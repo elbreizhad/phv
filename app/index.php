@@ -19,6 +19,12 @@ if (!in_array($page, $publicPages)) {
     requireAuth();
 }
 
+// API endpoints (AJAX, JSON response, pas de layout)
+if ($page === 'suggestions-api') {
+    require __DIR__ . '/pages/actions/suggestions-api.php';
+    exit;
+}
+
 // Routing
 $validPages = [
     'login',

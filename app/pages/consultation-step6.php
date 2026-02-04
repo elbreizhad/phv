@@ -32,12 +32,20 @@ $allReponses = getReponses($consultId);
         <h1>Programme d'Hygiène de Vie</h1>
         <p class="subtitle"><?= e($consultation['client_prenom'] . ' ' . $consultation['client_nom']) ?></p>
     </div>
-    <?php if ($phv): ?>
-    <a href="<?= url('phv-export', ['id' => $consultId]) ?>" class="btn btn-terra" target="_blank">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Exporter en PDF
-    </a>
-    <?php endif; ?>
+    <div class="d-flex gap-1">
+        <?php if (!$phv): ?>
+        <button type="button" id="phv-prefill-btn" class="btn btn-sage" data-consultation-id="<?= $consultId ?>">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><path d="M12 6v6l4 2"/></svg>
+            Pré-remplir intelligemment
+        </button>
+        <?php endif; ?>
+        <?php if ($phv): ?>
+        <a href="<?= url('phv-export', ['id' => $consultId]) ?>" class="btn btn-terra" target="_blank">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Exporter en PDF
+        </a>
+        <?php endif; ?>
+    </div>
 </div>
 
 <div class="page-body animate-in">
@@ -71,6 +79,21 @@ $allReponses = getReponses($consultId);
         </div>
     </div>
     <?php endif; ?>
+
+    <!-- Recherche dans la base de connaissances -->
+    <div class="card mb-3 knowledge-search-card">
+        <div class="card-header">
+            <h3>Rechercher dans les cours</h3>
+            <span class="badge badge-info">Aide à la rédaction</span>
+        </div>
+        <div class="card-body">
+            <div class="knowledge-search-wrapper">
+                <input type="text" id="knowledge-search" class="form-control" placeholder="Rechercher : stress, probiotiques, arthrose, lavande...">
+                <div id="knowledge-results" class="knowledge-results"></div>
+            </div>
+            <p class="form-hint">Tapez un mot-clé pour rechercher dans la base de connaissances (alimentation, phyto, aroma, routines...)</p>
+        </div>
+    </div>
 
     <form method="POST" action="<?= url('consultation-step6', ['id' => $consultId]) ?>">
         <input type="hidden" name="action" value="phv-save">
