@@ -1206,3 +1206,122 @@ select.form-control {
     background: var(--sage-300);
     cursor: not-allowed;
 }
+
+/* ============================================
+   PHV - Génération automatique
+   ============================================ */
+
+/* Section auto-générée */
+.auto-content-section {
+    margin-bottom: 0.75rem;
+}
+
+.auto-content-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--sage-700);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.auto-content-label.text-danger {
+    color: var(--danger);
+}
+
+.auto-content-label.text-success {
+    color: var(--success);
+}
+
+.auto-content-box {
+    background: var(--cream-50);
+    border: 1px solid var(--cream-300);
+    border-left: 3px solid var(--sage-400);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.2rem;
+    font-size: 0.88rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    white-space: pre-line;
+}
+
+.auto-content-box-small {
+    padding: 0.8rem 1rem;
+    font-size: 0.85rem;
+    min-height: 120px;
+}
+
+/* Commentaire praticien */
+.praticien-comment {
+    background: var(--sage-50);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    border: 1px dashed var(--sage-300);
+}
+
+.praticien-comment .form-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--sage-700);
+    font-size: 0.8rem;
+}
+
+.praticien-comment .form-label svg {
+    color: var(--sage-500);
+}
+
+.praticien-comment .form-control {
+    background: white;
+    font-size: 0.88rem;
+}
+
+/* Compléments auto-générés */
+.complements-auto-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.complement-auto-item {
+    background: var(--cream-50);
+    border: 1px solid var(--cream-300);
+    border-left: 3px solid var(--terra-400);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+}
+
+.complement-auto-nom {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--sage-800);
+    margin-bottom: 0.4rem;
+}
+
+.complement-auto-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.complement-auto-poso::before {
+    content: "📋 ";
+}
+
+.complement-auto-duree::before {
+    content: "⏱️ ";
+}
+
+.complement-auto-raison {
+    margin-top: 0.4rem;
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+/* Badge danger pour stress élevé */
+.badge-danger {
+    background: #fde8e6;
+    color: var(--danger);
+}

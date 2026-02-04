@@ -23,6 +23,15 @@ for ($i = 0; $i < count($noms); $i++) {
     }
 }
 
+// Collecter les commentaires du praticien
+$commentaires = [
+    'alimentation' => trim(getPost('commentaire_alimentation') ?? ''),
+    'stress' => trim(getPost('commentaire_stress') ?? ''),
+    'activite' => trim(getPost('commentaire_activite') ?? ''),
+    'routines' => trim(getPost('commentaire_routines') ?? ''),
+    'complements' => trim(getPost('commentaire_complements') ?? ''),
+];
+
 $data = [
     'alimentation' => getPost('alimentation'),
     'alimentation_eviter' => getPost('alimentation_eviter'),
@@ -36,6 +45,7 @@ $data = [
     'soins_naturels' => getPost('soins_naturels'),
     'recommandations_complementaires' => getPost('recommandations_complementaires'),
     'notes' => getPost('notes_phv'),
+    'commentaires_praticien' => json_encode($commentaires, JSON_UNESCAPED_UNICODE),
 ];
 
 // Vérifier si un PHV existe déjà
