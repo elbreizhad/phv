@@ -35,6 +35,7 @@ $userStmt->execute([$userId]);
 $user = $userStmt->fetch();
 
 $complements = json_decode($phv['complements'], true) ?: [];
+$commentaires = json_decode($phv['commentaires_praticien'] ?? '{}', true) ?: [];
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -157,6 +158,23 @@ $complements = json_decode($phv['complements'], true) ?: [];
 
         .box-avoid h4 { color: #c45b4b; }
         .box-favor h4 { color: #4a9b5a; }
+
+        /* Commentaires praticien */
+        .praticien-note {
+            margin-top: 0.8rem;
+            padding: 0.6rem 0.8rem;
+            background: #f8f6f2;
+            border-left: 3px solid #a85a3a;
+            border-radius: 4px;
+            font-size: 9.5pt;
+            color: #6d3a28;
+            font-style: italic;
+        }
+        .praticien-note::before {
+            content: "Note du praticien : ";
+            font-weight: 600;
+            font-style: normal;
+        }
 
         /* Compléments */
         .complement-table {
@@ -298,6 +316,10 @@ $complements = json_decode($phv['complements'], true) ?: [];
                     <p style="margin-top: 0.8rem;"><strong>Exemples de repas :</strong></p>
                     <p><?= nl2br(e($phv['menu_type'])) ?></p>
                 <?php endif; ?>
+
+                <?php if (!empty($commentaires['alimentation'])): ?>
+                    <div class="praticien-note"><?= nl2br(e($commentaires['alimentation'])) ?></div>
+                <?php endif; ?>
             </div>
         </div>
         <?php endif; ?>
@@ -306,7 +328,12 @@ $complements = json_decode($phv['complements'], true) ?: [];
         <?php if ($phv['gestion_stress']): ?>
         <div class="section">
             <div class="section-title">Gestion du stress & émotions</div>
-            <div class="content"><p><?= nl2br(e($phv['gestion_stress'])) ?></p></div>
+            <div class="content">
+                <p><?= nl2br(e($phv['gestion_stress'])) ?></p>
+                <?php if (!empty($commentaires['stress'])): ?>
+                    <div class="praticien-note"><?= nl2br(e($commentaires['stress'])) ?></div>
+                <?php endif; ?>
+            </div>
         </div>
         <?php endif; ?>
 
@@ -314,7 +341,12 @@ $complements = json_decode($phv['complements'], true) ?: [];
         <?php if ($phv['activite_physique']): ?>
         <div class="section">
             <div class="section-title">Activité physique</div>
-            <div class="content"><p><?= nl2br(e($phv['activite_physique'])) ?></p></div>
+            <div class="content">
+                <p><?= nl2br(e($phv['activite_physique'])) ?></p>
+                <?php if (!empty($commentaires['activite'])): ?>
+                    <div class="praticien-note"><?= nl2br(e($commentaires['activite'])) ?></div>
+                <?php endif; ?>
+            </div>
         </div>
         <?php endif; ?>
 
@@ -337,6 +369,9 @@ $complements = json_decode($phv['complements'], true) ?: [];
                     </div>
                     <?php endif; ?>
                 </div>
+                <?php if (!empty($commentaires['routines'])): ?>
+                    <div class="praticien-note"><?= nl2br(e($commentaires['routines'])) ?></div>
+                <?php endif; ?>
             </div>
         </div>
         <?php endif; ?>
@@ -372,6 +407,9 @@ $complements = json_decode($phv['complements'], true) ?: [];
                     <?php endforeach; ?>
                     </tbody>
                 </table>
+                <?php if (!empty($commentaires['complements'])): ?>
+                    <div class="praticien-note"><?= nl2br(e($commentaires['complements'])) ?></div>
+                <?php endif; ?>
             </div>
         </div>
         <?php endif; ?>

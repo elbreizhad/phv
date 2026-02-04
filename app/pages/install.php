@@ -22,6 +22,14 @@ try {
         }
     }
 
+    // Migration : ajouter la colonne commentaires_praticien si elle n'existe pas
+    try {
+        $db->exec("ALTER TABLE phv ADD COLUMN commentaires_praticien JSON AFTER notes");
+        $messages[] = ['info', 'Colonne commentaires_praticien ajoutee a la table phv.'];
+    } catch (Exception $e) {
+        // La colonne existe probablement déjà, on ignore
+    }
+
     // Créer l'utilisateur par défaut avec mot de passe hashé
     $hash = password_hash('naturo2026', PASSWORD_DEFAULT);
     $check = $db->query("SELECT COUNT(*) FROM users WHERE username = 'praticien'")->fetchColumn();

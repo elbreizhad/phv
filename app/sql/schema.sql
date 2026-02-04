@@ -118,6 +118,7 @@ CREATE TABLE phv (
     soins_naturels TEXT,
     recommandations_complementaires TEXT,
     notes TEXT,
+    commentaires_praticien JSON,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (consultation_id) REFERENCES consultations(id) ON DELETE CASCADE
