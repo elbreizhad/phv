@@ -71,6 +71,7 @@ define('RDV_TYPES', [
     'premiere_consultation' => ['label' => 'Première consultation', 'duree' => 90, 'couleur' => '#4a6741'],
     'suivi' => ['label' => 'Suivi', 'duree' => 60, 'couleur' => '#5a7a4c'],
     'telephone' => ['label' => 'Téléphone', 'duree' => 30, 'couleur' => '#4a7a9b'],
+    'visio' => ['label' => 'Téléconsultation', 'duree' => 60, 'couleur' => '#6b4a9b'],
     'autre' => ['label' => 'Autre', 'duree' => 60, 'couleur' => '#7a8370'],
 ]);
 

@@ -16,6 +16,16 @@ $dureeMinutes = (int)getPost('duree_minutes', 60);
 $tarif = getPost('tarif') ?: null;
 $notes = getPost('notes');
 $couleur = RDV_TYPES[$typeRdv]['couleur'] ?? '#4a6741';
+$visioEnabled = (bool)getPost('visio_enabled', false);
+
+// Générer lien visio si c'est une téléconsultation
+$visioRoomId = null;
+$visioPassword = null;
+if ($visioEnabled || $typeRdv === 'visio') {
+    $visioEnabled = true;
+    $visioRoomId = 'phv-' . bin2hex(random_bytes(8));
+    $visioPassword = strtoupper(bin2hex(random_bytes(3)));
+}
 
 // Si client sélectionné, utiliser son nom comme titre
 if ($clientId) {
@@ -36,28 +46,47 @@ if (!$heureFin && $heureDebut && $dureeMinutes) {
 
 if ($rdvId) {
     // Mise à jour
+    if ($visioEnabled) {
+        // Vérifier si visio existe déjà
+        $checkStmt = $db->prepare("SELECT visio_room_id FROM rendez_vous WHERE id = ?");
+        $checkStmt->execute([$rdvId]);
+        $existing = $checkStmt->fetch();
+        if ($existing && $existing['visio_room_id']) {
+            // Garder l'ancien lien visio
+            $visioRoomId = $existing['visio_room_id'];
+            $visioPassword = null; // Ne pas écraser
+        }
+    }
+
     $stmt = $db->prepare("
         UPDATE rendez_vous SET
             client_id = ?, titre = ?, type_rdv = ?, date_rdv = ?,
             heure_debut = ?, heure_fin = ?, duree_minutes = ?,
-            tarif = ?, notes = ?, couleur = ?, updated_at = NOW()
+            tarif = ?, notes = ?, couleur = ?,
+            visio_enabled = ?,
+            visio_room_id = COALESCE(?, visio_room_id),
+            visio_password = COALESCE(?, visio_password),
+            updated_at = NOW()
         WHERE id = ? AND user_id = ?
     ");
     $stmt->execute([
         $clientId, $titre, $typeRdv, $dateRdv,
         $heureDebut, $heureFin, $dureeMinutes,
-        $tarif, $notes, $couleur, $rdvId, $userId
+        $tarif, $notes, $couleur,
+        $visioEnabled, $visioRoomId, $visioPassword,
+        $rdvId, $userId
     ]);
     flashSet('success', 'Rendez-vous modifié avec succès.');
 } else {
     // Création
     $stmt = $db->prepare("
-        INSERT INTO rendez_vous (user_id, client_id, titre, type_rdv, date_rdv, heure_debut, heure_fin, duree_minutes, tarif, notes, couleur)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO rendez_vous (user_id, client_id, titre, type_rdv, date_rdv, heure_debut, heure_fin, duree_minutes, tarif, notes, couleur, visio_enabled, visio_room_id, visio_password)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
     $stmt->execute([
         $userId, $clientId, $titre, $typeRdv, $dateRdv,
-        $heureDebut, $heureFin, $dureeMinutes, $tarif, $notes, $couleur
+        $heureDebut, $heureFin, $dureeMinutes, $tarif, $notes, $couleur,
+        $visioEnabled, $visioRoomId, $visioPassword
     ]);
     flashSet('success', 'Rendez-vous créé avec succès.');
 }

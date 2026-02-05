@@ -13,16 +13,22 @@ initSession();
 $page = getGet('page', 'dashboard');
 
 // Pages accessibles sans authentification
-$publicPages = ['login', 'install'];
+$publicPages = ['login', 'install', 'visio-client'];
 
 if (!in_array($page, $publicPages)) {
     requireAuth();
 }
 
 // API endpoints (AJAX, JSON response, pas de layout)
-$apiPages = ['suggestions-api', 'agenda-api', 'factures-api', 'stats-api'];
+$apiPages = ['suggestions-api', 'agenda-api', 'factures-api', 'stats-api', 'rdv-notes-save'];
 if (in_array($page, $apiPages)) {
-    $apiFile = $page === 'suggestions-api' ? '/pages/actions/suggestions-api.php' : '/pages/' . $page . '.php';
+    if ($page === 'suggestions-api') {
+        $apiFile = '/pages/actions/suggestions-api.php';
+    } elseif ($page === 'rdv-notes-save') {
+        $apiFile = '/pages/actions/rdv-notes-save.php';
+    } else {
+        $apiFile = '/pages/' . $page . '.php';
+    }
     require __DIR__ . $apiFile;
     exit;
 }
@@ -81,6 +87,9 @@ $validPages = [
     'parametres-prestations',
     // Questionnaire pré-consultation (public)
     'questionnaire-pre',
+    // Téléconsultation
+    'teleconsultation',
+    'visio-client',
 ];
 
 if (!in_array($page, $validPages)) {
@@ -227,8 +236,8 @@ if ($page === 'logout') {
     redirect('login');
 }
 
-// Pages sans layout (login, install, export PDF, questionnaire public)
-$noLayout = ['login', 'install', 'phv-export', 'facture-export', 'questionnaire-pre'];
+// Pages sans layout (login, install, export PDF, questionnaire public, visio client)
+$noLayout = ['login', 'install', 'phv-export', 'facture-export', 'questionnaire-pre', 'visio-client'];
 
 if (in_array($page, $noLayout)) {
     require __DIR__ . '/pages/' . $page . '.php';

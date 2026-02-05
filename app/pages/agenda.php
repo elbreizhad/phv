@@ -412,6 +412,12 @@ $mois = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'aoû
                     <label class="form-label">Notes</label>
                     <textarea name="notes" id="rdv_notes" class="form-control" rows="2" placeholder="Notes internes..."></textarea>
                 </div>
+                <div class="form-group">
+                    <label class="form-check">
+                        <input type="checkbox" name="visio_enabled" id="rdv_visio" value="1">
+                        <span class="form-check-label">Téléconsultation (générer un lien visio)</span>
+                    </label>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="closeRdvModal()">Annuler</button>
@@ -535,6 +541,9 @@ function viewRdv(id) {
                 }
                 if (rdv.client_id && (rdv.statut === 'planifie' || rdv.statut === 'confirme')) {
                     actions += `<a href="<?= APP_URL ?>/index.php?page=consultation-new&client_id=${rdv.client_id}&rdv_id=${rdv.id}" class="btn btn-primary">Démarrer consultation</a>`;
+                }
+                if (rdv.visio_enabled && rdv.visio_room_id && (rdv.statut === 'planifie' || rdv.statut === 'confirme')) {
+                    actions += `<a href="<?= APP_URL ?>/index.php?page=teleconsultation&rdv=${rdv.id}" class="btn btn-primary" style="background: #6b4a9b;">Lancer visio</a>`;
                 }
 
                 document.getElementById('rdv-view-actions').innerHTML = actions;
