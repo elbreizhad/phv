@@ -20,8 +20,10 @@ if (!in_array($page, $publicPages)) {
 }
 
 // API endpoints (AJAX, JSON response, pas de layout)
-if ($page === 'suggestions-api') {
-    require __DIR__ . '/pages/actions/suggestions-api.php';
+$apiPages = ['suggestions-api', 'agenda-api', 'factures-api', 'stats-api'];
+if (in_array($page, $apiPages)) {
+    $apiFile = $page === 'suggestions-api' ? '/pages/actions/suggestions-api.php' : '/pages/' . $page . '.php';
+    require __DIR__ . $apiFile;
     exit;
 }
 
@@ -31,10 +33,16 @@ $validPages = [
     'logout',
     'install',
     'dashboard',
+    // Clients
     'clients',
     'client-new',
     'client-edit',
     'client-view',
+    'client-evolution',
+    'client-objectifs',
+    'client-documents',
+    'client-timeline',
+    // Consultations
     'consultation-new',
     'consultation-step1',
     'consultation-step2',
@@ -43,9 +51,36 @@ $validPages = [
     'consultation-step5',
     'consultation-step6',
     'consultation-view',
+    // Agenda
+    'agenda',
+    'agenda-api',
+    // Facturation
+    'factures',
+    'facture-new',
+    'facture-edit',
+    'facture-view',
+    'facture-export',
+    // Ressources
     'fiches',
     'fiche-view',
     'phv-export',
+    'phv-templates',
+    'phv-template-edit',
+    'protocoles',
+    'protocole-edit',
+    'recettes',
+    'recette-edit',
+    // Bilans
+    'bilan-alimentaire',
+    'bilan-alimentaire-edit',
+    // Statistiques
+    'statistiques',
+    // Paramètres
+    'parametres',
+    'parametres-cabinet',
+    'parametres-prestations',
+    // Questionnaire pré-consultation (public)
+    'questionnaire-pre',
 ];
 
 if (!in_array($page, $validPages)) {
@@ -85,6 +120,104 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         case 'phv-save':
             require __DIR__ . '/pages/actions/phv-save.php';
             break;
+
+        // Agenda
+        case 'rdv-save':
+            require __DIR__ . '/pages/actions/rdv-save.php';
+            break;
+
+        case 'rdv-confirm':
+            $rdvId = (int)getPost('rdv_id');
+            $db = getDB();
+            $stmt = $db->prepare("UPDATE rendez_vous SET statut = 'confirme' WHERE id = ? AND user_id = ?");
+            $stmt->execute([$rdvId, currentUserId()]);
+            flashSet('success', 'Rendez-vous confirmé.');
+            redirect('agenda');
+            break;
+
+        case 'rdv-cancel':
+            $rdvId = (int)getPost('rdv_id');
+            $db = getDB();
+            $stmt = $db->prepare("UPDATE rendez_vous SET statut = 'annule' WHERE id = ? AND user_id = ?");
+            $stmt->execute([$rdvId, currentUserId()]);
+            flashSet('success', 'Rendez-vous annulé.');
+            redirect('agenda');
+            break;
+
+        // Factures
+        case 'facture-save':
+            require __DIR__ . '/pages/actions/facture-save.php';
+            break;
+
+        case 'facture-payer':
+            require __DIR__ . '/pages/actions/facture-payer.php';
+            break;
+
+        // Client - Mesures et objectifs
+        case 'mesure-save':
+            require __DIR__ . '/pages/actions/mesure-save.php';
+            break;
+
+        case 'objectif-save':
+            require __DIR__ . '/pages/actions/objectif-save.php';
+            break;
+
+        // Templates et protocoles
+        case 'phv-template-save':
+            require __DIR__ . '/pages/actions/phv-template-save.php';
+            break;
+
+        case 'protocole-save':
+            require __DIR__ . '/pages/actions/protocole-save.php';
+            break;
+
+        // Paramètres
+        case 'settings-save':
+            require __DIR__ . '/pages/actions/settings-save.php';
+            break;
+
+        case 'prestation-save':
+            require __DIR__ . '/pages/actions/prestation-save.php';
+            break;
+
+        case 'prestation-delete':
+            $prestationId = (int)getPost('prestation_id');
+            $db = getDB();
+            $db->prepare("DELETE FROM prestations WHERE id = ? AND user_id = ?")->execute([$prestationId, currentUserId()]);
+            flashSet('success', 'Prestation supprimée.');
+            redirect('parametres');
+            break;
+
+        // Recettes
+        case 'recette-save':
+            require __DIR__ . '/pages/actions/recette-save.php';
+            break;
+
+        case 'recette-delete':
+            $recetteId = (int)getPost('recette_id');
+            $db = getDB();
+            $db->prepare("DELETE FROM recettes WHERE id = ? AND user_id = ?")->execute([$recetteId, currentUserId()]);
+            flashSet('success', 'Recette supprimée.');
+            redirect('recettes');
+            break;
+
+        // Protocoles
+        case 'protocole-delete':
+            $protocoleId = (int)getPost('protocole_id');
+            $db = getDB();
+            $db->prepare("DELETE FROM protocoles WHERE id = ? AND user_id = ?")->execute([$protocoleId, currentUserId()]);
+            flashSet('success', 'Protocole supprimé.');
+            redirect('protocoles');
+            break;
+
+        // Templates PHV
+        case 'phv-template-delete':
+            $templateId = (int)getPost('template_id');
+            $db = getDB();
+            $db->prepare("DELETE FROM phv_templates WHERE id = ? AND user_id = ?")->execute([$templateId, currentUserId()]);
+            flashSet('success', 'Template supprimé.');
+            redirect('phv-templates');
+            break;
     }
 }
 
@@ -94,8 +227,8 @@ if ($page === 'logout') {
     redirect('login');
 }
 
-// Pages sans layout (login, install, export PDF)
-$noLayout = ['login', 'install', 'phv-export'];
+// Pages sans layout (login, install, export PDF, questionnaire public)
+$noLayout = ['login', 'install', 'phv-export', 'facture-export', 'questionnaire-pre'];
 
 if (in_array($page, $noLayout)) {
     require __DIR__ . '/pages/' . $page . '.php';

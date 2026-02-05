@@ -1325,3 +1325,428 @@ select.form-control {
     background: #fde8e6;
     color: var(--danger);
 }
+
+/* ============================================
+   Modaux
+   ============================================ */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    position: relative;
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalIn 0.3s ease;
+}
+
+@keyframes modalIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid var(--cream-200);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 0;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    color: var(--danger);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--cream-200);
+    background: var(--cream-50);
+}
+
+/* ============================================
+   Calendrier / Agenda
+   ============================================ */
+
+/* Vue Mois */
+.calendar-month {
+    padding: 1rem;
+}
+
+.calendar-header-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--cream-200);
+    margin-bottom: 0.5rem;
+}
+
+.calendar-header-cell {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+}
+
+.calendar-week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-day {
+    min-height: 100px;
+    padding: 0.5rem;
+    border: 1px solid var(--cream-100);
+    background: white;
+    transition: var(--transition);
+}
+
+.calendar-day:hover {
+    background: var(--sage-50);
+}
+
+.calendar-day.empty {
+    background: var(--cream-50);
+}
+
+.calendar-day.today {
+    background: var(--sage-50);
+    border-color: var(--sage-300);
+}
+
+.day-number {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+}
+
+.calendar-day.today .day-number {
+    color: var(--sage-700);
+}
+
+.day-event {
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    margin-bottom: 0.2rem;
+    font-size: 0.7rem;
+    cursor: pointer;
+    border-left: 3px solid;
+    transition: var(--transition);
+}
+
+.day-event:hover {
+    transform: translateX(2px);
+}
+
+.event-time {
+    font-weight: 600;
+    margin-right: 0.3rem;
+}
+
+.event-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.day-more {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Vue Semaine */
+.calendar-week-view {
+    overflow-x: auto;
+}
+
+.week-header {
+    display: grid;
+    grid-template-columns: 60px repeat(7, 1fr);
+    background: var(--sage-50);
+    border-bottom: 2px solid var(--cream-200);
+}
+
+.week-time-col {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: right;
+    border-right: 1px solid var(--cream-200);
+}
+
+.week-day-header {
+    padding: 0.8rem 0.5rem;
+    text-align: center;
+    border-right: 1px solid var(--cream-200);
+}
+
+.week-day-header.today {
+    background: var(--sage-100);
+}
+
+.week-day-header .day-name {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: block;
+}
+
+.week-day-header .day-num {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--sage-700);
+}
+
+.week-body {}
+
+.week-row {
+    display: grid;
+    grid-template-columns: 60px repeat(7, 1fr);
+    border-bottom: 1px solid var(--cream-100);
+}
+
+.week-cell {
+    min-height: 50px;
+    padding: 0.2rem;
+    border-right: 1px solid var(--cream-100);
+    position: relative;
+}
+
+.week-cell.today {
+    background: rgba(74, 103, 65, 0.03);
+}
+
+.week-cell:hover {
+    background: var(--sage-50);
+    cursor: pointer;
+}
+
+.week-event {
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    color: white;
+    font-size: 0.75rem;
+    cursor: pointer;
+    margin-bottom: 0.2rem;
+}
+
+.week-event:hover {
+    opacity: 0.9;
+}
+
+.event-client {
+    font-weight: 500;
+}
+
+/* Vue Jour */
+.calendar-day-view {}
+
+.day-header {
+    padding: 1rem;
+    background: var(--sage-50);
+    border-bottom: 2px solid var(--cream-200);
+}
+
+.day-header h3 {
+    margin: 0;
+}
+
+.day-timeline {
+    padding: 0 1rem;
+}
+
+.timeline-hour {
+    display: flex;
+    border-bottom: 1px solid var(--cream-100);
+    min-height: 60px;
+}
+
+.hour-label {
+    width: 60px;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.hour-slot {
+    flex: 1;
+    position: relative;
+    padding: 0.2rem;
+    border-left: 1px solid var(--cream-200);
+}
+
+.hour-slot:hover {
+    background: var(--sage-50);
+    cursor: pointer;
+}
+
+.timeline-event {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    border-radius: var(--radius-sm);
+    padding: 0.5rem;
+    color: white;
+    font-size: 0.85rem;
+    cursor: pointer;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.timeline-event:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.timeline-event .event-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+/* ============================================
+   Badges supplémentaires
+   ============================================ */
+.badge-secondary {
+    background: var(--cream-200);
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   Bouton Success
+   ============================================ */
+.btn-success {
+    background: var(--success);
+    color: white;
+}
+
+.btn-success:hover {
+    background: #3d8a4a;
+    color: white;
+}
+
+/* ============================================
+   Liens dans le vue client
+   ============================================ */
+.client-nav-links {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--cream-50);
+    border-radius: var(--radius-sm);
+}
+
+.client-nav-links a {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: var(--transition);
+}
+
+.client-nav-links a:hover {
+    background: var(--sage-100);
+    color: var(--sage-700);
+}
+
+.client-nav-links a.active {
+    background: var(--sage-500);
+    color: white;
+}
+
+/* ============================================
+   Responsive tablette
+   ============================================ */
+@media (max-width: 1024px) {
+    .calendar-day {
+        min-height: 80px;
+    }
+
+    .week-cell {
+        min-height: 40px;
+    }
+
+    .modal-content {
+        max-width: 95%;
+    }
+}
+
+@media (max-width: 768px) {
+    .calendar-header-cell {
+        font-size: 0.65rem;
+    }
+
+    .calendar-day {
+        min-height: 60px;
+        padding: 0.25rem;
+    }
+
+    .day-number {
+        font-size: 0.8rem;
+    }
+
+    .day-event {
+        font-size: 0.6rem;
+        padding: 0.1rem 0.2rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
