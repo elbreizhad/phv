@@ -9,7 +9,7 @@ USE phv_app;
 -- PROTOCOLES COMPLETS
 -- ============================================
 
-INSERT INTO protocoles (user_id, nom, type_protocole, duree_jours, description, objectifs, phases, complements, alimentation, contre_indications, actif) VALUES
+INSERT INTO protocoles (user_id, nom, type_protocole, duree_jours, description, objectifs, phases, complements, alimentation, contre_indications) VALUES
 
 -- ============================================
 -- 1. PROTOCOLE DETOX HEPATIQUE
