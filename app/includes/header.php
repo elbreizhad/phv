@@ -1,3 +1,4 @@
+<!-- DEBUG: header.php v2.0 loaded at <?= date('Y-m-d H:i:s') ?> from <?= __FILE__ ?> -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -13,6 +14,7 @@
         <div class="sidebar-brand">
             <h1>PHV Naturo</h1>
             <div class="brand-subtitle">Outil de consultation</div>
+            <div style="font-size:10px;color:#999;margin-top:5px;">v2.0 - <?= count(glob(__DIR__ . '/../pages/*.php')) ?> pages</div>
         </div>
 
         <nav class="sidebar-nav">
