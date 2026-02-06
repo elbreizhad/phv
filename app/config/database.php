@@ -8,7 +8,7 @@
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'pertec_natu');       // Nom de la base
 define('DB_USER', 'pertec_naturo');     // Utilisateur
-define('DB_PASS', 'VOTRE_MOT_DE_PASSE'); // À modifier sur le serveur !
+define('DB_PASS', 'Z;WV0i3W%I');
 define('DB_CHARSET', 'utf8mb4');
 
 function getDB(): PDO {
