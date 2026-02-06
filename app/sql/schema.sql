@@ -1,8 +1,9 @@
 -- PHV App - Schema de la base de données
 -- Outil d'aide à la consultation en naturopathie
 
-CREATE DATABASE IF NOT EXISTS phv_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE phv_app;
+-- Pour hébergement mutualisé, la base est déjà créée par l'hébergeur
+-- CREATE DATABASE IF NOT EXISTS pertec_natu CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE pertec_natu;
 
 -- ============================================
 -- UTILISATEURS (authentification praticien)
