@@ -1,10 +1,9 @@
 -- ============================================
 -- PHV Naturo - Installation Complète Production
--- Base de données: pertec_natu
 -- Version 2.0 avec téléconsultation
 -- ============================================
-
-USE pertec_natu;
+-- IMPORTANT: Sélectionnez votre base dans phpMyAdmin AVANT d'importer ce fichier
+-- ============================================
 
 -- ============================================
 -- 1. STRUCTURE DES TABLES
@@ -626,4 +625,3 @@ INSERT INTO protocoles (user_id, nom, type_protocole, duree_jours, description, 
 -- ============================================
 
 SELECT 'Installation terminée avec succès!' AS message;
-SELECT CONCAT(COUNT(*), ' tables créées') AS info FROM information_schema.tables WHERE table_schema = 'pertec_natu';
