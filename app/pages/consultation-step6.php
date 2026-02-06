@@ -20,7 +20,7 @@ $currentStep = 6;
 // Récupérer la synthèse
 $synthStmt = $db->prepare("SELECT * FROM consultation_synthese WHERE consultation_id = ?");
 $synthStmt->execute([$consultId]);
-$synthese = $synthStmt->fetch();
+$synthese = $synthStmt->fetch() ?: null;
 
 // Récupérer le PHV existant
 $phvStmt = $db->prepare("SELECT * FROM phv WHERE consultation_id = ?");
