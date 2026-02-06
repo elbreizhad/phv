@@ -31,6 +31,16 @@ $phv = $phvStmt->fetch();
 $allReponses = getReponses($consultId);
 
 // ============================================
+// RÉCUPÉRER LES PROTOCOLES SUGGÉRÉS
+// ============================================
+$protocolesStmt = $db->prepare("SELECT * FROM protocoles WHERE user_id = ? AND actif = TRUE ORDER BY type_protocole, nom");
+$protocolesStmt->execute([$userId]);
+$allProtocoles = $protocolesStmt->fetchAll();
+
+// Matcher les protocoles avec la consultation
+$suggestedProtocoles = matchProtocolesToConsultation($consultation, $synthese, $allReponses, $allProtocoles);
+
+// ============================================
 // GÉNÉRATION AUTOMATIQUE DU CONTENU PHV
 // ============================================
 $autoContent = generateAutoPhvContent($consultation, $synthese, $allReponses);
@@ -293,6 +303,150 @@ $commentaires = $phv ? json_decode($phv['commentaires_praticien'] ?? '{}', true)
             </div>
         </div>
 
+        <!-- ============================================ -->
+        <!-- PROTOCOLES SUGGÉRÉS -->
+        <!-- ============================================ -->
+        <?php if (!empty($suggestedProtocoles)): ?>
+        <div class="card mb-3" style="border: 2px solid var(--terra-cotta);">
+            <div class="card-header" style="background: linear-gradient(135deg, var(--terra-cotta) 0%, var(--sage) 100%); color: white;">
+                <h3 style="color: white; margin: 0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" style="vertical-align: middle; margin-right: 8px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    Protocoles suggérés
+                </h3>
+                <span class="badge" style="background: white; color: var(--terra-cotta);"><?= count($suggestedProtocoles) ?> protocole(s) adapté(s)</span>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-2">Basé sur le motif et les réponses au questionnaire, ces protocoles peuvent compléter le PHV :</p>
+
+                <div class="protocoles-suggestions">
+                    <?php foreach ($suggestedProtocoles as $proto): ?>
+                    <div class="protocole-suggestion-item" data-protocole-id="<?= $proto['id'] ?>">
+                        <div class="protocole-suggestion-header">
+                            <div>
+                                <span class="protocole-type-badge protocole-type-<?= e($proto['type_protocole']) ?>"><?= ucfirst(str_replace('_', ' ', $proto['type_protocole'])) ?></span>
+                                <strong><?= e($proto['nom']) ?></strong>
+                                <span class="text-muted">(<?= $proto['duree_jours'] ?> jours)</span>
+                            </div>
+                            <div class="protocole-match-score">
+                                <span class="match-badge match-<?= $proto['match_level'] ?>">
+                                    <?php if ($proto['match_level'] === 'high'): ?>
+                                        Très pertinent
+                                    <?php elseif ($proto['match_level'] === 'medium'): ?>
+                                        Pertinent
+                                    <?php else: ?>
+                                        Peut convenir
+                                    <?php endif; ?>
+                                </span>
+                            </div>
+                        </div>
+                        <p class="protocole-description"><?= e($proto['description']) ?></p>
+                        <div class="protocole-suggestion-actions">
+                            <button type="button" class="btn btn-sm btn-outline" onclick="toggleProtocoleDetails(<?= $proto['id'] ?>)">
+                                Voir détails
+                            </button>
+                            <label class="protocole-checkbox">
+                                <input type="checkbox" name="protocoles_selectionnes[]" value="<?= $proto['id'] ?>">
+                                <span>Ajouter au PHV</span>
+                            </label>
+                        </div>
+                        <div class="protocole-details" id="proto-details-<?= $proto['id'] ?>" style="display: none;">
+                            <div class="protocole-detail-section">
+                                <strong>Objectifs :</strong>
+                                <div><?= nl2br(e($proto['objectifs'])) ?></div>
+                            </div>
+                            <?php $phases = json_decode($proto['phases'] ?? '[]', true); ?>
+                            <?php if (!empty($phases)): ?>
+                            <div class="protocole-detail-section">
+                                <strong>Phases :</strong>
+                                <div class="phases-timeline">
+                                    <?php foreach ($phases as $i => $phase): ?>
+                                    <div class="phase-item">
+                                        <div class="phase-number"><?= $i + 1 ?></div>
+                                        <div class="phase-content">
+                                            <div class="phase-name"><?= e($phase['nom'] ?? 'Phase '.($i+1)) ?></div>
+                                            <?php if (!empty($phase['duree'])): ?>
+                                            <div class="phase-duree"><?= e($phase['duree']) ?></div>
+                                            <?php endif; ?>
+                                            <?php if (!empty($phase['actions'])): ?>
+                                            <ul class="phase-actions">
+                                                <?php foreach ($phase['actions'] as $action): ?>
+                                                <li><?= e($action) ?></li>
+                                                <?php endforeach; ?>
+                                            </ul>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+                            <?php $complements = json_decode($proto['complements'] ?? '[]', true); ?>
+                            <?php if (!empty($complements)): ?>
+                            <div class="protocole-detail-section">
+                                <strong>Compléments :</strong>
+                                <ul>
+                                    <?php foreach ($complements as $comp): ?>
+                                    <li>
+                                        <strong><?= e($comp['nom']) ?></strong> - <?= e($comp['posologie']) ?>
+                                        <span class="text-muted">(<?= e($comp['duree']) ?>)</span>
+                                    </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                            <?php endif; ?>
+                            <?php if (!empty($proto['contre_indications'])): ?>
+                            <div class="protocole-detail-section alert alert-warning">
+                                <strong>Contre-indications :</strong>
+                                <div><?= nl2br(e($proto['contre_indications'])) ?></div>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- ============================================ -->
+        <!-- TOUS LES PROTOCOLES DISPONIBLES -->
+        <!-- ============================================ -->
+        <?php if (!empty($allProtocoles)): ?>
+        <div class="card mb-3">
+            <div class="card-header" style="cursor: pointer;" onclick="toggleAllProtocoles()">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="vertical-align: middle; margin-right: 6px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    Bibliothèque de protocoles
+                </h3>
+                <span class="text-muted" id="proto-toggle-icon">Cliquer pour afficher tous les protocoles</span>
+            </div>
+            <div class="card-body" id="all-protocoles-list" style="display: none;">
+                <div class="protocoles-grid">
+                    <?php
+                    $groupedProtocoles = [];
+                    foreach ($allProtocoles as $p) {
+                        $groupedProtocoles[$p['type_protocole']][] = $p;
+                    }
+                    ?>
+                    <?php foreach ($groupedProtocoles as $type => $protos): ?>
+                    <div class="protocole-group">
+                        <h4 class="protocole-group-title"><?= ucfirst(str_replace('_', ' ', $type)) ?></h4>
+                        <?php foreach ($protos as $p): ?>
+                        <label class="protocole-mini-item">
+                            <input type="checkbox" name="protocoles_selectionnes[]" value="<?= $p['id'] ?>">
+                            <span>
+                                <?= e($p['nom']) ?>
+                                <small class="text-muted">(<?= $p['duree_jours'] ?>j)</small>
+                            </span>
+                        </label>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <div class="d-flex justify-between" style="margin-top: 1.5rem;">
             <a href="<?= url('consultation-step5', ['id' => $consultId]) ?>" class="btn btn-secondary">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
@@ -306,7 +460,288 @@ $commentaires = $phv ? json_decode($phv['commentaires_praticien'] ?? '{}', true)
     </form>
 </div>
 
+<script>
+function toggleProtocoleDetails(id) {
+    const details = document.getElementById('proto-details-' + id);
+    if (details.style.display === 'none') {
+        details.style.display = 'block';
+    } else {
+        details.style.display = 'none';
+    }
+}
+
+function toggleAllProtocoles() {
+    const list = document.getElementById('all-protocoles-list');
+    const icon = document.getElementById('proto-toggle-icon');
+    if (list.style.display === 'none') {
+        list.style.display = 'block';
+        icon.textContent = 'Cliquer pour masquer';
+    } else {
+        list.style.display = 'none';
+        icon.textContent = 'Cliquer pour afficher tous les protocoles';
+    }
+}
+</script>
+
+<style>
+.protocoles-suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.protocole-suggestion-item {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 1rem;
+    border-left: 4px solid var(--sage);
+}
+
+.protocole-suggestion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.protocole-type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-right: 0.5rem;
+}
+
+.protocole-type-detox { background: #e8f5e9; color: #2e7d32; }
+.protocole-type-digestif { background: #fff3e0; color: #ef6c00; }
+.protocole-type-stress { background: #e3f2fd; color: #1565c0; }
+.protocole-type-immunite { background: #fce4ec; color: #c2185b; }
+.protocole-type-hormonal { background: #f3e5f5; color: #7b1fa2; }
+.protocole-type-peau { background: #e0f7fa; color: #00838f; }
+.protocole-type-poids { background: #fff8e1; color: #ff8f00; }
+.protocole-type-remineralisation { background: #efebe9; color: #5d4037; }
+.protocole-type-autre { background: #eceff1; color: #546e7a; }
+
+.match-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.match-high { background: #c8e6c9; color: #2e7d32; }
+.match-medium { background: #fff9c4; color: #f57f17; }
+.match-low { background: #e0e0e0; color: #616161; }
+
+.protocole-description {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin: 0.5rem 0;
+}
+
+.protocole-suggestion-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 0.75rem;
+}
+
+.protocole-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    background: var(--sage);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.protocole-checkbox input {
+    accent-color: var(--terra-cotta);
+}
+
+.protocole-details {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border);
+}
+
+.protocole-detail-section {
+    margin-bottom: 1rem;
+}
+
+.phases-timeline {
+    margin-top: 0.5rem;
+}
+
+.phase-item {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-left: 0.5rem;
+}
+
+.phase-number {
+    width: 28px;
+    height: 28px;
+    background: var(--terra-cotta);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.phase-content {
+    flex: 1;
+}
+
+.phase-name {
+    font-weight: 600;
+    color: var(--sage-dark);
+}
+
+.phase-duree {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.phase-actions {
+    margin: 0.5rem 0 0 0;
+    padding-left: 1.2rem;
+    font-size: 0.9rem;
+}
+
+.phase-actions li {
+    margin-bottom: 0.25rem;
+}
+
+.protocoles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.protocole-group {
+    background: var(--cream);
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.protocole-group-title {
+    font-size: 0.9rem;
+    color: var(--terra-cotta);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.protocole-mini-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.protocole-mini-item:hover {
+    background: rgba(0,0,0,0.03);
+}
+</style>
+
 <?php
+/**
+ * Matching intelligent des protocoles avec la consultation
+ */
+function matchProtocolesToConsultation(array $consultation, ?array $synthese, array $reponses, array $protocoles): array {
+    $matched = [];
+
+    // Données de la consultation
+    $motif = strtolower($consultation['motif'] ?? '');
+    $motifCat = strtolower($consultation['motif_categorie'] ?? '');
+    $sexe = $consultation['client_sexe'] ?? '';
+
+    // Priorités de la synthèse
+    $priorite1 = strtolower($synthese['priorite_1'] ?? '');
+    $priorite2 = strtolower($synthese['priorite_2'] ?? '');
+    $priorite3 = strtolower($synthese['priorite_3'] ?? '');
+    $allPriorites = $priorite1 . ' ' . $priorite2 . ' ' . $priorite3;
+
+    // Scores du questionnaire
+    $stressNiveau = (int)($reponses['stress_niveau'] ?? 5);
+    $sommeilQualite = (int)($reponses['sommeil_qualite'] ?? 5);
+    $immuNiveau = (int)($reponses['immu_niveau'] ?? 5);
+    $digTroubles = strtolower($reponses['dig_troubles'] ?? '');
+    $desequilibres = strtolower($reponses['pre_synthese_desequilibres'] ?? '');
+
+    // Mots-clés par type de protocole
+    $keywords = [
+        'detox' => ['détox', 'detox', 'foie', 'hépatique', 'drainage', 'toxines', 'nettoyage', 'cure'],
+        'digestif' => ['digestif', 'digestion', 'ballonnement', 'intestin', 'colon', 'constipation', 'diarrhée', 'sii', 'fodmap', 'microbiote', 'dysbiose', 'perméabilité'],
+        'stress' => ['stress', 'anxiété', 'angoisse', 'burnout', 'épuisement', 'fatigue nerveuse', 'sommeil', 'insomnie'],
+        'immunite' => ['immunité', 'infection', 'rhume', 'grippe', 'défenses', 'immunitaire', 'hiver'],
+        'hormonal' => ['hormonal', 'hormone', 'cycle', 'règles', 'menstruel', 'spm', 'ménopause', 'préménopause', 'fertilité', 'thyroïde'],
+        'peau' => ['peau', 'acné', 'eczéma', 'psoriasis', 'cutané', 'dermatologique'],
+        'poids' => ['poids', 'minceur', 'surpoids', 'obésité', 'métabolisme', 'glycémie', 'cellulite', 'rétention'],
+        'remineralisation' => ['minéral', 'reminéralisation', 'os', 'ostéoporose', 'crampes', 'cheveux', 'ongles', 'fatigue'],
+        'autre' => ['articulaire', 'arthrose', 'douleur', 'inflammation', 'cardiovasculaire', 'énergie']
+    ];
+
+    foreach ($protocoles as $proto) {
+        $score = 0;
+        $type = $proto['type_protocole'];
+        $protoNom = strtolower($proto['nom']);
+        $protoDesc = strtolower($proto['description'] ?? '');
+        $protoObjectifs = strtolower($proto['objectifs'] ?? '');
+        $protoTexte = $protoNom . ' ' . $protoDesc . ' ' . $protoObjectifs;
+
+        // Vérifier les mots-clés du type dans le motif et les priorités
+        if (isset($keywords[$type])) {
+            foreach ($keywords[$type] as $kw) {
+                if (str_contains($motif, $kw)) $score += 3;
+                if (str_contains($motifCat, $kw)) $score += 2;
+                if (str_contains($allPriorites, $kw)) $score += 2;
+                if (str_contains($desequilibres, $kw)) $score += 2;
+            }
+        }
+
+        // Scores spécifiques basés sur le questionnaire
+        if ($type === 'stress' && $stressNiveau >= 7) $score += 3;
+        if ($type === 'stress' && $sommeilQualite <= 4) $score += 2;
+        if ($type === 'digestif' && !empty($digTroubles)) $score += 3;
+        if ($type === 'immunite' && $immuNiveau <= 4) $score += 3;
+        if ($type === 'hormonal' && $sexe === 'femme') $score += 1;
+
+        // Vérifier si les mots du motif apparaissent dans le protocole
+        $motifWords = preg_split('/\s+/', $motif);
+        foreach ($motifWords as $word) {
+            if (strlen($word) > 3 && str_contains($protoTexte, $word)) {
+                $score += 1;
+            }
+        }
+
+        // Seulement garder si score > 0
+        if ($score > 0) {
+            $proto['match_score'] = $score;
+            $proto['match_level'] = $score >= 5 ? 'high' : ($score >= 3 ? 'medium' : 'low');
+            $matched[] = $proto;
+        }
+    }
+
+    // Trier par score décroissant et limiter à 5
+    usort($matched, fn($a, $b) => $b['match_score'] - $a['match_score']);
+    return array_slice($matched, 0, 5);
+}
+
 /**
  * Génère automatiquement le contenu du PHV basé sur les données de consultation
  */
