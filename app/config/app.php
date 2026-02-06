@@ -4,8 +4,8 @@
  */
 
 define('APP_NAME', 'PHV Naturo');
-define('APP_VERSION', '1.0.0');
-define('APP_URL', '/app');
+define('APP_VERSION', '2.0.0');
+define('APP_URL', ''); // Racine du site (vide = racine)
 
 // Catégories de motifs de consultation
 define('MOTIF_CATEGORIES', [

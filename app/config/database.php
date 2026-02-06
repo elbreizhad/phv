@@ -1,12 +1,14 @@
 <?php
 /**
  * Configuration de la base de données
+ *
+ * PRODUCTION: Modifiez ces valeurs selon votre hébergeur
  */
 
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'phv_app');
-define('DB_USER', 'root');
-define('DB_PASS', 'root');
+define('DB_NAME', 'pertec_natu');       // Nom de la base
+define('DB_USER', 'pertec_naturo');     // Utilisateur
+define('DB_PASS', 'VOTRE_MOT_DE_PASSE'); // À modifier sur le serveur !
 define('DB_CHARSET', 'utf8mb4');
 
 function getDB(): PDO {

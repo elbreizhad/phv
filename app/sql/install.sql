@@ -4,8 +4,11 @@
 -- Version 2.0
 -- ============================================
 
-CREATE DATABASE IF NOT EXISTS phv_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE phv_app;
+-- Pour hébergement mutualisé, la base existe déjà (créée par l'hébergeur)
+-- Remplacez 'pertec_natu' par le nom de votre base si différent
+-- CREATE DATABASE IF NOT EXISTS pertec_natu CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+USE pertec_natu;
 
 -- ============================================
 -- UTILISATEURS (authentification praticien)
