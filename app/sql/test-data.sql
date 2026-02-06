@@ -3,7 +3,7 @@
 -- Clients, consultations et rendez-vous fictifs
 -- ============================================
 
-USE phv_app;
+USE pertec_natu;
 
 -- ============================================
 -- CLIENTS DE TEST

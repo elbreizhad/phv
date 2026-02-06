@@ -2,7 +2,7 @@
 -- Migration: Ajout téléconsultation
 -- ============================================
 
-USE phv_app;
+USE pertec_natu;
 
 -- Ajout colonnes visio à rendez_vous
 ALTER TABLE rendez_vous

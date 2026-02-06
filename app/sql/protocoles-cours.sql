@@ -3,7 +3,7 @@
 -- Protocoles naturopathiques professionnels
 -- ============================================
 
-USE phv_app;
+USE pertec_natu;
 
 -- ============================================
 -- PROTOCOLES COMPLETS

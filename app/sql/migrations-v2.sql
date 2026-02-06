@@ -3,7 +3,7 @@
 -- Nouvelles fonctionnalités : Agenda, Facturation, Statistiques, etc.
 -- ============================================
 
-USE phv_app;
+USE pertec_natu;
 
 -- ============================================
 -- RENDEZ-VOUS / AGENDA
