@@ -1,9 +1,8 @@
 -- ============================================
 -- PHV App - Données de test
 -- Clients, consultations et rendez-vous fictifs
+-- IMPORTANT: Sélectionnez pertec_natu dans phpMyAdmin avant d'importer
 -- ============================================
-
-USE pertec_natu;
 
 -- ============================================
 -- CLIENTS DE TEST
@@ -192,6 +191,3 @@ INSERT INTO facture_lignes (facture_id, description, quantite, prix_unitaire, mo
 (4, 'Première consultation naturopathie', 1, 70.00, 70.00);
 
 SELECT 'Données de test insérées avec succès!' AS message;
-SELECT CONCAT(COUNT(*), ' clients créés') AS clients FROM clients;
-SELECT CONCAT(COUNT(*), ' consultations créées') AS consultations FROM consultations;
-SELECT CONCAT(COUNT(*), ' rendez-vous créés') AS rdv FROM rendez_vous;
