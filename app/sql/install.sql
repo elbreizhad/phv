@@ -552,7 +552,7 @@ CREATE TABLE fiches_conseil (
 -- Le hash sera généré par PHP au premier lancement
 INSERT INTO users (username, password_hash, nom, prenom, email) VALUES (
     'praticien',
-    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+    '$2y$12$6yOQceuIU574jHQ752HaTOLySO9kJK27.IGVu0cW5Z4o.bl9Ae1JS',
     'Praticien',
     'PHV',
     'praticien@phv.fr'
