@@ -41,6 +41,26 @@ $allProtocoles = $protocolesStmt->fetchAll();
 $suggestedProtocoles = matchProtocolesToConsultation($consultation, $synthese, $allReponses, $allProtocoles);
 
 // ============================================
+// RÉCUPÉRER LES FICHES PATHOLOGIES
+// ============================================
+$pathosStmt = $db->prepare("SELECT * FROM fiches_pathologies ORDER BY systeme, nom");
+$pathosStmt->execute();
+$allPathologies = $pathosStmt->fetchAll();
+
+// Matcher les pathologies avec la consultation
+$suggestedPathologies = matchPathologiesToConsultation($consultation, $synthese, $allReponses, $allPathologies);
+
+// ============================================
+// RÉCUPÉRER LES RECETTES
+// ============================================
+$recettesStmt = $db->prepare("SELECT * FROM recettes ORDER BY categorie, nom");
+$recettesStmt->execute();
+$allRecettes = $recettesStmt->fetchAll();
+
+// Matcher les recettes avec les besoins
+$suggestedRecettes = matchRecettesToConsultation($consultation, $synthese, $allReponses, $allRecettes);
+
+// ============================================
 // GÉNÉRATION AUTOMATIQUE DU CONTENU PHV
 // ============================================
 $autoContent = generateAutoPhvContent($consultation, $synthese, $allReponses);
@@ -447,6 +467,182 @@ $commentaires = $phv ? json_decode($phv['commentaires_praticien'] ?? '{}', true)
         </div>
         <?php endif; ?>
 
+        <!-- ============================================ -->
+        <!-- FICHES PATHOLOGIES SUGGÉRÉES -->
+        <!-- ============================================ -->
+        <?php if (!empty($suggestedPathologies)): ?>
+        <div class="card mb-3" style="border: 2px solid #2196F3;">
+            <div class="card-header" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); color: white;">
+                <h3 style="color: white; margin: 0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" style="vertical-align: middle; margin-right: 8px;"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    Fiches pathologies associées
+                </h3>
+                <span class="badge" style="background: white; color: #2196F3;"><?= count($suggestedPathologies) ?> fiche(s)</span>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-2">Ces fiches correspondent au profil du client :</p>
+                <div class="pathologies-list">
+                    <?php foreach ($suggestedPathologies as $patho): ?>
+                    <div class="patho-item">
+                        <div class="patho-header">
+                            <label class="patho-checkbox">
+                                <input type="checkbox" name="pathologies_selectionnees[]" value="<?= $patho['id'] ?>">
+                                <span class="patho-systeme"><?= e($patho['systeme']) ?></span>
+                                <strong><?= e($patho['nom']) ?></strong>
+                            </label>
+                            <button type="button" class="btn btn-sm btn-outline" onclick="togglePathoDetails(<?= $patho['id'] ?>)">Détails</button>
+                        </div>
+                        <div class="patho-details" id="patho-details-<?= $patho['id'] ?>" style="display: none;">
+                            <div class="patho-section"><strong>Description:</strong> <?= nl2br(e($patho['description'])) ?></div>
+                            <div class="patho-section"><strong>Causes:</strong> <?= nl2br(e($patho['causes'])) ?></div>
+                            <div class="patho-section"><strong>Signes cliniques:</strong> <?= nl2br(e($patho['signes_cliniques'])) ?></div>
+                            <div class="patho-grid">
+                                <div class="patho-col">
+                                    <h5>Alimentation</h5>
+                                    <p><strong>À éviter:</strong> <?= nl2br(e($patho['aliments_eviter'])) ?></p>
+                                    <p><strong>À privilégier:</strong> <?= nl2br(e($patho['aliments_privilegier'])) ?></p>
+                                </div>
+                                <div class="patho-col">
+                                    <h5>Compléments</h5>
+                                    <p><?= nl2br(e($patho['complements'])) ?></p>
+                                </div>
+                            </div>
+                            <div class="patho-grid">
+                                <div class="patho-col">
+                                    <h5>Phytothérapie</h5>
+                                    <p><?= nl2br(e($patho['phytotherapie'])) ?></p>
+                                </div>
+                                <div class="patho-col">
+                                    <h5>Aromathérapie</h5>
+                                    <p><?= nl2br(e($patho['aromatherapie'])) ?></p>
+                                </div>
+                            </div>
+                            <?php if (!empty($patho['notes'])): ?>
+                            <div class="patho-section alert alert-info">
+                                <strong>Notes:</strong> <?= nl2br(e($patho['notes'])) ?>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- ============================================ -->
+        <!-- RECETTES SUGGÉRÉES -->
+        <!-- ============================================ -->
+        <?php if (!empty($suggestedRecettes)): ?>
+        <div class="card mb-3" style="border: 2px solid #4CAF50;">
+            <div class="card-header" style="background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%); color: white;">
+                <h3 style="color: white; margin: 0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" style="vertical-align: middle; margin-right: 8px;"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                    Recettes recommandées
+                </h3>
+                <span class="badge" style="background: white; color: #4CAF50;"><?= count($suggestedRecettes) ?> recette(s)</span>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-2">Recettes adaptées aux besoins du client :</p>
+                <div class="recettes-grid">
+                    <?php foreach ($suggestedRecettes as $recette): ?>
+                    <div class="recette-card">
+                        <label class="recette-select">
+                            <input type="checkbox" name="recettes_selectionnees[]" value="<?= $recette['id'] ?>">
+                            <div class="recette-content">
+                                <span class="recette-categorie"><?= ucfirst(str_replace('_', ' ', $recette['categorie'])) ?></span>
+                                <strong class="recette-nom"><?= e($recette['nom']) ?></strong>
+                                <div class="recette-meta">
+                                    <span><?= $recette['temps_preparation'] + ($recette['temps_cuisson'] ?? 0) ?> min</span>
+                                    <span><?= $recette['portions'] ?> portions</span>
+                                </div>
+                                <?php $regimes = json_decode($recette['regimes'] ?? '[]', true); ?>
+                                <?php if (!empty($regimes)): ?>
+                                <div class="recette-regimes">
+                                    <?php foreach (array_slice($regimes, 0, 3) as $regime): ?>
+                                    <span class="regime-tag"><?= e($regime) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                        </label>
+                        <button type="button" class="btn btn-sm btn-outline" onclick="toggleRecetteDetails(<?= $recette['id'] ?>)">Voir</button>
+                        <div class="recette-details" id="recette-details-<?= $recette['id'] ?>" style="display: none;">
+                            <div class="recette-section">
+                                <h5>Ingrédients</h5>
+                                <div><?= nl2br(e($recette['ingredients'])) ?></div>
+                            </div>
+                            <div class="recette-section">
+                                <h5>Instructions</h5>
+                                <div><?= nl2br(e($recette['instructions'])) ?></div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- ============================================ -->
+        <!-- BIBLIOTHÈQUE COMPLÈTE -->
+        <!-- ============================================ -->
+        <div class="card mb-3">
+            <div class="card-header" style="cursor: pointer;" onclick="toggleBibliotheque()">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="vertical-align: middle; margin-right: 6px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    Bibliothèque complète
+                </h3>
+                <span class="text-muted" id="biblio-toggle-icon">Cliquer pour explorer toutes les ressources</span>
+            </div>
+            <div class="card-body" id="bibliotheque-complete" style="display: none;">
+                <div class="biblio-tabs">
+                    <button type="button" class="biblio-tab active" onclick="showBiblioTab('pathos')">Fiches pathologies</button>
+                    <button type="button" class="biblio-tab" onclick="showBiblioTab('recettes')">Recettes</button>
+                </div>
+
+                <div id="biblio-pathos" class="biblio-content">
+                    <?php
+                    $groupedPathos = [];
+                    foreach ($allPathologies as $p) { $groupedPathos[$p['systeme']][] = $p; }
+                    ?>
+                    <div class="biblio-grid">
+                        <?php foreach ($groupedPathos as $systeme => $pathos): ?>
+                        <div class="biblio-group">
+                            <h4><?= e($systeme) ?></h4>
+                            <?php foreach ($pathos as $p): ?>
+                            <label class="biblio-item">
+                                <input type="checkbox" name="pathologies_selectionnees[]" value="<?= $p['id'] ?>">
+                                <?= e($p['nom']) ?>
+                            </label>
+                            <?php endforeach; ?>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <div id="biblio-recettes" class="biblio-content" style="display: none;">
+                    <?php
+                    $groupedRecettes = [];
+                    foreach ($allRecettes as $r) { $groupedRecettes[$r['categorie']][] = $r; }
+                    ?>
+                    <div class="biblio-grid">
+                        <?php foreach ($groupedRecettes as $cat => $recs): ?>
+                        <div class="biblio-group">
+                            <h4><?= ucfirst(str_replace('_', ' ', $cat)) ?></h4>
+                            <?php foreach ($recs as $r): ?>
+                            <label class="biblio-item">
+                                <input type="checkbox" name="recettes_selectionnees[]" value="<?= $r['id'] ?>">
+                                <?= e($r['nom']) ?>
+                            </label>
+                            <?php endforeach; ?>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="d-flex justify-between" style="margin-top: 1.5rem;">
             <a href="<?= url('consultation-step5', ['id' => $consultId]) ?>" class="btn btn-secondary">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
@@ -480,6 +676,35 @@ function toggleAllProtocoles() {
         list.style.display = 'none';
         icon.textContent = 'Cliquer pour afficher tous les protocoles';
     }
+}
+
+function togglePathoDetails(id) {
+    const details = document.getElementById('patho-details-' + id);
+    details.style.display = details.style.display === 'none' ? 'block' : 'none';
+}
+
+function toggleRecetteDetails(id) {
+    const details = document.getElementById('recette-details-' + id);
+    details.style.display = details.style.display === 'none' ? 'block' : 'none';
+}
+
+function toggleBibliotheque() {
+    const biblio = document.getElementById('bibliotheque-complete');
+    const icon = document.getElementById('biblio-toggle-icon');
+    if (biblio.style.display === 'none') {
+        biblio.style.display = 'block';
+        icon.textContent = 'Cliquer pour masquer';
+    } else {
+        biblio.style.display = 'none';
+        icon.textContent = 'Cliquer pour explorer toutes les ressources';
+    }
+}
+
+function showBiblioTab(tab) {
+    document.querySelectorAll('.biblio-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.biblio-content').forEach(c => c.style.display = 'none');
+    event.target.classList.add('active');
+    document.getElementById('biblio-' + tab).style.display = 'block';
 }
 </script>
 
@@ -656,6 +881,45 @@ function toggleAllProtocoles() {
 .protocole-mini-item:hover {
     background: rgba(0,0,0,0.03);
 }
+
+/* Fiches pathologies */
+.pathologies-list { display: flex; flex-direction: column; gap: 1rem; }
+.patho-item { background: #e3f2fd; border-radius: 8px; padding: 1rem; border-left: 4px solid #2196F3; }
+.patho-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+.patho-checkbox { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+.patho-systeme { background: #2196F3; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-right: 0.5rem; }
+.patho-details { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #90CAF9; }
+.patho-section { margin-bottom: 1rem; }
+.patho-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+.patho-col h5 { color: #1976D2; margin-bottom: 0.5rem; }
+
+/* Recettes */
+.recettes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+.recette-card { background: #e8f5e9; border-radius: 8px; padding: 1rem; border-left: 4px solid #4CAF50; }
+.recette-select { display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer; }
+.recette-content { flex: 1; }
+.recette-categorie { background: #4CAF50; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; text-transform: uppercase; }
+.recette-nom { display: block; margin: 0.5rem 0; }
+.recette-meta { font-size: 0.8rem; color: #666; display: flex; gap: 1rem; }
+.recette-regimes { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.5rem; }
+.regime-tag { background: #c8e6c9; color: #2e7d32; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; }
+.recette-details { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #a5d6a7; }
+.recette-section { margin-bottom: 1rem; }
+.recette-section h5 { color: #388E3C; margin-bottom: 0.5rem; }
+
+/* Bibliothèque */
+.biblio-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+.biblio-tab { background: none; border: none; padding: 0.5rem 1rem; cursor: pointer; border-radius: 4px 4px 0 0; }
+.biblio-tab.active { background: var(--sage); color: white; }
+.biblio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+.biblio-group { background: var(--cream); padding: 1rem; border-radius: 8px; }
+.biblio-group h4 { font-size: 0.9rem; color: var(--terra-cotta); margin-bottom: 0.75rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+.biblio-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0; font-size: 0.85rem; cursor: pointer; }
+
+@media (max-width: 768px) {
+    .patho-grid { grid-template-columns: 1fr; }
+    .recettes-grid { grid-template-columns: 1fr; }
+}
 </style>
 
 <?php
@@ -740,6 +1004,94 @@ function matchProtocolesToConsultation(array $consultation, ?array $synthese, ar
     // Trier par score décroissant et limiter à 5
     usort($matched, fn($a, $b) => $b['match_score'] - $a['match_score']);
     return array_slice($matched, 0, 5);
+}
+
+/**
+ * Matching des fiches pathologies avec la consultation
+ */
+function matchPathologiesToConsultation(array $consultation, ?array $synthese, array $reponses, array $pathologies): array {
+    $matched = [];
+    $motif = strtolower($consultation['motif'] ?? '');
+    $motifCat = strtolower($consultation['motif_categorie'] ?? '');
+    $priorites = strtolower(($synthese['priorite_1'] ?? '') . ' ' . ($synthese['priorite_2'] ?? '') . ' ' . ($synthese['priorite_3'] ?? ''));
+
+    foreach ($pathologies as $patho) {
+        $score = 0;
+        $pathoNom = strtolower($patho['nom']);
+        $pathoDesc = strtolower($patho['description'] ?? '');
+        $pathoSysteme = strtolower($patho['systeme'] ?? '');
+
+        // Recherche dans le nom de la pathologie
+        if (str_contains($motif, $pathoNom) || str_contains($pathoNom, $motif)) $score += 5;
+
+        // Mots clés communs
+        $keywords = [
+            'Digestif' => ['digestif', 'intestin', 'ballonnement', 'constipation', 'diarrhée', 'reflux', 'rgo', 'acidité', 'candidose'],
+            'Nerveux' => ['stress', 'anxiété', 'sommeil', 'insomnie', 'fatigue', 'burn', 'épuisement'],
+            'Immunitaire' => ['immunité', 'infection', 'rhume', 'allergie', 'défenses'],
+            'Endocrinien' => ['thyroïde', 'hormone', 'cycle', 'règles', 'spm', 'ménopause'],
+            'Ostéo-articulaire' => ['articulation', 'arthrose', 'douleur', 'rhumatisme'],
+            'Tégumentaire' => ['peau', 'acné', 'eczéma', 'psoriasis'],
+            'Cardiovasculaire' => ['tension', 'hypertension', 'cholestérol', 'cœur', 'circulation']
+        ];
+
+        if (isset($keywords[$patho['systeme']])) {
+            foreach ($keywords[$patho['systeme']] as $kw) {
+                if (str_contains($motif, $kw)) $score += 3;
+                if (str_contains($priorites, $kw)) $score += 2;
+            }
+        }
+
+        if ($score > 0) {
+            $patho['match_score'] = $score;
+            $matched[] = $patho;
+        }
+    }
+
+    usort($matched, fn($a, $b) => $b['match_score'] - $a['match_score']);
+    return array_slice($matched, 0, 5);
+}
+
+/**
+ * Matching des recettes avec les besoins de la consultation
+ */
+function matchRecettesToConsultation(array $consultation, ?array $synthese, array $reponses, array $recettes): array {
+    $matched = [];
+    $motif = strtolower($consultation['motif'] ?? '');
+    $priorites = strtolower(($synthese['priorite_1'] ?? '') . ' ' . ($synthese['priorite_2'] ?? ''));
+
+    // Détecter les régimes nécessaires
+    $needsVegan = str_contains($motif, 'vegan') || str_contains($motif, 'végétal');
+    $needsGlutenFree = str_contains($motif, 'gluten') || str_contains($motif, 'cœliaque');
+    $needsAntiInflam = str_contains($motif, 'inflam') || str_contains($motif, 'arthrose') || str_contains($motif, 'douleur');
+    $needsDetox = str_contains($motif, 'détox') || str_contains($motif, 'foie') || str_contains($motif, 'drainage');
+    $needsDigestif = str_contains($motif, 'digest') || str_contains($motif, 'ballonne') || str_contains($motif, 'intestin');
+    $needsIGBas = str_contains($motif, 'poids') || str_contains($motif, 'glycémie') || str_contains($motif, 'diabète');
+
+    foreach ($recettes as $recette) {
+        $score = 0;
+        $regimes = json_decode($recette['regimes'] ?? '[]', true) ?: [];
+        $regimesLower = array_map('strtolower', $regimes);
+
+        // Bonus selon besoins détectés
+        if ($needsVegan && in_array('vegan', $regimesLower)) $score += 3;
+        if ($needsGlutenFree && in_array('sans gluten', $regimesLower)) $score += 3;
+        if ($needsAntiInflam && in_array('anti-inflammatoire', $regimesLower)) $score += 4;
+        if ($needsDetox && in_array('détox', $regimesLower)) $score += 4;
+        if ($needsDigestif && in_array('digestive', $regimesLower)) $score += 4;
+        if ($needsIGBas && in_array('ig bas', $regimesLower)) $score += 4;
+
+        // Bonus petit bonus pour variété
+        if (!empty($regimes)) $score += 1;
+
+        if ($score > 0) {
+            $recette['match_score'] = $score;
+            $matched[] = $recette;
+        }
+    }
+
+    usort($matched, fn($a, $b) => $b['match_score'] - $a['match_score']);
+    return array_slice($matched, 0, 8);
 }
 
 /**
