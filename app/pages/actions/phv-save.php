@@ -32,6 +32,16 @@ $commentaires = [
     'complements' => trim(getPost('commentaire_complements') ?? ''),
 ];
 
+// Collecter les ressources sélectionnées
+$protocolesIds = $_POST['protocoles_selectionnes'] ?? [];
+$recettesIds = $_POST['recettes_selectionnees'] ?? [];
+$pathologiesIds = $_POST['pathologies_selectionnees'] ?? [];
+
+// Nettoyer et convertir en entiers
+$protocolesIds = array_values(array_unique(array_filter(array_map('intval', $protocolesIds))));
+$recettesIds = array_values(array_unique(array_filter(array_map('intval', $recettesIds))));
+$pathologiesIds = array_values(array_unique(array_filter(array_map('intval', $pathologiesIds))));
+
 $data = [
     'alimentation' => getPost('alimentation'),
     'alimentation_eviter' => getPost('alimentation_eviter'),
@@ -47,6 +57,16 @@ $data = [
     'notes' => getPost('notes_phv'),
     'commentaires_praticien' => json_encode($commentaires, JSON_UNESCAPED_UNICODE),
 ];
+
+// Ajouter les ressources si les colonnes existent
+try {
+    $db->query("SELECT protocoles_ids FROM phv LIMIT 0");
+    $data['protocoles_ids'] = json_encode($protocolesIds);
+    $data['recettes_ids'] = json_encode($recettesIds);
+    $data['pathologies_ids'] = json_encode($pathologiesIds);
+} catch (PDOException $e) {
+    // Colonnes pas encore créées, ignorer les ressources
+}
 
 // Vérifier si un PHV existe déjà
 $check = $db->prepare("SELECT id FROM phv WHERE consultation_id = ?");

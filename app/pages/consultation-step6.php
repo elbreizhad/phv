@@ -33,32 +33,44 @@ $allReponses = getReponses($consultId);
 // ============================================
 // RÉCUPÉRER LES PROTOCOLES SUGGÉRÉS
 // ============================================
-$protocolesStmt = $db->prepare("SELECT * FROM protocoles WHERE user_id = ? AND actif = TRUE ORDER BY type_protocole, nom");
-$protocolesStmt->execute([$userId]);
-$allProtocoles = $protocolesStmt->fetchAll();
-
-// Matcher les protocoles avec la consultation
-$suggestedProtocoles = matchProtocolesToConsultation($consultation, $synthese, $allReponses, $allProtocoles);
+$allProtocoles = [];
+$suggestedProtocoles = [];
+try {
+    $protocolesStmt = $db->prepare("SELECT * FROM protocoles WHERE user_id = ? AND actif = TRUE ORDER BY type_protocole, nom");
+    $protocolesStmt->execute([$userId]);
+    $allProtocoles = $protocolesStmt->fetchAll();
+    $suggestedProtocoles = matchProtocolesToConsultation($consultation, $synthese, $allReponses, $allProtocoles);
+} catch (PDOException $e) {
+    // Table protocoles n'existe pas encore
+}
 
 // ============================================
 // RÉCUPÉRER LES FICHES PATHOLOGIES
 // ============================================
-$pathosStmt = $db->prepare("SELECT * FROM fiches_pathologies ORDER BY systeme, nom");
-$pathosStmt->execute();
-$allPathologies = $pathosStmt->fetchAll();
-
-// Matcher les pathologies avec la consultation
-$suggestedPathologies = matchPathologiesToConsultation($consultation, $synthese, $allReponses, $allPathologies);
+$allPathologies = [];
+$suggestedPathologies = [];
+try {
+    $pathosStmt = $db->prepare("SELECT * FROM fiches_pathologies ORDER BY systeme, nom");
+    $pathosStmt->execute();
+    $allPathologies = $pathosStmt->fetchAll();
+    $suggestedPathologies = matchPathologiesToConsultation($consultation, $synthese, $allReponses, $allPathologies);
+} catch (PDOException $e) {
+    // Table fiches_pathologies n'existe pas encore
+}
 
 // ============================================
 // RÉCUPÉRER LES RECETTES
 // ============================================
-$recettesStmt = $db->prepare("SELECT * FROM recettes ORDER BY categorie, nom");
-$recettesStmt->execute();
-$allRecettes = $recettesStmt->fetchAll();
-
-// Matcher les recettes avec les besoins
-$suggestedRecettes = matchRecettesToConsultation($consultation, $synthese, $allReponses, $allRecettes);
+$allRecettes = [];
+$suggestedRecettes = [];
+try {
+    $recettesStmt = $db->prepare("SELECT * FROM recettes ORDER BY categorie, nom");
+    $recettesStmt->execute();
+    $allRecettes = $recettesStmt->fetchAll();
+    $suggestedRecettes = matchRecettesToConsultation($consultation, $synthese, $allReponses, $allRecettes);
+} catch (PDOException $e) {
+    // Table recettes n'existe pas encore
+}
 
 // ============================================
 // GÉNÉRATION AUTOMATIQUE DU CONTENU PHV
