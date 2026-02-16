@@ -947,6 +947,16 @@ function showBiblioTab(tab) {
 
 <?php
 /**
+ * Convertit une valeur en string (gère les arrays)
+ */
+function toStr($value): string {
+    if (is_array($value)) {
+        return implode(' ', array_filter($value));
+    }
+    return (string)($value ?? '');
+}
+
+/**
  * Matching intelligent des protocoles avec la consultation
  */
 function matchProtocolesToConsultation(array $consultation, ?array $synthese, array $reponses, array $protocoles): array {
@@ -964,11 +974,11 @@ function matchProtocolesToConsultation(array $consultation, ?array $synthese, ar
     $allPriorites = $priorite1 . ' ' . $priorite2 . ' ' . $priorite3;
 
     // Scores du questionnaire
-    $stressNiveau = (int)($reponses['stress_niveau'] ?? 5);
-    $sommeilQualite = (int)($reponses['sommeil_qualite'] ?? 5);
-    $immuNiveau = (int)($reponses['immu_niveau'] ?? 5);
-    $digTroubles = strtolower($reponses['dig_troubles'] ?? '');
-    $desequilibres = strtolower($reponses['pre_synthese_desequilibres'] ?? '');
+    $stressNiveau = (int)(toStr($reponses['stress_niveau'] ?? 5));
+    $sommeilQualite = (int)(toStr($reponses['sommeil_qualite'] ?? 5));
+    $immuNiveau = (int)(toStr($reponses['immu_niveau'] ?? 5));
+    $digTroubles = strtolower(toStr($reponses['dig_troubles'] ?? ''));
+    $desequilibres = strtolower(toStr($reponses['pre_synthese_desequilibres'] ?? ''));
 
     // Mots-clés par type de protocole
     $keywords = [
@@ -1140,22 +1150,22 @@ function generateAutoPhvContent(array $consultation, ?array $synthese, array $re
     $priorite3 = strtolower($synthese['priorite_3'] ?? '');
 
     // Scores et indicateurs
-    $stressNiveau = (int)($reponses['stress_niveau'] ?? 5);
-    $sommeilQualite = (int)($reponses['sommeil_qualite'] ?? 5);
-    $activiteNiveau = (int)($reponses['activite_niveau'] ?? 5);
-    $immuNiveau = (int)($reponses['immu_niveau'] ?? 5);
+    $stressNiveau = (int)(toStr($reponses['stress_niveau'] ?? 5));
+    $sommeilQualite = (int)(toStr($reponses['sommeil_qualite'] ?? 5));
+    $activiteNiveau = (int)(toStr($reponses['activite_niveau'] ?? 5));
+    $immuNiveau = (int)(toStr($reponses['immu_niveau'] ?? 5));
 
     // Troubles détectés
-    $digTroubles = strtolower($reponses['dig_troubles'] ?? '');
-    $stressManifestation = strtolower($reponses['stress_manifestations'] ?? '');
-    $sommeilProblemes = strtolower($reponses['sommeil_problemes'] ?? '');
-    $nervSymptomes = strtolower($reponses['nerv_symptomes'] ?? '');
-    $desequilibres = strtolower($reponses['pre_synthese_desequilibres'] ?? '');
+    $digTroubles = strtolower(toStr($reponses['dig_troubles'] ?? ''));
+    $stressManifestation = strtolower(toStr($reponses['stress_manifestations'] ?? ''));
+    $sommeilProblemes = strtolower(toStr($reponses['sommeil_problemes'] ?? ''));
+    $nervSymptomes = strtolower(toStr($reponses['nerv_symptomes'] ?? ''));
+    $desequilibres = strtolower(toStr($reponses['pre_synthese_desequilibres'] ?? ''));
 
     // Alimentation
-    $hydratation = strtolower($reponses['alim_hydratation'] ?? '');
-    $mastication = strtolower($reponses['alim_mastication'] ?? '');
-    $grignotage = strtolower($reponses['alim_grignotage'] ?? '');
+    $hydratation = strtolower(toStr($reponses['alim_hydratation'] ?? ''));
+    $mastication = strtolower(toStr($reponses['alim_mastication'] ?? ''));
+    $grignotage = strtolower(toStr($reponses['alim_grignotage'] ?? ''));
 
     // ============================================
     // ALIMENTATION
@@ -1238,7 +1248,7 @@ function generateAutoPhvContent(array $consultation, ?array $synthese, array $re
     }
 
     // Problèmes hormonaux féminins
-    if ($sexe === 'femme' && (str_contains($reponses['uro_gyneco'] ?? '', 'spm') || str_contains($motif, 'hormonal') || str_contains($motif, 'règles'))) {
+    if ($sexe === 'femme' && (str_contains(toStr($reponses['uro_gyneco'] ?? ''), 'spm') || str_contains($motif, 'hormonal') || str_contains($motif, 'règles'))) {
         $alimPrivilegier[] = "Graines de lin fraîchement moulues";
         $alimPrivilegier[] = "Légumes crucifères (brocoli, chou)";
         $alimEviter[] = "Perturbateurs endocriniens (plastiques, conserves)";
@@ -1467,7 +1477,7 @@ DÎNER (léger, 3h avant coucher) :
     }
 
     // Fer si femme avec fatigue
-    if ($sexe === 'femme' && str_contains(strtolower($reponses['endo_energie'] ?? ''), 'fatigue') && count($complements) < 3) {
+    if ($sexe === 'femme' && str_contains(strtolower(toStr($reponses['endo_energie'] ?? '')), 'fatigue') && count($complements) < 3) {
         $complements[] = [
             'nom' => 'Fer bisglycinate + Vitamine C',
             'posologie' => '14-20 mg/jour si carence confirmée',
@@ -1491,11 +1501,11 @@ DÎNER (léger, 3h avant coucher) :
         $reco[] = "• Massage abdominal ou réflexologie plantaire";
     }
 
-    if (str_contains($stressManifestation, 'tension') || str_contains($reponses['osteo_douleurs'] ?? '', '')) {
+    if (str_contains($stressManifestation, 'tension') || !empty(toStr($reponses['osteo_douleurs'] ?? ''))) {
         $reco[] = "• Ostéopathie ou massage thérapeutique";
     }
 
-    if ($sexe === 'femme' && str_contains($reponses['uro_gyneco'] ?? '', 'menopause')) {
+    if ($sexe === 'femme' && str_contains(toStr($reponses['uro_gyneco'] ?? ''), 'menopause')) {
         $reco[] = "• Bilan hormonal avec médecin traitant";
     }
 
