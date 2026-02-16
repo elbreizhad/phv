@@ -4,7 +4,18 @@
  * GÉNÉRATION AUTOMATIQUE basée sur le questionnaire
  * Le praticien ne fait qu'ajouter des commentaires spécifiques
  */
-require_once __DIR__ . '/../data/knowledge-base.php';
+
+// DEBUG - Afficher les erreurs
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Vérifier que le fichier knowledge-base existe
+$kbPath = __DIR__ . '/../data/knowledge-base.php';
+if (!file_exists($kbPath)) {
+    die("ERREUR: Fichier knowledge-base.php introuvable: " . $kbPath);
+}
+require_once $kbPath;
 
 $db = getDB();
 $consultId = (int) getGet('id');
