@@ -37,6 +37,15 @@ $user = $userStmt->fetch();
 $complements = json_decode($phv['complements'], true) ?: [];
 $commentaires = json_decode($phv['commentaires_praticien'] ?? '{}', true) ?: [];
 
+// Fonction pour remplacer les caractères problématiques dans le PDF
+function fixPdfChars($text) {
+    return str_replace(
+        ['→', '←', '↑', '↓', '•'],
+        ['▸', '◂', '▴', '▾', '●'],
+        $text ?? ''
+    );
+}
+
 // Récupérer les ressources sélectionnées (colonnes optionnelles)
 $protocolesIds = [];
 $recettesIds = [];
@@ -706,13 +715,13 @@ if (!empty($pathologiesIds)) {
                     <?php if ($phv['routine_matin']): ?>
                     <div>
                         <p><strong>Matin :</strong></p>
-                        <p><?= nl2br(e($phv['routine_matin'])) ?></p>
+                        <p><?= nl2br(e(fixPdfChars($phv['routine_matin']))) ?></p>
                     </div>
                     <?php endif; ?>
                     <?php if ($phv['routine_soir']): ?>
                     <div>
                         <p><strong>Soir :</strong></p>
-                        <p><?= nl2br(e($phv['routine_soir'])) ?></p>
+                        <p><?= nl2br(e(fixPdfChars($phv['routine_soir']))) ?></p>
                     </div>
                     <?php endif; ?>
                 </div>

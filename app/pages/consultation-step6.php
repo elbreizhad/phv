@@ -164,6 +164,36 @@ $commentaires = $phv ? json_decode($phv['commentaires_praticien'] ?? '{}', true)
                     <input type="hidden" name="menu_type" value="<?= e($autoContent['alimentation']['menu_type']) ?>">
                 </div>
 
+                <!-- Régimes spécifiques -->
+                <div class="auto-content-section mt-2">
+                    <div class="auto-content-label">Régimes / Restrictions alimentaires :</div>
+                    <div class="regimes-grid">
+                        <?php
+                        $regimesOptions = [
+                            ['id' => 'sans_gluten', 'nom' => 'Sans gluten', 'icon' => 'SG'],
+                            ['id' => 'sans_lactose', 'nom' => 'Sans lactose', 'icon' => 'SL'],
+                            ['id' => 'sans_lait_vache', 'nom' => 'Sans lait de vache', 'icon' => 'SLV'],
+                            ['id' => 'sans_sucre', 'nom' => 'Sans sucre ajouté', 'icon' => 'SS'],
+                            ['id' => 'fodmap', 'nom' => 'Pauvre en FODMAPs', 'icon' => 'FM'],
+                            ['id' => 'anti_inflammatoire', 'nom' => 'Anti-inflammatoire', 'icon' => 'AI'],
+                            ['id' => 'hypotoxique', 'nom' => 'Hypotoxique', 'icon' => 'HT'],
+                            ['id' => 'cetogene', 'nom' => 'Cétogène', 'icon' => 'CG'],
+                            ['id' => 'vegetarien', 'nom' => 'Végétarien', 'icon' => 'VG'],
+                            ['id' => 'ig_bas', 'nom' => 'Index glycémique bas', 'icon' => 'IG'],
+                        ];
+                        $regimesSuggeres = $autoContent['alimentation']['regimes_suggeres'] ?? [];
+                        ?>
+                        <?php foreach ($regimesOptions as $regime): ?>
+                        <label class="regime-option">
+                            <input type="checkbox" name="regimes[]" value="<?= e($regime['id']) ?>"
+                                <?= in_array($regime['id'], $regimesSuggeres) ? 'checked' : '' ?>>
+                            <span class="regime-icon"><?= e($regime['icon']) ?></span>
+                            <span class="regime-nom"><?= e($regime['nom']) ?></span>
+                        </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
                 <!-- Commentaire praticien -->
                 <div class="form-group mt-2 praticien-comment">
                     <label class="form-label">
@@ -242,25 +272,57 @@ $commentaires = $phv ? json_decode($phv['commentaires_praticien'] ?? '{}', true)
         </div>
 
         <!-- ============================================ -->
-        <!-- ROUTINES MATIN / SOIR -->
+        <!-- ROUTINES MATIN / SOIR (avec checkboxes) -->
         <!-- ============================================ -->
         <div class="card mb-3">
-            <div class="card-header"><h3>Routines quotidiennes</h3></div>
+            <div class="card-header">
+                <h3>Routines quotidiennes</h3>
+                <span class="text-muted text-sm">Cochez les éléments à inclure dans le PHV</span>
+            </div>
             <div class="card-body">
                 <div class="form-row">
-                    <div class="auto-content-section">
-                        <div class="auto-content-label">Routine matin :</div>
-                        <div class="auto-content-box auto-content-box-small">
-                            <?= nl2br(e($autoContent['routines']['matin'])) ?>
+                    <!-- Routine Matin -->
+                    <div class="routine-section">
+                        <div class="routine-header">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                            Routine matin
                         </div>
-                        <input type="hidden" name="routine_matin" value="<?= e($autoContent['routines']['matin']) ?>">
+                        <div class="routine-items">
+                            <?php foreach ($autoContent['routines']['matin_items'] as $item): ?>
+                            <label class="routine-item">
+                                <input type="checkbox" name="routine_matin_items[]" value="<?= e($item['id']) ?>" <?= $item['checked'] ? 'checked' : '' ?>>
+                                <div class="routine-item-content">
+                                    <span class="routine-item-titre"><?= e($item['titre']) ?></span>
+                                    <?php if (!empty($item['description'])): ?>
+                                    <span class="routine-item-desc"><?= e($item['description']) ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <input type="hidden" name="routine_matin_data[<?= e($item['id']) ?>]" value="<?= e(json_encode($item)) ?>">
+                            </label>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
-                    <div class="auto-content-section">
-                        <div class="auto-content-label">Routine soir :</div>
-                        <div class="auto-content-box auto-content-box-small">
-                            <?= nl2br(e($autoContent['routines']['soir'])) ?>
+
+                    <!-- Routine Soir -->
+                    <div class="routine-section">
+                        <div class="routine-header">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                            Routine soir
                         </div>
-                        <input type="hidden" name="routine_soir" value="<?= e($autoContent['routines']['soir']) ?>">
+                        <div class="routine-items">
+                            <?php foreach ($autoContent['routines']['soir_items'] as $item): ?>
+                            <label class="routine-item">
+                                <input type="checkbox" name="routine_soir_items[]" value="<?= e($item['id']) ?>" <?= $item['checked'] ? 'checked' : '' ?>>
+                                <div class="routine-item-content">
+                                    <span class="routine-item-titre"><?= e($item['titre']) ?></span>
+                                    <?php if (!empty($item['description'])): ?>
+                                    <span class="routine-item-desc"><?= e($item['description']) ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <input type="hidden" name="routine_soir_data[<?= e($item['id']) ?>]" value="<?= e(json_encode($item)) ?>">
+                            </label>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                 </div>
 
@@ -279,44 +341,101 @@ $commentaires = $phv ? json_decode($phv['commentaires_praticien'] ?? '{}', true)
         <!-- ============================================ -->
         <div class="card mb-3">
             <div class="card-header">
-                <h3>Compléments alimentaires suggérés</h3>
-                <span class="badge badge-info"><?= count($autoContent['complements']) ?> complément(s)</span>
+                <h3>Compléments alimentaires</h3>
+                <button type="button" class="btn btn-sm btn-outline" onclick="addComplement()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Ajouter
+                </button>
             </div>
             <div class="card-body">
-                <?php if (!empty($autoContent['complements'])): ?>
-                <div class="complements-auto-list">
-                    <?php foreach ($autoContent['complements'] as $i => $comp): ?>
-                    <div class="complement-auto-item">
-                        <div class="complement-auto-nom"><?= e($comp['nom']) ?></div>
-                        <div class="complement-auto-details">
-                            <span class="complement-auto-poso"><?= e($comp['posologie']) ?></span>
-                            <span class="complement-auto-duree"><?= e($comp['duree']) ?></span>
+                <p class="text-muted text-sm mb-2">Cochez les compléments à inclure, modifiez les posologies si nécessaire.</p>
+
+                <div class="complements-edit-list" id="complements-list">
+                    <?php
+                    $complements = $autoContent['complements'];
+                    // Ajouter 2 lignes vides pour permettre d'ajouter
+                    $totalSlots = max(count($complements) + 2, 5);
+                    for ($i = 0; $i < $totalSlots; $i++):
+                        $comp = $complements[$i] ?? ['nom' => '', 'posologie' => '', 'duree' => '', 'raison' => ''];
+                        $hasContent = !empty($comp['nom']);
+                    ?>
+                    <div class="complement-edit-item <?= $hasContent ? 'has-content' : 'empty-slot' ?>" data-index="<?= $i ?>">
+                        <label class="complement-checkbox">
+                            <input type="checkbox" name="complement_actif[]" value="<?= $i ?>" <?= $hasContent ? 'checked' : '' ?>>
+                        </label>
+                        <div class="complement-fields">
+                            <input type="text" name="complement_nom[]" class="form-control complement-nom"
+                                placeholder="Nom du complément" value="<?= e($comp['nom']) ?>">
+                            <input type="text" name="complement_posologie[]" class="form-control complement-poso"
+                                placeholder="Posologie (ex: 1 gélule/jour)" value="<?= e($comp['posologie']) ?>">
+                            <input type="text" name="complement_duree[]" class="form-control complement-duree"
+                                placeholder="Durée (ex: 3 mois)" value="<?= e($comp['duree']) ?>">
                         </div>
-                        <div class="complement-auto-raison text-sm text-muted"><?= e($comp['raison'] ?? '') ?></div>
-                        <input type="hidden" name="complement_nom[]" value="<?= e($comp['nom']) ?>">
-                        <input type="hidden" name="complement_posologie[]" value="<?= e($comp['posologie']) ?>">
-                        <input type="hidden" name="complement_duree[]" value="<?= e($comp['duree']) ?>">
+                        <?php if (!empty($comp['raison'])): ?>
+                        <div class="complement-raison"><?= e($comp['raison']) ?></div>
+                        <?php endif; ?>
+                        <button type="button" class="complement-remove" onclick="removeComplement(this)" title="Supprimer">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
                     </div>
-                    <?php endforeach; ?>
-                    <?php for ($i = count($autoContent['complements']); $i < 3; $i++): ?>
-                    <input type="hidden" name="complement_nom[]" value="">
-                    <input type="hidden" name="complement_posologie[]" value="">
-                    <input type="hidden" name="complement_duree[]" value="">
                     <?php endfor; ?>
                 </div>
-                <?php else: ?>
-                <p class="text-muted">Aucun complément suggéré selon le profil. Ajoutez manuellement si nécessaire.</p>
-                <input type="hidden" name="complement_nom[]" value="">
-                <input type="hidden" name="complement_posologie[]" value="">
-                <input type="hidden" name="complement_duree[]" value="">
-                <?php endif; ?>
 
                 <div class="form-group mt-2 praticien-comment">
                     <label class="form-label">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        Ajustements compléments (ajouter/modifier/supprimer)
+                        Notes compléments
                     </label>
                     <textarea name="commentaire_complements" class="form-control" rows="2" placeholder="Ex: Remplacer le magnésium par..., Ajouter zinc car..."><?= e($commentaires['complements'] ?? '') ?></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- EXAMENS BIOLOGIQUES SUGGÉRÉS -->
+        <!-- ============================================ -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3>Examens biologiques à suggérer</h3>
+                <span class="text-muted text-sm">Cochez les examens pertinents pour ce client</span>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-2">Ces examens peuvent aider à affiner le bilan. Le client devra demander une ordonnance à son médecin.</p>
+
+                <div class="examens-bio-grid">
+                    <?php
+                    $examensBio = [
+                        ['id' => 'vit_d', 'nom' => 'Vitamine D (25-OH)', 'indication' => 'Fatigue, douleurs, immunité faible'],
+                        ['id' => 'tsh', 'nom' => 'TSH', 'indication' => 'Fatigue, prise de poids, frilosité, constipation'],
+                        ['id' => 't3_t4', 'nom' => 'T3/T4 libres', 'indication' => 'Si TSH anormale ou symptômes thyroïdiens'],
+                        ['id' => 'ferritine', 'nom' => 'Ferritine + Fer sérique', 'indication' => 'Fatigue, pâleur, chute de cheveux, règles abondantes'],
+                        ['id' => 'b12_b9', 'nom' => 'Vitamine B12 + B9', 'indication' => 'Fatigue, troubles neurologiques, végétariens'],
+                        ['id' => 'zinc', 'nom' => 'Zinc', 'indication' => 'Immunité, peau, ongles, cicatrisation'],
+                        ['id' => 'magnesium', 'nom' => 'Magnésium érythrocytaire', 'indication' => 'Stress, crampes, troubles du sommeil'],
+                        ['id' => 'homocysteine', 'nom' => 'Homocystéine', 'indication' => 'Cardiovasculaire, fatigue, troubles cognitifs'],
+                        ['id' => 'glycemie', 'nom' => 'Glycémie à jeun + HbA1c', 'indication' => 'Fatigue après repas, envies de sucre, surpoids'],
+                        ['id' => 'insuline', 'nom' => 'Insulinémie à jeun', 'indication' => 'Résistance à l\'insuline, syndrome métabolique'],
+                        ['id' => 'cortisol', 'nom' => 'Cortisol (8h)', 'indication' => 'Fatigue chronique, stress chronique, burnout'],
+                        ['id' => 'crp', 'nom' => 'CRP ultrasensible', 'indication' => 'Inflammation chronique bas grade'],
+                        ['id' => 'omega', 'nom' => 'Profil acides gras / Oméga-3 Index', 'indication' => 'Inflammation, sécheresse, troubles cognitifs'],
+                        ['id' => 'igg_aliments', 'nom' => 'IgG alimentaires', 'indication' => 'Troubles digestifs, migraines, eczéma'],
+                    ];
+                    ?>
+                    <?php foreach ($examensBio as $exam): ?>
+                    <label class="examen-bio-item">
+                        <input type="checkbox" name="examens_bio[]" value="<?= e($exam['id']) ?>"
+                            <?= in_array($exam['id'], $autoContent['examens_suggeres'] ?? []) ? 'checked' : '' ?>>
+                        <div class="examen-bio-content">
+                            <span class="examen-bio-nom"><?= e($exam['nom']) ?></span>
+                            <span class="examen-bio-indication"><?= e($exam['indication']) ?></span>
+                        </div>
+                    </label>
+                    <?php endforeach; ?>
+                </div>
+
+                <div class="form-group mt-2 praticien-comment">
+                    <label class="form-label">Autres examens ou précisions</label>
+                    <textarea name="examens_bio_notes" class="form-control" rows="2" placeholder="Ex: Dosage hormonal complet si ménopause..."><?= e($commentaires['examens_bio'] ?? '') ?></textarea>
                 </div>
             </div>
         </div>
@@ -729,6 +848,62 @@ function showBiblioTab(tab) {
     event.target.classList.add('active');
     document.getElementById('biblio-' + tab).style.display = 'block';
 }
+
+// Gestion des compléments
+function addComplement() {
+    const list = document.getElementById('complements-list');
+    const items = list.querySelectorAll('.complement-edit-item');
+    const newIndex = items.length;
+
+    const newItem = document.createElement('div');
+    newItem.className = 'complement-edit-item empty-slot';
+    newItem.setAttribute('data-index', newIndex);
+    newItem.innerHTML = `
+        <label class="complement-checkbox">
+            <input type="checkbox" name="complement_actif[]" value="${newIndex}" checked>
+        </label>
+        <div class="complement-fields">
+            <input type="text" name="complement_nom[]" class="form-control complement-nom"
+                placeholder="Nom du complément" value="">
+            <input type="text" name="complement_posologie[]" class="form-control complement-poso"
+                placeholder="Posologie (ex: 1 gélule/jour)" value="">
+            <input type="text" name="complement_duree[]" class="form-control complement-duree"
+                placeholder="Durée (ex: 3 mois)" value="">
+        </div>
+        <button type="button" class="complement-remove" onclick="removeComplement(this)" title="Supprimer">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+    `;
+    list.appendChild(newItem);
+
+    // Focus sur le champ nom
+    newItem.querySelector('.complement-nom').focus();
+}
+
+function removeComplement(btn) {
+    const item = btn.closest('.complement-edit-item');
+    // Vider les champs plutôt que supprimer (pour garder les indices cohérents)
+    item.querySelectorAll('input[type="text"]').forEach(input => input.value = '');
+    item.querySelector('input[type="checkbox"]').checked = false;
+    item.classList.add('empty-slot');
+    item.classList.remove('has-content');
+}
+
+// Auto-cocher quand on commence à taper
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.complement-edit-item input[type="text"]').forEach(input => {
+        input.addEventListener('input', function() {
+            const item = this.closest('.complement-edit-item');
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            const nomInput = item.querySelector('.complement-nom');
+            if (nomInput.value.trim()) {
+                checkbox.checked = true;
+                item.classList.remove('empty-slot');
+                item.classList.add('has-content');
+            }
+        });
+    });
+});
 </script>
 
 <style>
@@ -939,9 +1114,301 @@ function showBiblioTab(tab) {
 .biblio-group h4 { font-size: 0.9rem; color: var(--terra-cotta); margin-bottom: 0.75rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
 .biblio-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0; font-size: 0.85rem; cursor: pointer; }
 
+/* Routines avec checkboxes */
+.routine-section {
+    flex: 1;
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    border-radius: 12px;
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+}
+
+.routine-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--sage-dark);
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--sage);
+}
+
+.routine-header svg {
+    color: var(--terra-cotta);
+}
+
+.routine-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.routine-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.routine-item:hover {
+    border-color: var(--sage);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.routine-item input[type="checkbox"] {
+    margin-top: 2px;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--terra-cotta);
+    cursor: pointer;
+}
+
+.routine-item-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.routine-item-titre {
+    font-weight: 500;
+    color: var(--text);
+    font-size: 0.9rem;
+}
+
+.routine-item-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.routine-item input[type="checkbox"]:checked + .routine-item-content .routine-item-titre {
+    color: var(--sage-dark);
+}
+
+.routine-item:has(input:checked) {
+    border-color: var(--sage);
+    background: linear-gradient(135deg, #f0f7f0 0%, #fff 100%);
+}
+
+/* Examens biologiques */
+.examens-bio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 0.75rem;
+}
+
+.examen-bio-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.examen-bio-item:hover {
+    border-color: #2196F3;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.15);
+}
+
+.examen-bio-item input[type="checkbox"] {
+    margin-top: 2px;
+    width: 18px;
+    height: 18px;
+    accent-color: #2196F3;
+    cursor: pointer;
+}
+
+.examen-bio-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.examen-bio-nom {
+    font-weight: 500;
+    color: var(--text);
+    font-size: 0.9rem;
+}
+
+.examen-bio-indication {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.examen-bio-item:has(input:checked) {
+    border-color: #2196F3;
+    background: linear-gradient(135deg, #e3f2fd 0%, #fff 100%);
+}
+
+.examen-bio-item:has(input:checked) .examen-bio-nom {
+    color: #1976D2;
+}
+
+/* Régimes alimentaires */
+.regimes-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.regime-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+}
+
+.regime-option:hover {
+    border-color: var(--terra-cotta);
+    background: #fdf5f3;
+}
+
+.regime-option input[type="checkbox"] {
+    display: none;
+}
+
+.regime-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: #f0f0f0;
+    border-radius: 50%;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #666;
+}
+
+.regime-nom {
+    color: var(--text);
+}
+
+.regime-option:has(input:checked) {
+    border-color: var(--terra-cotta);
+    background: linear-gradient(135deg, #fdf5f3 0%, #fff 100%);
+}
+
+.regime-option:has(input:checked) .regime-icon {
+    background: var(--terra-cotta);
+    color: white;
+}
+
+.regime-option:has(input:checked) .regime-nom {
+    color: var(--terra-cotta);
+    font-weight: 500;
+}
+
+/* Compléments éditables */
+.complements-edit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.complement-edit-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.complement-edit-item.empty-slot {
+    opacity: 0.6;
+    border-style: dashed;
+}
+
+.complement-edit-item:has(input[type="checkbox"]:checked) {
+    border-color: var(--sage);
+    background: linear-gradient(135deg, #f0f7f0 0%, #fff 100%);
+    opacity: 1;
+}
+
+.complement-checkbox input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--sage);
+    cursor: pointer;
+}
+
+.complement-fields {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr;
+    gap: 0.5rem;
+}
+
+.complement-fields input {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.9rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+}
+
+.complement-fields input:focus {
+    border-color: var(--sage);
+    outline: none;
+}
+
+.complement-raison {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-style: italic;
+    max-width: 150px;
+}
+
+.complement-remove {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.complement-remove:hover {
+    background: #ffebee;
+    color: #c62828;
+}
+
+@media (max-width: 768px) {
+    .complement-fields {
+        grid-template-columns: 1fr;
+    }
+    .complement-raison {
+        display: none;
+    }
+}
+
 @media (max-width: 768px) {
     .patho-grid { grid-template-columns: 1fr; }
     .recettes-grid { grid-template-columns: 1fr; }
+    .form-row { flex-direction: column; }
+    .routine-section { width: 100%; }
 }
 </style>
 
@@ -1281,6 +1748,44 @@ DÎNER (léger, 3h avant coucher) :
 • Petite protéine légère (poisson blanc, œuf)
 • Éviter féculents lourds et crudités le soir";
 
+    // Régimes suggérés selon le profil
+    $regimesSuggeres = [];
+
+    // Troubles digestifs -> FODMAPs, sans gluten/lactose
+    if ($hasDigestifIssue) {
+        $regimesSuggeres[] = 'fodmap';
+        $regimesSuggeres[] = 'sans_gluten';
+        $regimesSuggeres[] = 'sans_lactose';
+    }
+
+    // Inflammation -> Anti-inflammatoire
+    if ($hasInflammation || str_contains($priorite1, 'inflam') || str_contains($desequilibres, 'inflam')) {
+        $regimesSuggeres[] = 'anti_inflammatoire';
+        $regimesSuggeres[] = 'sans_gluten';
+    }
+
+    // Surpoids / Métabolisme -> IG bas, sans sucre
+    if (str_contains($motif, 'poids') || str_contains($priorite1, 'poids') || str_contains($priorite1, 'métabol')) {
+        $regimesSuggeres[] = 'ig_bas';
+        $regimesSuggeres[] = 'sans_sucre';
+    }
+
+    // Allergies / Intolérances mentionnées
+    if (str_contains(strtolower($digTroubles), 'lait') || str_contains(strtolower($digTroubles), 'lactose')) {
+        $regimesSuggeres[] = 'sans_lactose';
+        $regimesSuggeres[] = 'sans_lait_vache';
+    }
+    if (str_contains(strtolower($digTroubles), 'gluten') || str_contains(strtolower($digTroubles), 'blé')) {
+        $regimesSuggeres[] = 'sans_gluten';
+    }
+
+    // Détox / Hépatique -> Hypotoxique
+    if (str_contains($priorite1, 'détox') || str_contains($priorite1, 'foie') || str_contains($desequilibres, 'hépatique')) {
+        $regimesSuggeres[] = 'hypotoxique';
+    }
+
+    $content['alimentation']['regimes_suggeres'] = array_unique($regimesSuggeres);
+
     // ============================================
     // GESTION DU STRESS
     // ============================================
@@ -1374,52 +1879,114 @@ DÎNER (léger, 3h avant coucher) :
     $content['activite']['conseils'] = implode("\n", $activiteConseils);
 
     // ============================================
-    // ROUTINES
+    // ROUTINES (items sélectionnables)
     // ============================================
-    $routineMatin = [];
-    $routineSoir = [];
+    $routineMatinItems = [];
+    $routineSoirItems = [];
 
-    // Routine matin
-    $routineMatin[] = "1. GRATTE-LANGUE (5-7 passages)";
-    $routineMatin[] = "   → Élimine les toxines accumulées la nuit";
+    // Routine matin - chaque item a un id, titre, description et si coché par défaut
+    $routineMatinItems[] = [
+        'id' => 'matin_gratte_langue',
+        'titre' => 'GRATTE-LANGUE (5-7 passages)',
+        'description' => 'Élimine les toxines accumulées la nuit',
+        'checked' => true
+    ];
 
-    if (!$hasDigestifIssue) { // Citron déconseillé si RGO/acidité
-        $routineMatin[] = "2. EAU TIÈDE + JUS DE CITRON (si bien toléré)";
-        $routineMatin[] = "   → Stimule le foie et la digestion";
+    if (!$hasDigestifIssue) {
+        $routineMatinItems[] = [
+            'id' => 'matin_eau_citron',
+            'titre' => 'EAU TIÈDE + JUS DE CITRON (si bien toléré)',
+            'description' => 'Stimule le foie et la digestion',
+            'checked' => true
+        ];
     } else {
-        $routineMatin[] = "2. VERRE D'EAU TIÈDE (sans citron)";
-        $routineMatin[] = "   → Réhydrate en douceur";
+        $routineMatinItems[] = [
+            'id' => 'matin_eau_tiede',
+            'titre' => 'VERRE D\'EAU TIÈDE (sans citron)',
+            'description' => 'Réhydrate en douceur',
+            'checked' => true
+        ];
     }
 
-    $routineMatin[] = "3. AUTOMASSAGE DU VENTRE (2 min, sens horaire)";
-    $routineMatin[] = "   → Stimule le transit";
+    $routineMatinItems[] = [
+        'id' => 'matin_automassage',
+        'titre' => 'AUTOMASSAGE DU VENTRE (2 min, sens horaire)',
+        'description' => 'Stimule le transit',
+        'checked' => true
+    ];
 
     if ($stressNiveau >= 5) {
-        $routineMatin[] = "4. COHÉRENCE CARDIAQUE (5 min)";
-        $routineMatin[] = "   → Démarre la journée sereinement";
+        $routineMatinItems[] = [
+            'id' => 'matin_coherence',
+            'titre' => 'COHÉRENCE CARDIAQUE (5 min)',
+            'description' => 'Démarre la journée sereinement',
+            'checked' => true
+        ];
     }
 
     // Routine soir
-    $routineSoir[] = "1. DÎNER LÉGER (3h avant coucher minimum)";
+    $routineSoirItems[] = [
+        'id' => 'soir_diner_leger',
+        'titre' => 'DÎNER LÉGER (3h avant coucher minimum)',
+        'description' => '',
+        'checked' => true
+    ];
 
     if (str_contains($desequilibres, 'hépatique') || str_contains($priorite1, 'foie') || str_contains($priorite1, 'détox')) {
-        $routineSoir[] = "2. BOUILLOTTE CHAUDE SUR LE FOIE (20 min)";
-        $routineSoir[] = "   → Favorise la détoxification hépatique";
+        $routineSoirItems[] = [
+            'id' => 'soir_bouillotte',
+            'titre' => 'BOUILLOTTE CHAUDE SUR LE FOIE (20 min)',
+            'description' => 'Favorise la détoxification hépatique',
+            'checked' => true
+        ];
     }
 
-    $routineSoir[] = "3. ÉCRANS ÉTEINTS 1h avant le coucher";
-    $routineSoir[] = "   → Préserve la mélatonine naturelle";
+    $routineSoirItems[] = [
+        'id' => 'soir_ecrans',
+        'titre' => 'ÉCRANS ÉTEINTS 1h avant le coucher',
+        'description' => 'Préserve la mélatonine naturelle',
+        'checked' => true
+    ];
 
-    $routineSoir[] = "4. TISANE RELAXANTE";
-    $routineSoir[] = "   → Tilleul, mélisse, camomille ou passiflore";
+    $routineSoirItems[] = [
+        'id' => 'soir_tisane',
+        'titre' => 'TISANE RELAXANTE',
+        'description' => 'Tilleul, mélisse, camomille ou passiflore',
+        'checked' => true
+    ];
 
     if ($sommeilQualite <= 5) {
-        $routineSoir[] = "5. COHÉRENCE CARDIAQUE ou SCAN CORPOREL (5-10 min)";
-        $routineSoir[] = "   → Favorise l'endormissement";
+        $routineSoirItems[] = [
+            'id' => 'soir_coherence',
+            'titre' => 'COHÉRENCE CARDIAQUE ou SCAN CORPOREL (5-10 min)',
+            'description' => 'Favorise l\'endormissement',
+            'checked' => true
+        ];
     }
 
-    $content['routines']['matin'] = implode("\n", $routineMatin);
-    $content['routines']['soir'] = implode("\n", $routineSoir);
+    // Stocker les items pour l'affichage avec checkboxes
+    $content['routines']['matin_items'] = $routineMatinItems;
+    $content['routines']['soir_items'] = $routineSoirItems;
+
+    // Générer aussi le texte formaté (pour compatibilité)
+    $routineMatinText = [];
+    foreach ($routineMatinItems as $i => $item) {
+        $num = $i + 1;
+        $routineMatinText[] = "{$num}. {$item['titre']}";
+        if (!empty($item['description'])) {
+            $routineMatinText[] = "   ▸{$item['description']}";
+        }
+    }
+    $routineSoirText = [];
+    foreach ($routineSoirItems as $i => $item) {
+        $num = $i + 1;
+        $routineSoirText[] = "{$num}. {$item['titre']}";
+        if (!empty($item['description'])) {
+            $routineSoirText[] = "   ▸{$item['description']}";
+        }
+    }
+    $content['routines']['matin'] = implode("\n", $routineMatinText);
+    $content['routines']['soir'] = implode("\n", $routineSoirText);
 
     // ============================================
     // COMPLÉMENTS
@@ -1525,6 +2092,62 @@ DÎNER (léger, 3h avant coucher) :
         $soins[] = "• Bouillotte chaude sur le foie 20 min après dîner";
     }
     $content['soins_naturels'] = implode("\n", $soins);
+
+    // ============================================
+    // EXAMENS BIOLOGIQUES SUGGÉRÉS
+    // ============================================
+    $examensSuggeres = [];
+
+    // Fatigue générale -> Vit D, Ferritine, TSH, B12
+    if (str_contains($motif, 'fatigue') || str_contains($priorite1, 'fatigue') || str_contains($priorite1, 'énergie')) {
+        $examensSuggeres[] = 'vit_d';
+        $examensSuggeres[] = 'ferritine';
+        $examensSuggeres[] = 'tsh';
+        $examensSuggeres[] = 'b12_b9';
+    }
+
+    // Stress chronique -> Cortisol, Magnésium
+    if ($stressNiveau >= 7 || str_contains($priorite1, 'stress') || str_contains($priorite1, 'burnout')) {
+        $examensSuggeres[] = 'cortisol';
+        $examensSuggeres[] = 'magnesium';
+    }
+
+    // Troubles digestifs -> IgG alimentaires
+    if ($hasDigestifIssue) {
+        $examensSuggeres[] = 'igg_aliments';
+    }
+
+    // Inflammation -> CRP
+    if ($hasInflammation) {
+        $examensSuggeres[] = 'crp';
+        $examensSuggeres[] = 'omega';
+    }
+
+    // Problèmes de poids / métabolisme -> Glycémie, Insuline
+    if (str_contains($motif, 'poids') || str_contains($priorite1, 'poids') || str_contains($priorite1, 'métabol')) {
+        $examensSuggeres[] = 'glycemie';
+        $examensSuggeres[] = 'insuline';
+    }
+
+    // Thyroïde
+    if (str_contains($motif, 'thyro') || str_contains($priorite1, 'thyro') || str_contains($desequilibres, 'thyro')) {
+        $examensSuggeres[] = 'tsh';
+        $examensSuggeres[] = 't3_t4';
+    }
+
+    // Femmes - troubles hormonaux
+    if ($sexe === 'F' && (str_contains($motif, 'hormon') || str_contains($motif, 'règle') || str_contains($motif, 'ménopause'))) {
+        $examensSuggeres[] = 'ferritine';
+        $examensSuggeres[] = 'vit_d';
+    }
+
+    // Déficit immunitaire
+    if ($immuNiveau <= 4 || str_contains($motif, 'immun')) {
+        $examensSuggeres[] = 'vit_d';
+        $examensSuggeres[] = 'zinc';
+    }
+
+    $content['examens_suggeres'] = array_unique($examensSuggeres);
 
     return $content;
 }
