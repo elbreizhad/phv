@@ -1,8 +1,7 @@
 <?php
 /**
  * Étape 6 : Programme d'Hygiène de Vie (PHV)
- * GÉNÉRATION AUTOMATIQUE basée sur le questionnaire
- * Le praticien ne fait qu'ajouter des commentaires spécifiques
+ * SYSTÈME CONTEXTUEL : suggestions adaptées au profil + liberté totale du praticien
  */
 
 // DEBUG - Afficher les erreurs
@@ -16,6 +15,9 @@ if (!file_exists($kbPath)) {
     die("ERREUR: Fichier knowledge-base.php introuvable: " . $kbPath);
 }
 require_once $kbPath;
+
+// Charger le système de profil et suggestions
+require_once __DIR__ . '/../data/profil-tags.php';
 
 $db = getDB();
 $consultId = (int) getGet('id');
@@ -84,18 +86,39 @@ try {
 }
 
 // ============================================
+// DÉTECTION DU PROFIL CLIENT (TAGS)
+// ============================================
+$tagsProfil = detecterTagsProfil($consultation, $synthese, $allReponses);
+
+// ============================================
 // GÉNÉRATION AUTOMATIQUE DU CONTENU PHV
 // ============================================
 $autoContent = generateAutoPhvContent($consultation, $synthese, $allReponses);
 
-// Si PHV déjà sauvegardé, utiliser les données existantes pour les commentaires
+// Si PHV déjà sauvegardé, utiliser les données existantes
 $commentaires = $phv ? json_decode($phv['commentaires_praticien'] ?? '{}', true) : [];
+
+// Récupérer les suggestions par catégorie
+$suggestionsAlimentation = getSuggestionsCategorie($tagsProfil, 'alimentation');
+$suggestionsMenuType = getSuggestionsCategorie($tagsProfil, 'menu_type');
+$suggestionsPhyto = getSuggestionsCategorie($tagsProfil, 'phytologie');
+$suggestionsAroma = getSuggestionsCategorie($tagsProfil, 'aromatherapie');
+$suggestionsGemmo = getSuggestionsCategorie($tagsProfil, 'gemmotherapie');
+$suggestionsComplements = getSuggestionsCategorie($tagsProfil, 'complements');
+$suggestionsDetox = getSuggestionsCategorie($tagsProfil, 'detox');
+$suggestionsRoutineMatin = getSuggestionsCategorie($tagsProfil, 'routine_matin');
+$suggestionsRoutineSoir = getSuggestionsCategorie($tagsProfil, 'routine_soir');
+$suggestionsActivite = getSuggestionsCategorie($tagsProfil, 'activite');
+$suggestionsStress = getSuggestionsCategorie($tagsProfil, 'stress');
+$suggestionsExamens = getSuggestionsCategorie($tagsProfil, 'examens');
+$suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
 ?>
 
 <div class="page-header">
     <div>
         <h1>Programme d'Hygiène de Vie</h1>
         <p class="subtitle"><?= e($consultation['client_prenom'] . ' ' . $consultation['client_nom']) ?></p>
+        <?= renderTagsBadges($tagsProfil) ?>
     </div>
     <div class="d-flex gap-1">
         <?php if ($phv): ?>
@@ -111,8 +134,7 @@ $commentaires = $phv ? json_decode($phv['commentaires_praticien'] ?? '{}', true)
     <?php require __DIR__ . '/../includes/stepper.php'; ?>
 
     <div class="alert alert-info mb-3">
-        <strong>Génération automatique :</strong> Le programme est pré-rédigé à partir des réponses du questionnaire.
-        Ajoutez vos commentaires et ajustements si nécessaire.
+        <strong>Mode contextuel :</strong> Les suggestions s'adaptent au profil du client. Cliquez sur [+] pour ajouter une suggestion, modifiez librement le texte.
     </div>
 
     <form method="POST" action="<?= url('consultation-step6', ['id' => $consultId]) ?>">
@@ -125,43 +147,57 @@ $commentaires = $phv ? json_decode($phv['commentaires_praticien'] ?? '{}', true)
         <div class="card mb-3">
             <div class="card-header">
                 <h3>Alimentation</h3>
-                <?php if (!empty($autoContent['alimentation']['alertes'])): ?>
-                    <span class="badge badge-warning"><?= count($autoContent['alimentation']['alertes']) ?> point(s) d'attention</span>
-                <?php endif; ?>
             </div>
             <div class="card-body">
-                <!-- Contenu auto-généré (lecture seule visuel) -->
-                <div class="auto-content-section">
-                    <div class="auto-content-label">Conseils générés automatiquement :</div>
-                    <div class="auto-content-box">
-                        <?= nl2br(e($autoContent['alimentation']['conseils'])) ?>
+                <div class="phv-section">
+                    <div class="phv-section-main">
+                        <label class="form-label">Conseils alimentaires</label>
+                        <textarea name="alimentation" id="field-alimentation" rows="8"><?= e($phv['alimentation'] ?? $autoContent['alimentation']['conseils']) ?></textarea>
                     </div>
-                    <input type="hidden" name="alimentation" value="<?= e($autoContent['alimentation']['conseils']) ?>">
+                    <div class="phv-section-suggestions">
+                        <h4>Suggestions</h4>
+                        <div class="suggestion-list">
+                            <?php foreach (array_slice($suggestionsAlimentation, 0, 8) as $sugg): ?>
+                            <div class="suggestion-item" onclick="insertSuggestion('field-alimentation', this)" data-content="<?= e($sugg['contenu']) ?>">
+                                <span class="add-icon">+</span>
+                                <span class="suggestion-titre"><?= e($sugg['titre']) ?></span>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-row mt-2">
-                    <div class="auto-content-section">
-                        <div class="auto-content-label text-danger">À éviter / limiter :</div>
-                        <div class="auto-content-box auto-content-box-small">
-                            <?= nl2br(e($autoContent['alimentation']['eviter'])) ?>
+                    <div class="phv-section" style="flex:1">
+                        <div class="phv-section-main">
+                            <label class="form-label text-danger">A éviter / limiter</label>
+                            <textarea name="alimentation_eviter" id="field-eviter" rows="5"><?= e($phv['alimentation_eviter'] ?? $autoContent['alimentation']['eviter']) ?></textarea>
                         </div>
-                        <input type="hidden" name="alimentation_eviter" value="<?= e($autoContent['alimentation']['eviter']) ?>">
                     </div>
-                    <div class="auto-content-section">
-                        <div class="auto-content-label text-success">À privilégier :</div>
-                        <div class="auto-content-box auto-content-box-small">
-                            <?= nl2br(e($autoContent['alimentation']['privilegier'])) ?>
+                    <div class="phv-section" style="flex:1">
+                        <div class="phv-section-main">
+                            <label class="form-label text-success">A privilégier</label>
+                            <textarea name="alimentation_privilegier" id="field-privilegier" rows="5"><?= e($phv['alimentation_privilegier'] ?? $autoContent['alimentation']['privilegier']) ?></textarea>
                         </div>
-                        <input type="hidden" name="alimentation_privilegier" value="<?= e($autoContent['alimentation']['privilegier']) ?>">
                     </div>
                 </div>
 
-                <div class="auto-content-section mt-2">
-                    <div class="auto-content-label">Menu type suggéré :</div>
-                    <div class="auto-content-box">
-                        <?= nl2br(e($autoContent['alimentation']['menu_type'])) ?>
+                <div class="phv-section mt-2">
+                    <div class="phv-section-main">
+                        <label class="form-label">Menu type</label>
+                        <textarea name="menu_type" id="field-menu" rows="10"><?= e($phv['menu_type'] ?? $autoContent['alimentation']['menu_type']) ?></textarea>
                     </div>
-                    <input type="hidden" name="menu_type" value="<?= e($autoContent['alimentation']['menu_type']) ?>">
+                    <div class="phv-section-suggestions">
+                        <h4>Menus types</h4>
+                        <div class="suggestion-list">
+                            <?php foreach (array_slice($suggestionsMenuType, 0, 5) as $sugg): ?>
+                            <div class="suggestion-item" onclick="insertSuggestion('field-menu', this)" data-content="<?= e($sugg['contenu']) ?>">
+                                <span class="add-icon">+</span>
+                                <span class="suggestion-titre"><?= e($sugg['titre']) ?></span>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Régimes spécifiques -->
@@ -221,19 +257,21 @@ $commentaires = $phv ? json_decode($phv['commentaires_praticien'] ?? '{}', true)
                 <?php endif; ?>
             </div>
             <div class="card-body">
-                <div class="auto-content-section">
-                    <div class="auto-content-box">
-                        <?= nl2br(e($autoContent['stress']['conseils'])) ?>
+                <div class="phv-section">
+                    <div class="phv-section-main">
+                        <textarea name="gestion_stress" id="field-stress" rows="8"><?= e($phv['gestion_stress'] ?? $autoContent['stress']['conseils']) ?></textarea>
                     </div>
-                    <input type="hidden" name="gestion_stress" value="<?= e($autoContent['stress']['conseils']) ?>">
-                </div>
-
-                <div class="form-group mt-2 praticien-comment">
-                    <label class="form-label">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        Commentaire du praticien
-                    </label>
-                    <textarea name="commentaire_stress" class="form-control" rows="2" placeholder="Remarques personnalisées..."><?= e($commentaires['stress'] ?? '') ?></textarea>
+                    <div class="phv-section-suggestions">
+                        <h4>Techniques</h4>
+                        <div class="suggestion-list">
+                            <?php foreach (array_slice($suggestionsStress, 0, 6) as $sugg): ?>
+                            <div class="suggestion-item" onclick="insertSuggestion('field-stress', this)" data-content="<?= e($sugg['contenu']) ?>">
+                                <span class="add-icon">+</span>
+                                <span class="suggestion-titre"><?= e($sugg['titre']) ?></span>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -254,87 +292,181 @@ $commentaires = $phv ? json_decode($phv['commentaires_praticien'] ?? '{}', true)
                 <?php endif; ?>
             </div>
             <div class="card-body">
-                <div class="auto-content-section">
-                    <div class="auto-content-box">
-                        <?= nl2br(e($autoContent['activite']['conseils'])) ?>
+                <div class="phv-section">
+                    <div class="phv-section-main">
+                        <textarea name="activite_physique" id="field-activite" rows="6"><?= e($phv['activite_physique'] ?? $autoContent['activite']['conseils']) ?></textarea>
                     </div>
-                    <input type="hidden" name="activite_physique" value="<?= e($autoContent['activite']['conseils']) ?>">
-                </div>
-
-                <div class="form-group mt-2 praticien-comment">
-                    <label class="form-label">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        Commentaire du praticien
-                    </label>
-                    <textarea name="commentaire_activite" class="form-control" rows="2" placeholder="Adaptations spécifiques..."><?= e($commentaires['activite'] ?? '') ?></textarea>
+                    <div class="phv-section-suggestions">
+                        <h4>Activités</h4>
+                        <div class="suggestion-list">
+                            <?php foreach (array_slice($suggestionsActivite, 0, 6) as $sugg): ?>
+                            <div class="suggestion-item" onclick="insertSuggestion('field-activite', this)" data-content="<?= e($sugg['contenu']) ?>">
+                                <span class="add-icon">+</span>
+                                <span class="suggestion-titre"><?= e($sugg['titre']) ?></span>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- ============================================ -->
-        <!-- ROUTINES MATIN / SOIR (avec checkboxes) -->
+        <!-- ROUTINES MATIN / SOIR -->
         <!-- ============================================ -->
         <div class="card mb-3">
             <div class="card-header">
                 <h3>Routines quotidiennes</h3>
-                <span class="text-muted text-sm">Cochez les éléments à inclure dans le PHV</span>
             </div>
             <div class="card-body">
                 <div class="form-row">
-                    <!-- Routine Matin -->
-                    <div class="routine-section">
-                        <div class="routine-header">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                            Routine matin
+                    <div class="phv-section" style="flex:1">
+                        <div class="phv-section-main">
+                            <label class="form-label">Routine Matin</label>
+                            <textarea name="routine_matin" id="field-routine-matin" rows="8"><?= e($phv['routine_matin'] ?? $autoContent['routines']['matin']) ?></textarea>
                         </div>
-                        <div class="routine-items">
-                            <?php foreach ($autoContent['routines']['matin_items'] as $item): ?>
-                            <label class="routine-item">
-                                <input type="checkbox" name="routine_matin_items[]" value="<?= e($item['id']) ?>" <?= $item['checked'] ? 'checked' : '' ?>>
-                                <div class="routine-item-content">
-                                    <span class="routine-item-titre"><?= e($item['titre']) ?></span>
-                                    <?php if (!empty($item['description'])): ?>
-                                    <span class="routine-item-desc"><?= e($item['description']) ?></span>
-                                    <?php endif; ?>
+                        <div class="phv-section-suggestions">
+                            <h4>Suggestions matin</h4>
+                            <div class="suggestion-list">
+                                <?php foreach (array_slice($suggestionsRoutineMatin, 0, 4) as $sugg): ?>
+                                <div class="suggestion-item" onclick="insertSuggestion('field-routine-matin', this)" data-content="<?= e($sugg['contenu']) ?>">
+                                    <span class="add-icon">+</span>
+                                    <span class="suggestion-titre"><?= e($sugg['titre']) ?></span>
                                 </div>
-                                <input type="hidden" name="routine_matin_data[<?= e($item['id']) ?>]" value="<?= e(json_encode($item)) ?>">
-                            </label>
-                            <?php endforeach; ?>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- Routine Soir -->
-                    <div class="routine-section">
-                        <div class="routine-header">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                            Routine soir
+                    <div class="phv-section" style="flex:1">
+                        <div class="phv-section-main">
+                            <label class="form-label">Routine Soir</label>
+                            <textarea name="routine_soir" id="field-routine-soir" rows="8"><?= e($phv['routine_soir'] ?? $autoContent['routines']['soir']) ?></textarea>
                         </div>
-                        <div class="routine-items">
-                            <?php foreach ($autoContent['routines']['soir_items'] as $item): ?>
-                            <label class="routine-item">
-                                <input type="checkbox" name="routine_soir_items[]" value="<?= e($item['id']) ?>" <?= $item['checked'] ? 'checked' : '' ?>>
-                                <div class="routine-item-content">
-                                    <span class="routine-item-titre"><?= e($item['titre']) ?></span>
-                                    <?php if (!empty($item['description'])): ?>
-                                    <span class="routine-item-desc"><?= e($item['description']) ?></span>
-                                    <?php endif; ?>
+                        <div class="phv-section-suggestions">
+                            <h4>Suggestions soir</h4>
+                            <div class="suggestion-list">
+                                <?php foreach (array_slice($suggestionsRoutineSoir, 0, 4) as $sugg): ?>
+                                <div class="suggestion-item" onclick="insertSuggestion('field-routine-soir', this)" data-content="<?= e($sugg['contenu']) ?>">
+                                    <span class="add-icon">+</span>
+                                    <span class="suggestion-titre"><?= e($sugg['titre']) ?></span>
                                 </div>
-                                <input type="hidden" name="routine_soir_data[<?= e($item['id']) ?>]" value="<?= e(json_encode($item)) ?>">
-                            </label>
-                            <?php endforeach; ?>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="form-group mt-2 praticien-comment">
-                    <label class="form-label">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        Commentaire du praticien
-                    </label>
-                    <textarea name="commentaire_routines" class="form-control" rows="2" placeholder="Ajustements aux routines..."><?= e($commentaires['routines'] ?? '') ?></textarea>
                 </div>
             </div>
         </div>
+
+        <!-- ============================================ -->
+        <!-- PHYTOLOGIE -->
+        <!-- ============================================ -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3>Phytologie</h3>
+            </div>
+            <div class="card-body">
+                <div class="phv-section">
+                    <div class="phv-section-main">
+                        <textarea name="phytologie" id="field-phyto" rows="8" placeholder="Plantes recommandées, posologies, durées..."><?= e($phv['phytologie'] ?? '') ?></textarea>
+                    </div>
+                    <div class="phv-section-suggestions">
+                        <h4>Plantes suggérées</h4>
+                        <div class="suggestion-list">
+                            <?php foreach (array_slice($suggestionsPhyto, 0, 8) as $sugg): ?>
+                            <div class="suggestion-item" onclick="insertSuggestion('field-phyto', this)" data-content="<?= e($sugg['contenu']) ?>">
+                                <span class="add-icon">+</span>
+                                <span class="suggestion-titre"><?= e($sugg['titre']) ?></span>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- AROMATHÉRAPIE -->
+        <!-- ============================================ -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3>Aromathérapie</h3>
+            </div>
+            <div class="card-body">
+                <div class="phv-section">
+                    <div class="phv-section-main">
+                        <textarea name="aromatherapie" id="field-aroma" rows="6" placeholder="Huiles essentielles, modes d'utilisation, précautions..."><?= e($phv['aromatherapie'] ?? '') ?></textarea>
+                    </div>
+                    <div class="phv-section-suggestions">
+                        <h4>HE suggérées</h4>
+                        <div class="suggestion-list">
+                            <?php foreach (array_slice($suggestionsAroma, 0, 6) as $sugg): ?>
+                            <div class="suggestion-item" onclick="insertSuggestion('field-aroma', this)" data-content="<?= e($sugg['contenu']) ?>">
+                                <span class="add-icon">+</span>
+                                <span class="suggestion-titre"><?= e($sugg['titre']) ?></span>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- GEMMOTHÉRAPIE -->
+        <!-- ============================================ -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3>Gemmothérapie</h3>
+            </div>
+            <div class="card-body">
+                <div class="phv-section">
+                    <div class="phv-section-main">
+                        <textarea name="gemmotherapie" id="field-gemmo" rows="5" placeholder="Bourgeons recommandés, posologies..."><?= e($phv['gemmotherapie'] ?? '') ?></textarea>
+                    </div>
+                    <div class="phv-section-suggestions">
+                        <h4>Bourgeons</h4>
+                        <div class="suggestion-list">
+                            <?php foreach (array_slice($suggestionsGemmo, 0, 6) as $sugg): ?>
+                            <div class="suggestion-item" onclick="insertSuggestion('field-gemmo', this)" data-content="<?= e($sugg['contenu']) ?>">
+                                <span class="add-icon">+</span>
+                                <span class="suggestion-titre"><?= e($sugg['titre']) ?></span>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- PROGRAMME DÉTOX -->
+        <!-- ============================================ -->
+        <?php if (!empty($suggestionsDetox)): ?>
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3>Programme Détox / Protocole</h3>
+            </div>
+            <div class="card-body">
+                <div class="phv-section">
+                    <div class="phv-section-main">
+                        <textarea name="programme_detox" id="field-detox" rows="8" placeholder="Programme détox, 4R intestinal, protocole spécifique..."><?= e($phv['programme_detox'] ?? '') ?></textarea>
+                    </div>
+                    <div class="phv-section-suggestions">
+                        <h4>Protocoles</h4>
+                        <div class="suggestion-list">
+                            <?php foreach (array_slice($suggestionsDetox, 0, 5) as $sugg): ?>
+                            <div class="suggestion-item" onclick="insertSuggestion('field-detox', this)" data-content="<?= e($sugg['contenu']) ?>">
+                                <span class="add-icon">+</span>
+                                <span class="suggestion-titre"><?= e($sugg['titre']) ?></span>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
 
         <!-- ============================================ -->
         <!-- COMPLÉMENTS ALIMENTAIRES -->
@@ -342,18 +474,31 @@ $commentaires = $phv ? json_decode($phv['commentaires_praticien'] ?? '{}', true)
         <div class="card mb-3">
             <div class="card-header">
                 <h3>Compléments alimentaires</h3>
-                <button type="button" class="btn btn-sm btn-outline" onclick="addComplement()">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    Ajouter
-                </button>
             </div>
             <div class="card-body">
-                <p class="text-muted text-sm mb-2">Cochez les compléments à inclure, modifiez les posologies si nécessaire.</p>
+                <div class="phv-section">
+                    <div class="phv-section-main">
+                        <textarea name="complements_texte" id="field-complements" rows="8" placeholder="Compléments recommandés avec posologies et durées..."><?= e($phv['complements_texte'] ?? '') ?></textarea>
+                    </div>
+                    <div class="phv-section-suggestions">
+                        <h4>Compléments</h4>
+                        <div class="suggestion-list">
+                            <?php foreach (array_slice($suggestionsComplements, 0, 8) as $sugg): ?>
+                            <div class="suggestion-item" onclick="insertSuggestion('field-complements', this)" data-content="<?= e($sugg['contenu']) ?>">
+                                <span class="add-icon">+</span>
+                                <span class="suggestion-titre"><?= e($sugg['titre']) ?></span>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
 
-                <div class="complements-edit-list" id="complements-list">
+                <!-- Ancienne liste éditable (gardée pour compatibilité) -->
+                <details class="mt-3">
+                    <summary class="text-muted" style="cursor:pointer">Mode liste détaillée (optionnel)</summary>
+                    <div class="complements-edit-list mt-2" id="complements-list">
                     <?php
                     $complements = $autoContent['complements'];
-                    // Ajouter 2 lignes vides pour permettre d'ajouter
                     $totalSlots = max(count($complements) + 2, 5);
                     for ($i = 0; $i < $totalSlots; $i++):
                         $comp = $complements[$i] ?? ['nom' => '', 'posologie' => '', 'duree' => '', 'raison' => ''];
@@ -379,66 +524,66 @@ $commentaires = $phv ? json_decode($phv['commentaires_praticien'] ?? '{}', true)
                         </button>
                     </div>
                     <?php endfor; ?>
-                </div>
-
-                <div class="form-group mt-2 praticien-comment">
-                    <label class="form-label">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        Notes compléments
-                    </label>
-                    <textarea name="commentaire_complements" class="form-control" rows="2" placeholder="Ex: Remplacer le magnésium par..., Ajouter zinc car..."><?= e($commentaires['complements'] ?? '') ?></textarea>
-                </div>
+                    </div>
+                </details>
             </div>
         </div>
 
         <!-- ============================================ -->
-        <!-- EXAMENS BIOLOGIQUES SUGGÉRÉS -->
+        <!-- EXAMENS BIOLOGIQUES -->
         <!-- ============================================ -->
         <div class="card mb-3">
             <div class="card-header">
                 <h3>Examens biologiques à suggérer</h3>
-                <span class="text-muted text-sm">Cochez les examens pertinents pour ce client</span>
             </div>
             <div class="card-body">
-                <p class="text-muted mb-2">Ces examens peuvent aider à affiner le bilan. Le client devra demander une ordonnance à son médecin.</p>
-
-                <div class="examens-bio-grid">
-                    <?php
-                    $examensBio = [
-                        ['id' => 'vit_d', 'nom' => 'Vitamine D (25-OH)', 'indication' => 'Fatigue, douleurs, immunité faible'],
-                        ['id' => 'tsh', 'nom' => 'TSH', 'indication' => 'Fatigue, prise de poids, frilosité, constipation'],
-                        ['id' => 't3_t4', 'nom' => 'T3/T4 libres', 'indication' => 'Si TSH anormale ou symptômes thyroïdiens'],
-                        ['id' => 'ferritine', 'nom' => 'Ferritine + Fer sérique', 'indication' => 'Fatigue, pâleur, chute de cheveux, règles abondantes'],
-                        ['id' => 'b12_b9', 'nom' => 'Vitamine B12 + B9', 'indication' => 'Fatigue, troubles neurologiques, végétariens'],
-                        ['id' => 'zinc', 'nom' => 'Zinc', 'indication' => 'Immunité, peau, ongles, cicatrisation'],
-                        ['id' => 'magnesium', 'nom' => 'Magnésium érythrocytaire', 'indication' => 'Stress, crampes, troubles du sommeil'],
-                        ['id' => 'homocysteine', 'nom' => 'Homocystéine', 'indication' => 'Cardiovasculaire, fatigue, troubles cognitifs'],
-                        ['id' => 'glycemie', 'nom' => 'Glycémie à jeun + HbA1c', 'indication' => 'Fatigue après repas, envies de sucre, surpoids'],
-                        ['id' => 'insuline', 'nom' => 'Insulinémie à jeun', 'indication' => 'Résistance à l\'insuline, syndrome métabolique'],
-                        ['id' => 'cortisol', 'nom' => 'Cortisol (8h)', 'indication' => 'Fatigue chronique, stress chronique, burnout'],
-                        ['id' => 'crp', 'nom' => 'CRP ultrasensible', 'indication' => 'Inflammation chronique bas grade'],
-                        ['id' => 'omega', 'nom' => 'Profil acides gras / Oméga-3 Index', 'indication' => 'Inflammation, sécheresse, troubles cognitifs'],
-                        ['id' => 'igg_aliments', 'nom' => 'IgG alimentaires', 'indication' => 'Troubles digestifs, migraines, eczéma'],
-                    ];
-                    ?>
-                    <?php foreach ($examensBio as $exam): ?>
-                    <label class="examen-bio-item">
-                        <input type="checkbox" name="examens_bio[]" value="<?= e($exam['id']) ?>"
-                            <?= in_array($exam['id'], $autoContent['examens_suggeres'] ?? []) ? 'checked' : '' ?>>
-                        <div class="examen-bio-content">
-                            <span class="examen-bio-nom"><?= e($exam['nom']) ?></span>
-                            <span class="examen-bio-indication"><?= e($exam['indication']) ?></span>
+                <div class="phv-section">
+                    <div class="phv-section-main">
+                        <textarea name="examens_bio_texte" id="field-examens" rows="6" placeholder="Examens biologiques recommandés..."><?= e($phv['examens_bio'] ?? '') ?></textarea>
+                    </div>
+                    <div class="phv-section-suggestions">
+                        <h4>Bilans suggérés</h4>
+                        <div class="suggestion-list">
+                            <?php foreach (array_slice($suggestionsExamens, 0, 6) as $sugg): ?>
+                            <div class="suggestion-item" onclick="insertSuggestion('field-examens', this)" data-content="<?= e($sugg['contenu']) ?>">
+                                <span class="add-icon">+</span>
+                                <span class="suggestion-titre"><?= e($sugg['titre']) ?></span>
+                            </div>
+                            <?php endforeach; ?>
                         </div>
-                    </label>
-                    <?php endforeach; ?>
-                </div>
-
-                <div class="form-group mt-2 praticien-comment">
-                    <label class="form-label">Autres examens ou précisions</label>
-                    <textarea name="examens_bio_notes" class="form-control" rows="2" placeholder="Ex: Dosage hormonal complet si ménopause..."><?= e($commentaires['examens_bio'] ?? '') ?></textarea>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- ============================================ -->
+        <!-- HYDROLOGIE -->
+        <!-- ============================================ -->
+        <?php if (!empty($suggestionsHydrologie)): ?>
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3>Hydrologie</h3>
+            </div>
+            <div class="card-body">
+                <div class="phv-section">
+                    <div class="phv-section-main">
+                        <textarea name="hydrologie" id="field-hydrologie" rows="5" placeholder="Bains, douches, lavements..."><?= e($phv['hydrologie'] ?? '') ?></textarea>
+                    </div>
+                    <div class="phv-section-suggestions">
+                        <h4>Techniques</h4>
+                        <div class="suggestion-list">
+                            <?php foreach (array_slice($suggestionsHydrologie, 0, 4) as $sugg): ?>
+                            <div class="suggestion-item" onclick="insertSuggestion('field-hydrologie', this)" data-content="<?= e($sugg['contenu']) ?>">
+                                <span class="add-icon">+</span>
+                                <span class="suggestion-titre"><?= e($sugg['titre']) ?></span>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
 
         <!-- ============================================ -->
         <!-- RECOMMANDATIONS COMPLÉMENTAIRES -->
@@ -446,11 +591,8 @@ $commentaires = $phv ? json_decode($phv['commentaires_praticien'] ?? '{}', true)
         <div class="card mb-3">
             <div class="card-header"><h3>Recommandations complémentaires</h3></div>
             <div class="card-body">
-                <div class="auto-content-section">
-                    <div class="auto-content-box">
-                        <?= nl2br(e($autoContent['recommandations'])) ?>
-                    </div>
-                    <input type="hidden" name="recommandations_complementaires" value="<?= e($autoContent['recommandations']) ?>">
+                <div class="phv-section-main">
+                    <textarea name="recommandations_complementaires" id="field-reco" rows="5"><?= e($phv['recommandations_complementaires'] ?? $autoContent['recommandations']) ?></textarea>
                 </div>
 
                 <div class="form-group mt-2">
@@ -799,6 +941,42 @@ $commentaires = $phv ? json_decode($phv['commentaires_praticien'] ?? '{}', true)
 </div>
 
 <script>
+// Insertion de suggestion dans un textarea
+function insertSuggestion(fieldId, element) {
+    const textarea = document.getElementById(fieldId);
+    const content = element.getAttribute('data-content');
+
+    if (!textarea || !content) return;
+
+    // Ajouter à la fin avec séparateur si contenu existant
+    if (textarea.value.trim()) {
+        textarea.value += '\n\n' + content;
+    } else {
+        textarea.value = content;
+    }
+
+    // Marquer comme inséré
+    element.classList.add('inserted');
+
+    // Scroll vers le bas du textarea
+    textarea.scrollTop = textarea.scrollHeight;
+
+    // Focus sur le textarea
+    textarea.focus();
+}
+
+// Remplacer le contenu d'un textarea par une suggestion
+function replaceSuggestion(fieldId, element) {
+    const textarea = document.getElementById(fieldId);
+    const content = element.getAttribute('data-content');
+
+    if (!textarea || !content) return;
+
+    textarea.value = content;
+    element.classList.add('inserted');
+    textarea.focus();
+}
+
 function toggleProtocoleDetails(id) {
     const details = document.getElementById('proto-details-' + id);
     if (details.style.display === 'none') {
@@ -907,6 +1085,147 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <style>
+/* Tags du profil client */
+.profil-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+}
+
+.profil-tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Section PHV éditable avec suggestions */
+.phv-section {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.phv-section-main {
+    display: flex;
+    flex-direction: column;
+}
+
+.phv-section-main textarea {
+    width: 100%;
+    min-height: 150px;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.phv-section-main textarea:focus {
+    outline: none;
+    border-color: var(--sage);
+    box-shadow: 0 0 0 3px rgba(106, 141, 115, 0.1);
+}
+
+.phv-section-suggestions {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.phv-section-suggestions h4 {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.suggestion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 0.85rem;
+}
+
+.suggestion-item:hover {
+    border-color: var(--sage);
+    background: linear-gradient(135deg, #f0f7f0 0%, #fff 100%);
+}
+
+.suggestion-item .add-icon {
+    width: 20px;
+    height: 20px;
+    background: var(--sage);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.suggestion-item .suggestion-titre {
+    flex: 1;
+    font-weight: 500;
+}
+
+.suggestion-item .suggestion-tags {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.suggestion-item .suggestion-tag {
+    font-size: 0.65rem;
+    padding: 1px 5px;
+    background: #e8e8e8;
+    border-radius: 3px;
+    color: #666;
+}
+
+.suggestion-item.inserted {
+    opacity: 0.5;
+    border-style: dashed;
+}
+
+.suggestion-item.inserted .add-icon {
+    background: #ccc;
+}
+
+@media (max-width: 900px) {
+    .phv-section {
+        grid-template-columns: 1fr;
+    }
+    .phv-section-suggestions {
+        max-height: 200px;
+    }
+}
+
 .protocoles-suggestions {
     display: flex;
     flex-direction: column;

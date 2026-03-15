@@ -130,8 +130,8 @@ $data = [
     'menu_type' => getPost('menu_type'),
     'activite_physique' => getPost('activite_physique'),
     'gestion_stress' => getPost('gestion_stress'),
-    'routine_matin' => $routineMatinText ?: getPost('routine_matin'),
-    'routine_soir' => $routineSoirText ?: getPost('routine_soir'),
+    'routine_matin' => getPost('routine_matin'),
+    'routine_soir' => getPost('routine_soir'),
     'complements' => json_encode($complements, JSON_UNESCAPED_UNICODE),
     'soins_naturels' => getPost('soins_naturels'),
     'recommandations_complementaires' => getPost('recommandations_complementaires'),
@@ -150,13 +150,35 @@ try {
 }
 
 // Ajouter les examens biologiques si la colonne existe
+$examensBioTexte = getPost('examens_bio_texte') ?: $examensBioText;
 try {
     $db->query("SELECT examens_bio FROM phv LIMIT 0");
-    $data['examens_bio'] = $examensBioText;
+    $data['examens_bio'] = $examensBioTexte;
 } catch (PDOException $e) {
     // Colonne pas encore créée - stocker dans recommandations_complementaires
-    if ($examensBioText) {
-        $data['recommandations_complementaires'] .= "\n\n--- EXAMENS BIOLOGIQUES SUGGÉRÉS ---\n" . $examensBioText;
+    if ($examensBioTexte) {
+        $data['recommandations_complementaires'] .= "\n\n--- EXAMENS BIOLOGIQUES SUGGÉRÉS ---\n" . $examensBioTexte;
+    }
+}
+
+// Ajouter les nouveaux champs si les colonnes existent
+$nouveauxChamps = [
+    'phytologie' => getPost('phytologie'),
+    'aromatherapie' => getPost('aromatherapie'),
+    'gemmotherapie' => getPost('gemmotherapie'),
+    'programme_detox' => getPost('programme_detox'),
+    'hydrologie' => getPost('hydrologie'),
+    'complements_texte' => getPost('complements_texte'),
+];
+
+foreach ($nouveauxChamps as $champ => $valeur) {
+    if ($valeur) {
+        try {
+            $db->query("SELECT $champ FROM phv LIMIT 0");
+            $data[$champ] = $valeur;
+        } catch (PDOException $e) {
+            // Colonne pas encore créée - ignorer ou stocker ailleurs
+        }
     }
 }
 
