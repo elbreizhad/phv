@@ -1750,3 +1750,222 @@ select.form-control {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* ============================================
+   RÉCAPITULATIF GLOBAL PRATICIEN
+   ============================================ */
+
+.recap-global .card-header {
+    background: linear-gradient(135deg, var(--sage-600), var(--sage-700));
+    color: white;
+}
+
+.recap-global .card-header h3 {
+    color: white;
+}
+
+.recap-global .card-header svg {
+    stroke: white;
+}
+
+.recap-section {
+    border: 1px solid var(--cream-300);
+    border-radius: var(--radius);
+    margin-bottom: 1rem;
+    background: var(--cream-50);
+    overflow: hidden;
+}
+
+.recap-section:last-child {
+    margin-bottom: 0;
+}
+
+.recap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--cream-200);
+    border-bottom: 1px solid var(--cream-300);
+}
+
+.recap-header h4 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--sage-700);
+}
+
+.recap-content {
+    padding: 1rem;
+}
+
+.recap-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.recap-row:last-child {
+    margin-bottom: 0;
+}
+
+.recap-label {
+    font-weight: 500;
+    color: var(--text-secondary);
+    min-width: 120px;
+    flex-shrink: 0;
+}
+
+.recap-value {
+    color: var(--text-primary);
+    word-break: break-word;
+}
+
+/* Scores */
+.recap-scores {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.recap-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.recap-score .score-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.score-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.score-badge.score-low {
+    background: var(--sage-100);
+    color: var(--sage-700);
+}
+
+.score-badge.score-medium {
+    background: #fef3cd;
+    color: #856404;
+}
+
+.score-badge.score-high {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Badges */
+.recap-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+/* Priorités */
+.recap-priorities {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.recap-priority {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.priority-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--terra-500);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.priority-text {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+/* Notes praticien */
+.recap-notes {
+    background: #fff9e6;
+    border-color: #ffe066;
+}
+
+.recap-notes .recap-header {
+    background: #fff3cd;
+    border-color: #ffe066;
+}
+
+.recap-notes .recap-header h4 {
+    color: #856404;
+}
+
+/* RDV */
+.recap-rdv .recap-content {
+    padding: 0.75rem 1rem;
+}
+
+.recap-rdv .form-row {
+    margin: 0;
+    gap: 1rem;
+}
+
+.recap-rdv .form-group {
+    margin: 0;
+}
+
+/* PHV Summary */
+.recap-phv-summary .recap-row {
+    padding: 0.25rem 0;
+    border-bottom: 1px dashed var(--cream-300);
+}
+
+.recap-phv-summary .recap-row:last-child {
+    border-bottom: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .recap-row {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .recap-label {
+        min-width: auto;
+    }
+
+    .recap-scores {
+        justify-content: center;
+    }
+
+    .recap-rdv .form-row {
+        flex-direction: column;
+    }
+}

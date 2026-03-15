@@ -927,6 +927,244 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
             </div>
         </div>
 
+        <!-- ============================================ -->
+        <!-- RÉCAPITULATIF GLOBAL PRATICIEN -->
+        <!-- ============================================ -->
+        <div class="card mb-3 recap-global">
+            <div class="card-header" style="cursor:pointer;" onclick="toggleCollapse('recap-global-content')">
+                <h3>Récapitulatif Global</h3>
+                <svg id="recap-global-content-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="transition: transform 0.3s;"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="card-body" id="recap-global-content" style="display:none;">
+
+                <!-- ÉTAPE 1 : Client & Motif -->
+                <div class="recap-section">
+                    <div class="recap-header">
+                        <h4>Étape 1 : Client & Motif</h4>
+                        <a href="<?= url('consultation-step1', ['id' => $consultId]) ?>" class="btn btn-outline btn-sm">Modifier</a>
+                    </div>
+                    <div class="recap-content">
+                        <div class="recap-row">
+                            <span class="recap-label">Motif :</span>
+                            <span class="recap-value"><?= nl2br(e($consultation['motif'] ?: 'Non renseigné')) ?></span>
+                        </div>
+                        <?php if (!empty($allReponses['vie_pro_description']['reponse'] ?? '')): ?>
+                        <div class="recap-row">
+                            <span class="recap-label">Vie pro :</span>
+                            <span class="recap-value"><?= e(truncateText($allReponses['vie_pro_description']['reponse'] ?? '', 100)) ?></span>
+                        </div>
+                        <?php endif; ?>
+                        <?php if (!empty($allReponses['med_medicaments']['reponse'] ?? '')): ?>
+                        <div class="recap-row">
+                            <span class="recap-label">Traitements :</span>
+                            <span class="recap-value"><?= e($allReponses['med_medicaments']['reponse'] ?? 'Aucun') ?></span>
+                        </div>
+                        <?php endif; ?>
+                        <?php if (!empty($allReponses['med_allergies']['reponse'] ?? '')): ?>
+                        <div class="recap-row">
+                            <span class="recap-label">Allergies :</span>
+                            <span class="recap-value"><?= e($allReponses['med_allergies']['reponse'] ?? 'Aucune') ?></span>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- ÉTAPE 2 : Mode de vie -->
+                <div class="recap-section">
+                    <div class="recap-header">
+                        <h4>Étape 2 : Mode de vie</h4>
+                        <a href="<?= url('consultation-step2', ['id' => $consultId]) ?>" class="btn btn-outline btn-sm">Modifier</a>
+                    </div>
+                    <div class="recap-content">
+                        <div class="recap-scores">
+                            <div class="recap-score">
+                                <span class="score-label">Stress</span>
+                                <span class="score-badge <?= ($allReponses['stress_niveau']['reponse'] ?? 5) >= 7 ? 'score-high' : (($allReponses['stress_niveau']['reponse'] ?? 5) >= 5 ? 'score-medium' : 'score-low') ?>"><?= e($allReponses['stress_niveau']['reponse'] ?? '?') ?>/10</span>
+                            </div>
+                            <div class="recap-score">
+                                <span class="score-label">Sommeil</span>
+                                <span class="score-badge <?= ($allReponses['sommeil_qualite']['reponse'] ?? 5) <= 4 ? 'score-high' : (($allReponses['sommeil_qualite']['reponse'] ?? 5) <= 6 ? 'score-medium' : 'score-low') ?>"><?= e($allReponses['sommeil_qualite']['reponse'] ?? '?') ?>/10</span>
+                            </div>
+                            <div class="recap-score">
+                                <span class="score-label">Activité</span>
+                                <span class="score-badge <?= ($allReponses['activite_niveau']['reponse'] ?? 5) <= 3 ? 'score-high' : 'score-low' ?>"><?= e($allReponses['activite_niveau']['reponse'] ?? '?') ?>/10</span>
+                            </div>
+                        </div>
+                        <?php if (!empty($allReponses['stress_manifestations']['reponse'] ?? '')): ?>
+                        <div class="recap-row">
+                            <span class="recap-label">Manifestations stress :</span>
+                            <span class="recap-value"><?= e($allReponses['stress_manifestations']['reponse'] ?? '') ?></span>
+                        </div>
+                        <?php endif; ?>
+                        <?php if (!empty($allReponses['sommeil_problemes']['reponse'] ?? '')): ?>
+                        <div class="recap-row">
+                            <span class="recap-label">Problèmes sommeil :</span>
+                            <span class="recap-value"><?= e($allReponses['sommeil_problemes']['reponse'] ?? '') ?></span>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- ÉTAPE 3 : Bilan systémique -->
+                <div class="recap-section">
+                    <div class="recap-header">
+                        <h4>Étape 3 : Bilan systémique</h4>
+                        <a href="<?= url('consultation-step3', ['id' => $consultId]) ?>" class="btn btn-outline btn-sm">Modifier</a>
+                    </div>
+                    <div class="recap-content">
+                        <?php if (!empty($allReponses['dig_troubles']['reponse'] ?? '')): ?>
+                        <div class="recap-row">
+                            <span class="recap-label">Digestif :</span>
+                            <span class="recap-value"><?= e($allReponses['dig_troubles']['reponse'] ?? '') ?></span>
+                        </div>
+                        <?php endif; ?>
+                        <?php if (!empty($allReponses['nerv_symptomes']['reponse'] ?? '')): ?>
+                        <div class="recap-row">
+                            <span class="recap-label">Nerveux :</span>
+                            <span class="recap-value"><?= e($allReponses['nerv_symptomes']['reponse'] ?? '') ?></span>
+                        </div>
+                        <?php endif; ?>
+                        <?php if (!empty($allReponses['endo_thyroide']['reponse'] ?? '') || !empty($allReponses['endo_energie']['reponse'] ?? '')): ?>
+                        <div class="recap-row">
+                            <span class="recap-label">Endocrinien :</span>
+                            <span class="recap-value"><?= e(truncateText(($allReponses['endo_thyroide']['reponse'] ?? '') . ' ' . ($allReponses['endo_energie']['reponse'] ?? ''), 80)) ?></span>
+                        </div>
+                        <?php endif; ?>
+                        <?php if (!empty($allReponses['immu_niveau']['reponse'] ?? '') && ($allReponses['immu_niveau']['reponse'] ?? 10) <= 5): ?>
+                        <div class="recap-row">
+                            <span class="recap-label">Immunité :</span>
+                            <span class="recap-value score-badge score-high"><?= e($allReponses['immu_niveau']['reponse'] ?? '?') ?>/10</span>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- ÉTAPE 4 : Bilan complémentaire -->
+                <div class="recap-section">
+                    <div class="recap-header">
+                        <h4>Étape 4 : Observations</h4>
+                        <a href="<?= url('consultation-step4', ['id' => $consultId]) ?>" class="btn btn-outline btn-sm">Modifier</a>
+                    </div>
+                    <div class="recap-content">
+                        <?php
+                        $desequilibresRecap = array_filter(explode(',', $allReponses['pre_synthese_desequilibres']['reponse'] ?? ''));
+                        if (!empty($desequilibresRecap)):
+                        ?>
+                        <div class="recap-badges">
+                            <?php foreach (array_slice($desequilibresRecap, 0, 6) as $d): ?>
+                                <span class="badge badge-warning"><?= e(trim($d)) ?></span>
+                            <?php endforeach; ?>
+                            <?php if (count($desequilibresRecap) > 6): ?>
+                                <span class="badge badge-secondary">+<?= count($desequilibresRecap) - 6 ?></span>
+                            <?php endif; ?>
+                        </div>
+                        <?php endif; ?>
+                        <?php if (!empty($allReponses['obs_points_cles']['reponse'] ?? '')): ?>
+                        <div class="recap-row">
+                            <span class="recap-label">Points clés :</span>
+                            <span class="recap-value"><?= e(truncateText($allReponses['obs_points_cles']['reponse'] ?? '', 150)) ?></span>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- ÉTAPE 5 : Synthèse -->
+                <div class="recap-section">
+                    <div class="recap-header">
+                        <h4>Étape 5 : Synthèse</h4>
+                        <a href="<?= url('consultation-step5', ['id' => $consultId]) ?>" class="btn btn-outline btn-sm">Modifier</a>
+                    </div>
+                    <div class="recap-content">
+                        <?php if ($synthese): ?>
+                        <div class="recap-priorities">
+                            <?php if (!empty($synthese['priorite_1'])): ?>
+                            <div class="recap-priority">
+                                <span class="priority-num">1</span>
+                                <span class="priority-text"><?= e(truncateText($synthese['priorite_1'], 80)) ?></span>
+                            </div>
+                            <?php endif; ?>
+                            <?php if (!empty($synthese['priorite_2'])): ?>
+                            <div class="recap-priority">
+                                <span class="priority-num">2</span>
+                                <span class="priority-text"><?= e(truncateText($synthese['priorite_2'], 80)) ?></span>
+                            </div>
+                            <?php endif; ?>
+                            <?php if (!empty($synthese['priorite_3'])): ?>
+                            <div class="recap-priority">
+                                <span class="priority-num">3</span>
+                                <span class="priority-text"><?= e(truncateText($synthese['priorite_3'], 80)) ?></span>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                        <?php else: ?>
+                        <p class="text-muted">Synthèse non encore remplie</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- ÉTAPE 6 : PHV (résumé) -->
+                <div class="recap-section">
+                    <div class="recap-header">
+                        <h4>Étape 6 : PHV</h4>
+                        <span class="badge badge-terra">Actuel</span>
+                    </div>
+                    <div class="recap-content">
+                        <div class="recap-phv-summary">
+                            <?php if ($phv): ?>
+                            <div class="recap-row">
+                                <span class="recap-label">Alimentation :</span>
+                                <span class="recap-value"><?= e(truncateText($phv['alimentation'] ?? '', 60)) ?></span>
+                            </div>
+                            <?php if (!empty($phv['phytologie'])): ?>
+                            <div class="recap-row">
+                                <span class="recap-label">Phytologie :</span>
+                                <span class="recap-value"><?= e(truncateText($phv['phytologie'], 60)) ?></span>
+                            </div>
+                            <?php endif; ?>
+                            <?php if (!empty($phv['complements'])): ?>
+                            <div class="recap-row">
+                                <span class="recap-label">Compléments :</span>
+                                <span class="recap-value"><?= e(truncateText($phv['complements'], 60)) ?></span>
+                            </div>
+                            <?php endif; ?>
+                            <?php else: ?>
+                            <p class="text-muted">PHV en cours de rédaction...</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes praticien (internes) -->
+                <div class="recap-section recap-notes">
+                    <div class="recap-header">
+                        <h4>Notes praticien (internes)</h4>
+                        <span class="badge badge-secondary">Non exporté</span>
+                    </div>
+                    <div class="recap-content">
+                        <textarea name="notes_praticien_internes" class="form-control" rows="3" placeholder="Notes personnelles, rappels pour le suivi, points à surveiller..."><?= e($phv['notes_praticien'] ?? '') ?></textarea>
+                    </div>
+                </div>
+
+                <!-- Prochain RDV -->
+                <div class="recap-section recap-rdv">
+                    <div class="recap-header">
+                        <h4>Prochain rendez-vous</h4>
+                    </div>
+                    <div class="recap-content">
+                        <div class="form-row">
+                            <div class="form-group" style="flex:1;">
+                                <input type="date" name="prochain_rdv" class="form-control" value="<?= e($phv['prochain_rdv'] ?? '') ?>">
+                            </div>
+                            <div class="form-group" style="flex:2;">
+                                <input type="text" name="prochain_rdv_notes" class="form-control" placeholder="Notes pour le prochain RDV..." value="<?= e($phv['prochain_rdv_notes'] ?? '') ?>">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
         <div class="d-flex justify-between" style="margin-top: 1.5rem;">
             <a href="<?= url('consultation-step5', ['id' => $consultId]) ?>" class="btn btn-secondary">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>

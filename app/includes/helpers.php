@@ -110,3 +110,11 @@ function getReponses(int $consultationId, ?string $section = null): array {
 function getReponseValue(array $reponses, string $key, string $default = ''): string {
     return $reponses[$key]['reponse'] ?? $default;
 }
+
+// Tronquer un texte à une longueur maximale
+function truncateText(?string $text, int $maxLength = 100): string {
+    if ($text === null || $text === '') return '';
+    $text = trim($text);
+    if (mb_strlen($text) <= $maxLength) return $text;
+    return mb_substr($text, 0, $maxLength) . '...';
+}
