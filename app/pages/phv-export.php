@@ -97,9 +97,14 @@ if (!empty($pathologiesIds)) {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>PHV - <?= e($consultation['client_prenom'] . ' ' . $consultation['client_nom']) ?></title>
+    <title>PHV_<?= e(strtolower($consultation['client_prenom']) . '_' . strtolower($consultation['client_nom']) . '_' . date('Y-m-d', strtotime($consultation['date_consultation']))) ?></title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
+
+        @page {
+            size: A4;
+            margin: 15mm 15mm 15mm 15mm;
+        }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -610,12 +615,24 @@ if (!empty($pathologiesIds)) {
     </style>
 </head>
 <body>
+    <?php $autoPrint = isset($_GET['auto']) || !isset($_GET['preview']); ?>
     <div class="print-bar no-print">
         <span>Programme d'Hygiène de Vie - <?= e($consultation['client_prenom'] . ' ' . $consultation['client_nom']) ?></span>
         <div>
-            <button onclick="window.print()">Imprimer / Sauvegarder en PDF</button>
+            <button type="button" onclick="window.print()">📄 Ré-ouvrir le dialogue PDF</button>
+            <a href="<?= url('consultation-step6', ['id' => $consultId]) ?>" style="margin-left:.5rem;color:#fff;text-decoration:underline;">← Retour</a>
         </div>
     </div>
+
+    <?php if ($autoPrint): ?>
+    <script>
+    // Déclenche automatiquement le dialogue d'impression/PDF
+    // Chrome/Edge/Firefox/Safari proposent "Enregistrer au format PDF" par défaut
+    window.addEventListener('load', function() {
+        setTimeout(function() { window.print(); }, 500);
+    });
+    </script>
+    <?php endif; ?>
 
     <!-- PAGE 1 : PHV Principal -->
     <div class="page">
