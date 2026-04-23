@@ -115,6 +115,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             require __DIR__ . '/pages/actions/client-save.php';
             break;
 
+        case 'client-delete':
+            require __DIR__ . '/pages/actions/client-delete.php';
+            break;
+
+        case 'consultation-delete':
+            require __DIR__ . '/pages/actions/consultation-delete.php';
+            break;
+
         case 'consultation-create':
             require __DIR__ . '/pages/actions/consultation-create.php';
             break;

@@ -84,6 +84,11 @@ $clients = $stmt->fetchAll();
                             <td class="actions">
                                 <a href="<?= url('client-view', ['id' => $cl['id']]) ?>" class="btn btn-outline btn-sm">Voir</a>
                                 <a href="<?= url('consultation-new', ['client_id' => $cl['id']]) ?>" class="btn btn-terra btn-sm">Consultation</a>
+                                <form method="POST" action="<?= url('clients') ?>" style="display:inline;" onsubmit="return confirm('Supprimer définitivement <?= e(addslashes($cl['prenom'] . ' ' . $cl['nom'])) ?> et TOUTES ses données (consultations, factures, mesures) ?\n\nCette action est irréversible (<?= $nbConsult ?> consultation<?= $nbConsult > 1 ? 's' : '' ?>).');">
+                                    <input type="hidden" name="action" value="client-delete">
+                                    <input type="hidden" name="client_id" value="<?= $cl['id'] ?>">
+                                    <button type="submit" class="btn btn-sm" style="background:#fee;color:#d85a3d;border:1px solid #f5c5b8;" title="Supprimer">🗑</button>
+                                </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>

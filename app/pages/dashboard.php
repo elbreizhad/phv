@@ -135,8 +135,20 @@ $dernClients = $recentClients->fetchAll();
                                 <td><strong><?= e($c['client_prenom'] . ' ' . $c['client_nom']) ?></strong></td>
                                 <td class="text-sm text-muted"><?= e(mb_strimwidth($c['motif'], 0, 40, '...')) ?></td>
                                 <td><span class="badge <?= $statusBadge ?>"><?= $statusLabel ?></span></td>
-                                <td>
-                                    <a href="<?= url($stepPage, ['id' => $c['id']]) ?>" class="btn btn-outline btn-sm">Continuer</a>
+                                <td style="display:flex;gap:.3rem;">
+                                    <?php
+                                    $isV2 = ($c['trame_version'] ?? 'v1') === 'v2';
+                                    $continueUrl = $isV2
+                                        ? url('consultation-v2', ['id' => $c['id'], 'step' => max(1, (int)$c['current_step'])])
+                                        : url($stepPage, ['id' => $c['id']]);
+                                    ?>
+                                    <a href="<?= $continueUrl ?>" class="btn btn-outline btn-sm">Continuer</a>
+                                    <form method="POST" action="<?= url('dashboard') ?>" style="display:inline;" onsubmit="return confirm('Supprimer cette consultation ?');">
+                                        <input type="hidden" name="action" value="consultation-delete">
+                                        <input type="hidden" name="consultation_id" value="<?= $c['id'] ?>">
+                                        <input type="hidden" name="return_to" value="dashboard">
+                                        <button type="submit" class="btn btn-sm" style="background:#fee;color:#d85a3d;border:1px solid #f5c5b8;" title="Supprimer">🗑</button>
+                                    </form>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

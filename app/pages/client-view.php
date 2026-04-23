@@ -28,6 +28,11 @@ $age = $client['date_naissance'] ? (new DateTime($client['date_naissance']))->di
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Nouvelle consultation
         </a>
+        <form method="POST" action="<?= url('client-view', ['id' => $clientId]) ?>" style="display:inline;" onsubmit="return confirm('Supprimer définitivement <?= e(addslashes($client['prenom'] . ' ' . $client['nom'])) ?> et TOUTES ses données (<?= count($consultations) ?> consultation<?= count($consultations) > 1 ? 's' : '' ?>, factures, mesures) ?\n\nCette action est irréversible.');">
+            <input type="hidden" name="action" value="client-delete">
+            <input type="hidden" name="client_id" value="<?= $clientId ?>">
+            <button type="submit" class="btn" style="background:#fee;color:#d85a3d;border:1px solid #f5c5b8;">🗑 Supprimer le client</button>
+        </form>
     </div>
 </div>
 
@@ -142,10 +147,24 @@ $age = $client['date_naissance'] ? (new DateTime($client['date_naissance']))->di
                                 <td><span class="badge badge-<?= $c['type_seance'] === 'premiere' ? 'terra' : 'sage' ?>"><?= $c['type_seance'] === 'premiere' ? '1ère séance' : 'Suivi' ?></span></td>
                                 <td class="text-sm"><?= e(mb_strimwidth($c['motif'], 0, 50, '...')) ?></td>
                                 <td><span class="badge <?= $statusBadge ?>"><?= $statusLabel ?></span></td>
-                                <td>
-                                    <a href="<?= url('consultation-step' . $c['current_step'], ['id' => $c['id']]) ?>" class="btn btn-outline btn-sm">
+                                <td style="display:flex;gap:.3rem;">
+                                    <?php
+                                    $isV2 = ($c['trame_version'] ?? 'v1') === 'v2';
+                                    if ($isV2) {
+                                        $continueUrl = url('consultation-v2', ['id' => $c['id'], 'step' => max(1, (int)$c['current_step'])]);
+                                    } else {
+                                        $continueUrl = url('consultation-step' . $c['current_step'], ['id' => $c['id']]);
+                                    }
+                                    ?>
+                                    <a href="<?= $continueUrl ?>" class="btn btn-outline btn-sm">
                                         <?= $c['statut'] === 'terminee' ? 'Voir' : 'Continuer' ?>
                                     </a>
+                                    <form method="POST" action="<?= url('client-view', ['id' => $clientId]) ?>" style="display:inline;" onsubmit="return confirm('Supprimer cette consultation du <?= formatDate($c['date_consultation']) ?> ?');">
+                                        <input type="hidden" name="action" value="consultation-delete">
+                                        <input type="hidden" name="consultation_id" value="<?= $c['id'] ?>">
+                                        <input type="hidden" name="return_to" value="client-view">
+                                        <button type="submit" class="btn btn-sm" style="background:#fee;color:#d85a3d;border:1px solid #f5c5b8;" title="Supprimer">🗑</button>
+                                    </form>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
