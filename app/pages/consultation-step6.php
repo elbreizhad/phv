@@ -131,9 +131,12 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
     </div>
     <div class="d-flex gap-1">
         <?php if ($phv): ?>
-        <a href="<?= url('phv-export', ['id' => $consultId]) ?>" class="btn btn-terra" target="_blank">
+        <a href="<?= url('phv-pdf', ['id' => $consultId]) ?>" class="btn btn-terra">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Exporter en PDF
+            Télécharger le PDF
+        </a>
+        <a href="<?= url('phv-export', ['id' => $consultId, 'preview' => 1]) ?>" class="btn btn-outline" target="_blank" title="Aperçu HTML (pour vérifier avant export)">
+            Aperçu
         </a>
         <?php endif; ?>
     </div>

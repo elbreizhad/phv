@@ -71,6 +71,7 @@ $validPages = [
     'fiches',
     'fiche-view',
     'phv-export',
+    'phv-pdf',
     'phv-templates',
     'phv-template-edit',
     'protocoles',
@@ -250,7 +251,7 @@ if ($page === 'logout') {
 }
 
 // Pages sans layout (login, install, export PDF, questionnaire public, visio client)
-$noLayout = ['login', 'install', 'phv-export', 'facture-export', 'questionnaire-pre', 'visio-client'];
+$noLayout = ['login', 'install', 'phv-export', 'phv-pdf', 'facture-export', 'questionnaire-pre', 'visio-client'];
 
 if (in_array($page, $noLayout)) {
     require __DIR__ . '/pages/' . $page . '.php';
