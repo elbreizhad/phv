@@ -2289,10 +2289,12 @@ function generateAutoPhvContent(array $consultation, ?array $synthese, array $re
     }
 
     // Problèmes cutanés - nutriments clé pour la peau
+    $motifCatLower = strtolower((string)$motifCat);
+    $allPrioritesLocal = trim($priorite1 . ' ' . $priorite2 . ' ' . $priorite3);
     $hasPeauIssue = str_contains($motif, 'peau') || str_contains($motif, 'acné') || str_contains($motif, 'eczéma') ||
                     str_contains($motif, 'psoriasis') || str_contains($motif, 'rosacée') || str_contains($motif, 'cutané') ||
-                    str_contains($motifCat, 'peau') || str_contains($allPriorites, 'peau') || str_contains($allPriorites, 'cutané') ||
-                    str_contains($allPriorites, 'tégumentaire');
+                    str_contains($motifCatLower, 'peau') || str_contains($allPrioritesLocal, 'peau') || str_contains($allPrioritesLocal, 'cutané') ||
+                    str_contains($allPrioritesLocal, 'tégumentaire');
     if ($hasPeauIssue) {
         $alimPrivilegier[] = "Poissons gras (sardines, maquereaux) 3x/sem - oméga-3 anti-inflammatoires";
         $alimPrivilegier[] = "Huile de bourrache ou onagre - oméga-6 GLA (peau)";
