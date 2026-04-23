@@ -123,11 +123,15 @@ $prestations = $prestationsStmt->fetchAll();
                     <h3>Trame de consultation</h3>
                 </div>
                 <div class="card-body">
-                    <label class="form-check">
-                        <input type="checkbox" name="trame_v2_enabled" value="1" <?= !empty($settings['trame_v2_enabled']) ? 'checked' : '' ?>>
-                        <label>Utiliser la trame V2 (15 sections - TaNaturo / ESN)</label>
-                    </label>
+                    <div style="display:flex; align-items:center; gap:.6rem; padding:.4rem 0;">
+                        <input type="checkbox" id="trame_v2_enabled" name="trame_v2_enabled" value="1" <?= !empty($settings['trame_v2_enabled']) ? 'checked' : '' ?> style="width:20px; height:20px; cursor:pointer;">
+                        <label for="trame_v2_enabled" style="cursor:pointer; font-weight:500;">Utiliser la trame V2 (15 sections - TaNaturo / ESN)</label>
+                    </div>
                     <p class="form-hint">Les nouvelles consultations utiliseront un questionnaire détaillé inspiré du format officiel ESN : premières impressions, antécédents familiaux tabulaires, habitat, journal alimentaire 24h, tégumentaire & endocrinien enrichis, synthèse terrain. Les consultations déjà démarrées conservent leur trame d'origine.</p>
+                    <p class="form-hint" style="background:#f3f5ef; padding:.4rem .6rem; border-radius:4px;">
+                        État actuel en base : <strong><?= !empty($settings['trame_v2_enabled']) ? '✅ V2 activée' : '⭕ V1 (par défaut)' ?></strong>
+                        — user_settings.trame_v2_enabled = <code><?= var_export($settings['trame_v2_enabled'] ?? null, true) ?></code>
+                    </p>
                 </div>
             </div>
 
