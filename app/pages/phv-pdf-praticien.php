@@ -5,10 +5,25 @@
  * Fonctionne pour V1 et V2.
  */
 
-require_once __DIR__ . '/../lib/vendor/autoload.php';
+$debugMode = isset($_GET['debug']);
+if ($debugMode) {
+    ini_set('display_errors', 1);
+    error_reporting(E_ALL);
+    header('Content-Type: text/plain; charset=utf-8');
+    echo "=== DEBUG phv-pdf-praticien ===\nPHP : " . PHP_VERSION . "\n";
+    $autoload = __DIR__ . '/../lib/vendor/autoload.php';
+    echo "Autoload : " . (file_exists($autoload) ? 'OK' : 'MANQUANT - ' . $autoload) . "\n";
+}
 
-use Dompdf\Dompdf;
-use Dompdf\Options;
+try {
+    $autoload = __DIR__ . '/../lib/vendor/autoload.php';
+    if (!file_exists($autoload)) {
+        throw new RuntimeException("Bibliothèque Dompdf absente. Upload manquant : app/lib/vendor/");
+    }
+    require_once $autoload;
+    if (!class_exists('Dompdf\Dompdf')) {
+        throw new RuntimeException("Classe Dompdf introuvable.");
+    }
 
 $db = getDB();
 $consultId = (int) getGet('id');
@@ -303,19 +318,46 @@ if (!empty($complements)) {
 <?php
 $html = ob_get_clean();
 
-$options = new Options();
+$options = new \Dompdf\Options();
 $options->set('isRemoteEnabled', false);
 $options->set('isHtml5ParserEnabled', true);
 $options->set('defaultFont', 'DejaVu Sans');
 $options->set('chroot', [__DIR__ . '/..']);
+$options->set('tempDir', sys_get_temp_dir());
+$options->set('fontDir', __DIR__ . '/../lib/vendor/dompdf/dompdf/lib/fonts');
+$options->set('fontCache', sys_get_temp_dir());
 
-$dompdf = new Dompdf($options);
+$dompdf = new \Dompdf\Dompdf($options);
 $dompdf->loadHtml($html, 'UTF-8');
 $dompdf->setPaper('A4', 'portrait');
 $dompdf->render();
+
+if ($debugMode) {
+    echo "\nRendu OK - " . $dompdf->getCanvas()->get_page_count() . " pages\n";
+    echo "HTML capturé : " . strlen($html) . " caractères\n";
+    echo "\nRetire ?debug=1 pour télécharger.\n";
+    exit;
+}
 
 $filename = 'Dossier_' . preg_replace('/[^a-zA-Z0-9_-]/', '_', strtolower($consultation['client_prenom'] . '_' . $consultation['client_nom']))
           . '_' . date('Y-m-d', strtotime($consultation['date_consultation'])) . '.pdf';
 
 $dompdf->stream($filename, ['Attachment' => true]);
 exit;
+
+} catch (Throwable $e) {
+    if (isset($debugMode) && $debugMode) {
+        echo "\n!!! EXCEPTION !!!\n" . get_class($e) . " : " . $e->getMessage() . "\n"
+           . "Fichier : " . $e->getFile() . ":" . $e->getLine() . "\n\n"
+           . $e->getTraceAsString() . "\n";
+    } else {
+        http_response_code(500);
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Erreur PDF</title></head><body style="font-family:sans-serif;padding:2rem;max-width:800px;margin:auto;">';
+        echo '<h1 style="color:#c0392b;">Erreur lors de la génération du PDF praticien</h1>';
+        echo '<p>' . htmlspecialchars($e->getMessage()) . '</p>';
+        echo '<p><a href="?page=phv-pdf-praticien&id=' . (int)($_GET['id'] ?? 0) . '&debug=1">Mode debug</a> · <a href="javascript:history.back()">← Retour</a></p>';
+        echo '</body></html>';
+    }
+    exit;
+}
