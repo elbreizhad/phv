@@ -75,16 +75,16 @@ $sectionFile = __DIR__ . '/v2-sections/' . ($sectionSlugs[$currentStep] ?? '01-a
         </div>
     </div>
 
-    <?php if (!empty($_SESSION['v2_save_debug'])): $sdbg = $_SESSION['v2_save_debug']; unset($_SESSION['v2_save_debug']); ?>
-    <div style="background:#1e1e1e; color:#0f0; padding:.8rem; border-radius:6px; font-family:monospace; font-size:12px; white-space:pre-wrap; margin-bottom:1rem;">🐛 DEBUG DERNIER SAVE V2
+    <?php // Bandeau debug du dernier save (affiché uniquement si ?debug=1 dans l'URL)
+    if (isset($_GET['debug']) && !empty($_SESSION['v2_save_debug'])): $sdbg = $_SESSION['v2_save_debug']; unset($_SESSION['v2_save_debug']); ?>
+    <div style="background:#1e1e1e; color:#0f0; padding:.8rem; border-radius:6px; font-family:monospace; font-size:12px; overflow-x:auto; max-width:100%; margin-bottom:1rem;">🐛 DEBUG DERNIER SAVE V2
 <?php foreach ($sdbg as $k => $v): ?>
   <?= str_pad($k, 26) ?> : <?= is_scalar($v) ? var_export($v, true) : json_encode($v, JSON_UNESCAPED_UNICODE) ?>
 <?php endforeach; ?>
 </div>
-    <?php endif; ?>
+    <?php elseif (!empty($_SESSION['v2_save_debug'])): unset($_SESSION['v2_save_debug']); endif; ?>
 
-    <?php // 🐛 DEBUG dispatcher - à retirer plus tard
-    if (isset($_GET['debug'])): ?>
+    <?php if (isset($_GET['debug'])): ?>
     <div style="background:#1e1e1e; color:#0f0; padding:.8rem; border-radius:6px; font-family:monospace; font-size:12px; white-space:pre-wrap; margin-bottom:1rem;">🐛 DEBUG V2 DISPATCHER
   currentStep (?step=)       : <?= $currentStep ?>
 
@@ -137,9 +137,17 @@ $sectionFile = __DIR__ . '/v2-sections/' . ($sectionSlugs[$currentStep] ?? '01-a
 <style>
 .v2-section { margin-bottom: 1.5rem; }
 .v2-section .card-header { background: #f3f5ef; }
-.v2-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-.v2-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-.v2-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: .5rem; }
+.v2-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.v2-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.v2-grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .5rem; }
+@media (max-width: 900px) {
+    .v2-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .v2-grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+    .v2-grid-2, .v2-grid-3, .v2-grid-4 { grid-template-columns: 1fr; }
+}
+.v2-section .form-control { max-width: 100%; }
 .v2-tip { background: #fff6e0; border-left: 3px solid #e0a829; padding: .6rem .9rem; border-radius: 4px; font-size: 13px; margin: .5rem 0; }
 .v2-warn { background: #ffe8e3; border-left: 3px solid #d85a3d; padding: .6rem .9rem; border-radius: 4px; font-size: 13px; margin: .5rem 0; }
 .v2-scale { display: flex; gap: .25rem; flex-wrap: wrap; }
@@ -154,4 +162,5 @@ $sectionFile = __DIR__ . '/v2-sections/' . ($sectionSlugs[$currentStep] ?? '01-a
 .v2-family-table th { background: #f3f5ef; font-weight: 600; }
 .v2-family-table td:first-child { text-align: left; font-weight: 500; }
 .v2-family-table input[type="checkbox"] { margin: 0; }
+.main-content { overflow-x: hidden; }
 </style>

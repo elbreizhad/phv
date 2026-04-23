@@ -42,6 +42,8 @@ $steps = CONSULTATION_STEPS_V2;
     padding: .8rem;
     background: #f9f9f7;
     border-radius: 8px;
+    max-width: 100%;
+    overflow-x: auto;
 }
 .step-v2 {
     display: flex;
@@ -56,6 +58,7 @@ $steps = CONSULTATION_STEPS_V2;
     font-size: 12px;
     line-height: 1.2;
     transition: all .15s;
+    flex-shrink: 0;
 }
 .step-v2:hover { border-color: #a2b59a; color: #2c3e2c; }
 .step-v2.completed { background: #e8f0e3; border-color: #7a9b6e; color: #3a5a2e; }
@@ -66,10 +69,11 @@ $steps = CONSULTATION_STEPS_V2;
     border-radius: 50%;
     background: rgba(0,0,0,.06);
     font-size: 13px;
+    flex-shrink: 0;
 }
 .step-v2.active .step-number { background: rgba(255,255,255,.2); }
 .step-label-v2 { white-space: nowrap; }
-@media (max-width: 1200px) {
+@media (max-width: 1400px) {
     .step-label-v2 { display: none; }
     .step-v2 { padding: .35rem; }
 }
