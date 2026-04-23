@@ -19,17 +19,26 @@ $terminees = $db->prepare("SELECT COUNT(*) FROM consultations WHERE user_id = ? 
 $terminees->execute([$userId]);
 $nbTerminees = $terminees->fetchColumn();
 
-// Dernières consultations
-$recentConsult = $db->prepare("
-    SELECT c.*, cl.nom AS client_nom, cl.prenom AS client_prenom
-    FROM consultations c
-    JOIN clients cl ON c.client_id = cl.id
-    WHERE c.user_id = ?
-    ORDER BY c.updated_at DESC
-    LIMIT 5
-");
-$recentConsult->execute([$userId]);
-$dernieres = $recentConsult->fetchAll();
+// Dernières consultations avec détection V2 (trame_version OU présence v2_step%)
+try {
+    $recentConsult = $db->prepare("
+        SELECT c.*, cl.nom AS client_nom, cl.prenom AS client_prenom,
+            CASE WHEN c.trame_version = 'v2'
+                 OR EXISTS (SELECT 1 FROM consultation_reponses r WHERE r.consultation_id = c.id AND r.section LIKE 'v2_step%')
+            THEN 'v2' ELSE 'v1' END AS resolved_trame
+        FROM consultations c
+        JOIN clients cl ON c.client_id = cl.id
+        WHERE c.user_id = ?
+        ORDER BY c.updated_at DESC
+        LIMIT 5
+    ");
+    $recentConsult->execute([$userId]);
+    $dernieres = $recentConsult->fetchAll();
+} catch (PDOException $e) {
+    $fallback = $db->prepare("SELECT c.*, cl.nom AS client_nom, cl.prenom AS client_prenom, 'v1' AS resolved_trame FROM consultations c JOIN clients cl ON c.client_id = cl.id WHERE c.user_id = ? ORDER BY c.updated_at DESC LIMIT 5");
+    $fallback->execute([$userId]);
+    $dernieres = $fallback->fetchAll();
+}
 
 // Derniers clients
 $recentClients = $db->prepare("SELECT * FROM clients WHERE user_id = ? ORDER BY created_at DESC LIMIT 5");
@@ -137,10 +146,16 @@ $dernClients = $recentClients->fetchAll();
                                 <td><span class="badge <?= $statusBadge ?>"><?= $statusLabel ?></span></td>
                                 <td style="display:flex;gap:.3rem;">
                                     <?php
-                                    $isV2 = ($c['trame_version'] ?? 'v1') === 'v2';
-                                    $continueUrl = $isV2
-                                        ? url('consultation-v2', ['id' => $c['id'], 'step' => max(1, (int)$c['current_step'])])
-                                        : url($stepPage, ['id' => $c['id']]);
+                                    $isV2 = ($c['resolved_trame'] ?? 'v1') === 'v2';
+                                    if ($isV2) {
+                                        if ($c['statut'] === 'phv' || $c['statut'] === 'terminee') {
+                                            $continueUrl = url('consultation-step6', ['id' => $c['id']]);
+                                        } else {
+                                            $continueUrl = url('consultation-v2', ['id' => $c['id'], 'step' => max(1, min(15, (int)$c['current_step']))]);
+                                        }
+                                    } else {
+                                        $continueUrl = url($stepPage, ['id' => $c['id']]);
+                                    }
                                     ?>
                                     <a href="<?= $continueUrl ?>" class="btn btn-outline btn-sm">Continuer</a>
                                     <form method="POST" action="<?= url('dashboard') ?>" style="display:inline;" onsubmit="return confirm('Supprimer cette consultation ?');">

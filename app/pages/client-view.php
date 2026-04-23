@@ -8,10 +8,25 @@ $stmt->execute([$clientId, $userId]);
 $client = $stmt->fetch();
 if (!$client) { redirect('clients'); }
 
-// Consultations du client
-$cStmt = $db->prepare("SELECT * FROM consultations WHERE client_id = ? ORDER BY date_consultation DESC");
-$cStmt->execute([$clientId]);
-$consultations = $cStmt->fetchAll();
+// Consultations du client + détection V2 (trame_version OU présence de réponses v2_step%)
+$cStmt = $db->prepare("
+    SELECT c.*,
+        CASE WHEN c.trame_version = 'v2'
+             OR EXISTS (SELECT 1 FROM consultation_reponses r WHERE r.consultation_id = c.id AND r.section LIKE 'v2_step%')
+        THEN 'v2' ELSE 'v1' END AS resolved_trame
+    FROM consultations c
+    WHERE c.client_id = ?
+    ORDER BY c.date_consultation DESC
+");
+try {
+    $cStmt->execute([$clientId]);
+    $consultations = $cStmt->fetchAll();
+} catch (PDOException $e) {
+    // Colonne trame_version absente -> requête simple
+    $fallback = $db->prepare("SELECT *, 'v1' AS resolved_trame FROM consultations WHERE client_id = ? ORDER BY date_consultation DESC");
+    $fallback->execute([$clientId]);
+    $consultations = $fallback->fetchAll();
+}
 
 // Calcul âge
 $age = $client['date_naissance'] ? (new DateTime($client['date_naissance']))->diff(new DateTime())->y : $client['age'];
@@ -149,11 +164,17 @@ $age = $client['date_naissance'] ? (new DateTime($client['date_naissance']))->di
                                 <td><span class="badge <?= $statusBadge ?>"><?= $statusLabel ?></span></td>
                                 <td style="display:flex;gap:.3rem;">
                                     <?php
-                                    $isV2 = ($c['trame_version'] ?? 'v1') === 'v2';
+                                    $isV2 = ($c['resolved_trame'] ?? 'v1') === 'v2';
                                     if ($isV2) {
-                                        $continueUrl = url('consultation-v2', ['id' => $c['id'], 'step' => max(1, (int)$c['current_step'])]);
+                                        // Si statut = phv, on renvoie sur le PHV (step6 réutilisé) ; sinon sur la dernière étape questionnaire/synthèse
+                                        if ($c['statut'] === 'phv' || $c['statut'] === 'terminee') {
+                                            $continueUrl = url('consultation-step6', ['id' => $c['id']]);
+                                        } else {
+                                            $vStep = max(1, min(15, (int)$c['current_step']));
+                                            $continueUrl = url('consultation-v2', ['id' => $c['id'], 'step' => $vStep]);
+                                        }
                                     } else {
-                                        $continueUrl = url('consultation-step' . $c['current_step'], ['id' => $c['id']]);
+                                        $continueUrl = url('consultation-step' . max(1, min(6, (int)$c['current_step'])), ['id' => $c['id']]);
                                     }
                                     ?>
                                     <a href="<?= $continueUrl ?>" class="btn btn-outline btn-sm">

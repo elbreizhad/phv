@@ -30,6 +30,15 @@ if (!$consultation) { redirect('dashboard'); }
 
 $currentStep = 6;
 
+// Détection V2 : trame_version explicite OU présence de réponses v2_step%
+$isV2 = ($consultation['trame_version'] ?? 'v1') === 'v2';
+if (!$isV2) {
+    $checkV2 = $db->prepare("SELECT 1 FROM consultation_reponses WHERE consultation_id = ? AND section LIKE 'v2_step%' LIMIT 1");
+    $checkV2->execute([$consultId]);
+    $isV2 = (bool) $checkV2->fetchColumn();
+}
+if ($isV2) { $currentStep = 16; }
+
 // Récupérer la synthèse
 $synthStmt = $db->prepare("SELECT * FROM consultation_synthese WHERE consultation_id = ?");
 $synthStmt->execute([$consultId]);
@@ -131,7 +140,7 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
 </div>
 
 <div class="page-body animate-in">
-    <?php require __DIR__ . '/../includes/stepper.php'; ?>
+    <?php require __DIR__ . ($isV2 ? '/../includes/stepper-v2.php' : '/../includes/stepper.php'); ?>
 
     <div class="alert alert-info mb-3">
         <strong>Mode contextuel :</strong> Les suggestions s'adaptent au profil du client. Cliquez sur [+] pour ajouter une suggestion, modifiez librement le texte.
@@ -941,7 +950,7 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
                 <div class="recap-section">
                     <div class="recap-header">
                         <h4>Étape 1 : Client & Motif</h4>
-                        <a href="<?= url('consultation-step1', ['id' => $consultId]) ?>" class="btn btn-outline btn-sm">Modifier</a>
+                        <a href="<?= $isV2 ? url('consultation-v2', ['id' => $consultId, 'step' => 1]) : url('consultation-step1', ['id' => $consultId]) ?>" class="btn btn-outline btn-sm">Modifier</a>
                     </div>
                     <div class="recap-content">
                         <div class="recap-row">
@@ -973,7 +982,7 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
                 <div class="recap-section">
                     <div class="recap-header">
                         <h4>Étape 2 : Mode de vie</h4>
-                        <a href="<?= url('consultation-step2', ['id' => $consultId]) ?>" class="btn btn-outline btn-sm">Modifier</a>
+                        <a href="<?= $isV2 ? url('consultation-v2', ['id' => $consultId, 'step' => 5]) : url('consultation-step2', ['id' => $consultId]) ?>" class="btn btn-outline btn-sm">Modifier</a>
                     </div>
                     <div class="recap-content">
                         <div class="recap-scores">
@@ -1009,7 +1018,7 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
                 <div class="recap-section">
                     <div class="recap-header">
                         <h4>Étape 3 : Bilan systémique</h4>
-                        <a href="<?= url('consultation-step3', ['id' => $consultId]) ?>" class="btn btn-outline btn-sm">Modifier</a>
+                        <a href="<?= $isV2 ? url('consultation-v2', ['id' => $consultId, 'step' => 9]) : url('consultation-step3', ['id' => $consultId]) ?>" class="btn btn-outline btn-sm">Modifier</a>
                     </div>
                     <div class="recap-content">
                         <?php if (!empty($allReponses['dig_troubles']['reponse'] ?? '')): ?>
@@ -1043,7 +1052,7 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
                 <div class="recap-section">
                     <div class="recap-header">
                         <h4>Étape 4 : Observations</h4>
-                        <a href="<?= url('consultation-step4', ['id' => $consultId]) ?>" class="btn btn-outline btn-sm">Modifier</a>
+                        <a href="<?= $isV2 ? url('consultation-v2', ['id' => $consultId, 'step' => 11]) : url('consultation-step4', ['id' => $consultId]) ?>" class="btn btn-outline btn-sm">Modifier</a>
                     </div>
                     <div class="recap-content">
                         <?php
@@ -1072,7 +1081,7 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
                 <div class="recap-section">
                     <div class="recap-header">
                         <h4>Étape 5 : Synthèse</h4>
-                        <a href="<?= url('consultation-step5', ['id' => $consultId]) ?>" class="btn btn-outline btn-sm">Modifier</a>
+                        <a href="<?= $isV2 ? url('consultation-v2', ['id' => $consultId, 'step' => 15]) : url('consultation-step5', ['id' => $consultId]) ?>" class="btn btn-outline btn-sm">Modifier</a>
                     </div>
                     <div class="recap-content">
                         <?php if ($synthese): ?>
@@ -1166,9 +1175,10 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
         </div>
 
         <div class="d-flex justify-between" style="margin-top: 1.5rem;">
-            <a href="<?= url('consultation-step5', ['id' => $consultId]) ?>" class="btn btn-secondary">
+            <?php $prevUrl = $isV2 ? url('consultation-v2', ['id' => $consultId, 'step' => 15]) : url('consultation-step5', ['id' => $consultId]); ?>
+            <a href="<?= $prevUrl ?>" class="btn btn-secondary">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
-                Précédent
+                Précédent (<?= $isV2 ? 'Synthèse V2' : 'Synthèse' ?>)
             </a>
             <div class="d-flex gap-1">
                 <button type="submit" name="finalize" value="0" class="btn btn-primary btn-lg">Enregistrer le PHV</button>

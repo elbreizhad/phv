@@ -2,6 +2,7 @@
 /**
  * Stepper V2 (16 étapes) - compact horizontal
  * Variables attendues : $consultation, $currentStep
+ * Toutes les étapes sont cliquables (navigation libre).
  */
 $steps = CONSULTATION_STEPS_V2;
 ?>
@@ -14,13 +15,8 @@ $steps = CONSULTATION_STEPS_V2;
         $url = $num === 16
             ? url('consultation-step6', ['id' => $consultation['id']])
             : url('consultation-v2', ['id' => $consultation['id'], 'step' => $num]);
-        $clickable = $num <= $currentStep;
         ?>
-        <?php if ($clickable): ?>
-            <a href="<?= $url ?>" class="step-v2 <?= $state ?>" title="<?= e($step['label']) ?>">
-        <?php else: ?>
-            <div class="step-v2 <?= $state ?>" title="<?= e($step['label']) ?>">
-        <?php endif; ?>
+        <a href="<?= $url ?>" class="step-v2 <?= $state ?>" title="<?= e($step['label']) ?>">
             <div class="step-number">
                 <?php if ($state === 'completed'): ?>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg>
@@ -29,7 +25,7 @@ $steps = CONSULTATION_STEPS_V2;
                 <?php endif; ?>
             </div>
             <span class="step-label-v2"><?= $num ?>. <?= e($step['label']) ?></span>
-        <?php echo $clickable ? '</a>' : '</div>'; ?>
+        </a>
     <?php endforeach; ?>
 </div>
 
