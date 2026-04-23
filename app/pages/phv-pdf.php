@@ -30,6 +30,11 @@ if ($debugMode) {
     echo "max_execution_time : " . ini_get('max_execution_time') . "\n";
 }
 
+// Capturer tout output parasite en mode normal
+if (!$debugMode) {
+    ob_start();
+}
+
 try {
     $autoload = __DIR__ . '/../lib/vendor/autoload.php';
     if (!file_exists($autoload)) {
@@ -103,7 +108,18 @@ try {
     $filename = 'PHV_' . preg_replace('/[^a-zA-Z0-9_-]/', '_', strtolower($consultation['client_prenom'] . '_' . $consultation['client_nom']))
               . '_' . date('Y-m-d', strtotime($consultation['date_consultation'])) . '.pdf';
 
-    $dompdf->stream($filename, ['Attachment' => true]);
+    // Vider tout output parasite avant d'envoyer le PDF binaire
+    if (!$debugMode && ob_get_length() !== false) {
+        ob_end_clean();
+    }
+
+    $pdfOutput = $dompdf->output();
+    header('Content-Type: application/pdf');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    header('Content-Length: ' . strlen($pdfOutput));
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
+    echo $pdfOutput;
     exit;
 
 } catch (Throwable $e) {
