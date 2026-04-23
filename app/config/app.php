@@ -66,6 +66,27 @@ define('CONSULTATION_STEPS', [
     6 => ['slug' => 'phv', 'label' => 'Programme PHV', 'icon' => 'file-text'],
 ]);
 
+// Trame V2 (basée sur Questionnaire_Naturopathie_Complet.docx - TaNaturo / ESN)
+// 15 sections + étape PHV = 16 étapes
+define('CONSULTATION_STEPS_V2', [
+    1  => ['emoji' => '👁️',  'label' => 'Anthropométrie & Premières impressions'],
+    2  => ['emoji' => '🎯',  'label' => 'Motif de consultation'],
+    3  => ['emoji' => '👨‍👩‍👧', 'label' => 'Situation familiale & sociale'],
+    4  => ['emoji' => '💼',  'label' => 'Vie professionnelle'],
+    5  => ['emoji' => '🏥',  'label' => 'Antécédents personnels & familiaux'],
+    6  => ['emoji' => '😴',  'label' => 'Sommeil & Énergie vitale'],
+    7  => ['emoji' => '🏡',  'label' => 'Habitat & Activité physique'],
+    8  => ['emoji' => '💧',  'label' => 'Hydratation'],
+    9  => ['emoji' => '🥗',  'label' => 'Hygiène alimentaire'],
+    10 => ['emoji' => '🫁',  'label' => 'Système digestif & Émonctoires'],
+    11 => ['emoji' => '🧴',  'label' => 'Système tégumentaire'],
+    12 => ['emoji' => '🫀',  'label' => 'Respiratoire / Cardio / Locomoteur / Urinaire'],
+    13 => ['emoji' => '🧠',  'label' => 'Immunité & Système nerveux / émotionnel'],
+    14 => ['emoji' => '🔬',  'label' => 'Système endocrinien & hormonal'],
+    15 => ['emoji' => '🗺️',  'label' => 'Synthèse — Terrain & Priorités'],
+    16 => ['emoji' => '🌿',  'label' => 'Programme PHV'],
+]);
+
 // Types de rendez-vous
 define('RDV_TYPES', [
     'premiere_consultation' => ['label' => 'Première consultation', 'duree' => 90, 'couleur' => '#4a6741'],

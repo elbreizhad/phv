@@ -20,6 +20,7 @@ if ($tab === 'cabinet') {
     $premiereHeure = getPost('premiere_heure_agenda');
     $derniereHeure = getPost('derniere_heure_agenda');
     $dureeRdv = (int)getPost('duree_rdv_defaut');
+    $trameV2 = !empty($_POST['trame_v2_enabled']) ? 1 : 0;
 
     // Vérifier si settings existe
     $checkStmt = $db->prepare("SELECT id FROM user_settings WHERE user_id = ?");
@@ -30,23 +31,24 @@ if ($tab === 'cabinet') {
             UPDATE user_settings SET
                 nom_cabinet = ?, site_web = ?, adresse_cabinet = ?, telephone_cabinet = ?, email_cabinet = ?,
                 siret = ?, code_ape = ?, mentions_facture = ?,
-                premiere_heure_agenda = ?, derniere_heure_agenda = ?, duree_rdv_defaut = ?
+                premiere_heure_agenda = ?, derniere_heure_agenda = ?, duree_rdv_defaut = ?,
+                trame_v2_enabled = ?
             WHERE user_id = ?
         ");
         $stmt->execute([
             $nomCabinet, $siteWeb, $adresseCabinet, $telephoneCabinet, $emailCabinet,
             $siret, $codeApe, $mentionsFacture,
-            $premiereHeure, $derniereHeure, $dureeRdv,
+            $premiereHeure, $derniereHeure, $dureeRdv, $trameV2,
             $userId
         ]);
     } else {
         $stmt = $db->prepare("
-            INSERT INTO user_settings (user_id, nom_cabinet, site_web, adresse_cabinet, telephone_cabinet, email_cabinet, siret, code_ape, mentions_facture, premiere_heure_agenda, derniere_heure_agenda, duree_rdv_defaut)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO user_settings (user_id, nom_cabinet, site_web, adresse_cabinet, telephone_cabinet, email_cabinet, siret, code_ape, mentions_facture, premiere_heure_agenda, derniere_heure_agenda, duree_rdv_defaut, trame_v2_enabled)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $stmt->execute([
             $userId, $nomCabinet, $siteWeb, $adresseCabinet, $telephoneCabinet, $emailCabinet,
-            $siret, $codeApe, $mentionsFacture, $premiereHeure, $derniereHeure, $dureeRdv
+            $siret, $codeApe, $mentionsFacture, $premiereHeure, $derniereHeure, $dureeRdv, $trameV2
         ]);
     }
 

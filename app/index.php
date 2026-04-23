@@ -56,6 +56,7 @@ $validPages = [
     'consultation-step4',
     'consultation-step5',
     'consultation-step6',
+    'consultation-v2',
     'consultation-view',
     // Agenda
     'agenda',
@@ -120,6 +121,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         case 'consultation-save-step':
             require __DIR__ . '/pages/actions/consultation-save-step.php';
+            break;
+
+        case 'consultation-save-step-v2':
+            require __DIR__ . '/pages/actions/consultation-save-step-v2.php';
             break;
 
         case 'synthese-save':

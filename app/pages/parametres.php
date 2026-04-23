@@ -118,6 +118,19 @@ $prestations = $prestationsStmt->fetchAll();
                 </div>
             </div>
 
+            <div class="card mb-2">
+                <div class="card-header">
+                    <h3>Trame de consultation</h3>
+                </div>
+                <div class="card-body">
+                    <label class="form-check">
+                        <input type="checkbox" name="trame_v2_enabled" value="1" <?= !empty($settings['trame_v2_enabled']) ? 'checked' : '' ?>>
+                        <label>Utiliser la trame V2 (15 sections - TaNaturo / ESN)</label>
+                    </label>
+                    <p class="form-hint">Les nouvelles consultations utiliseront un questionnaire détaillé inspiré du format officiel ESN : premières impressions, antécédents familiaux tabulaires, habitat, journal alimentaire 24h, tégumentaire & endocrinien enrichis, synthèse terrain. Les consultations déjà démarrées conservent leur trame d'origine.</p>
+                </div>
+            </div>
+
             <button type="submit" class="btn btn-primary">Enregistrer les paramètres</button>
         </form>
     </div>
