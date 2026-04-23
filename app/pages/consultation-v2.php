@@ -135,32 +135,48 @@ $sectionFile = __DIR__ . '/v2-sections/' . ($sectionSlugs[$currentStep] ?? '01-a
 </div>
 
 <style>
-.v2-section { margin-bottom: 1.5rem; }
+/* Garde-fou global : rien ne dépasse le conteneur principal */
+html, body { overflow-x: hidden; }
+.main-content { overflow-x: hidden; max-width: 100%; min-width: 0; }
+.page-body { max-width: 100%; box-sizing: border-box; overflow-x: hidden; }
+
+.v2-section { margin-bottom: 1.5rem; max-width: 100%; overflow-x: auto; }
 .v2-section .card-header { background: #f3f5ef; }
-.v2-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-.v2-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
-.v2-grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .5rem; }
-@media (max-width: 900px) {
+.v2-section .card-body { max-width: 100%; box-sizing: border-box; overflow-x: auto; }
+
+/* Grilles qui s'écrasent proprement au lieu de déborder */
+.v2-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; max-width: 100%; }
+.v2-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; max-width: 100%; }
+.v2-grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .5rem; max-width: 100%; }
+@media (max-width: 1100px) {
     .v2-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .v2-grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 600px) {
+@media (max-width: 700px) {
     .v2-grid-2, .v2-grid-3, .v2-grid-4 { grid-template-columns: 1fr; }
 }
-.v2-section .form-control { max-width: 100%; }
-.v2-tip { background: #fff6e0; border-left: 3px solid #e0a829; padding: .6rem .9rem; border-radius: 4px; font-size: 13px; margin: .5rem 0; }
-.v2-warn { background: #ffe8e3; border-left: 3px solid #d85a3d; padding: .6rem .9rem; border-radius: 4px; font-size: 13px; margin: .5rem 0; }
-.v2-scale { display: flex; gap: .25rem; flex-wrap: wrap; }
+
+/* Tous les inputs restent dans leur cellule */
+.v2-section .form-control, .v2-section input, .v2-section textarea, .v2-section select {
+    max-width: 100%; box-sizing: border-box; min-width: 0;
+}
+.v2-section .form-group { min-width: 0; }
+
+.v2-tip { background: #fff6e0; border-left: 3px solid #e0a829; padding: .6rem .9rem; border-radius: 4px; font-size: 13px; margin: .5rem 0; word-break: break-word; }
+.v2-warn { background: #ffe8e3; border-left: 3px solid #d85a3d; padding: .6rem .9rem; border-radius: 4px; font-size: 13px; margin: .5rem 0; word-break: break-word; }
+.v2-scale { display: flex; gap: .25rem; flex-wrap: wrap; max-width: 100%; }
 .v2-scale label { display: inline-flex; flex-direction: column; align-items: center; padding: .25rem .4rem; border: 1px solid #e4e2dc; border-radius: 6px; cursor: pointer; min-width: 32px; font-size: 11px; }
 .v2-scale input[type="radio"] { margin: 0 0 2px 0; }
 .v2-scale input[type="radio"]:checked + span { font-weight: bold; color: #4a6741; }
 .v2-group-title { font-weight: 600; color: #4a6741; margin: 1rem 0 .5rem; font-size: .95rem; }
-.v2-checkbox-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: .3rem .8rem; }
-.v2-checkbox-grid label { display: flex; align-items: center; gap: .4rem; font-size: 13px; cursor: pointer; padding: .2rem 0; }
-.v2-family-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.v2-checkbox-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: .3rem .8rem; max-width: 100%; }
+.v2-checkbox-grid label { display: flex; align-items: center; gap: .4rem; font-size: 13px; cursor: pointer; padding: .2rem 0; min-width: 0; }
+
+/* Tables larges : scroll horizontal dans leur carte au lieu de forcer la page */
+.v2-family-table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: auto; }
 .v2-family-table th, .v2-family-table td { border: 1px solid #e4e2dc; padding: .3rem; text-align: center; }
 .v2-family-table th { background: #f3f5ef; font-weight: 600; }
 .v2-family-table td:first-child { text-align: left; font-weight: 500; }
 .v2-family-table input[type="checkbox"] { margin: 0; }
-.main-content { overflow-x: hidden; }
+.v2-family-table input[type="text"], .v2-family-table input[type="time"] { width: 100%; min-width: 60px; }
 </style>
