@@ -27,29 +27,61 @@ if ($tab === 'cabinet') {
     $checkStmt->execute([$userId]);
 
     if ($checkStmt->fetch()) {
-        $stmt = $db->prepare("
-            UPDATE user_settings SET
-                nom_cabinet = ?, site_web = ?, adresse_cabinet = ?, telephone_cabinet = ?, email_cabinet = ?,
-                siret = ?, code_ape = ?, mentions_facture = ?,
-                premiere_heure_agenda = ?, derniere_heure_agenda = ?, duree_rdv_defaut = ?,
-                trame_v2_enabled = ?
-            WHERE user_id = ?
-        ");
-        $stmt->execute([
-            $nomCabinet, $siteWeb, $adresseCabinet, $telephoneCabinet, $emailCabinet,
-            $siret, $codeApe, $mentionsFacture,
-            $premiereHeure, $derniereHeure, $dureeRdv, $trameV2,
-            $userId
-        ]);
+        try {
+            $stmt = $db->prepare("
+                UPDATE user_settings SET
+                    nom_cabinet = ?, site_web = ?, adresse_cabinet = ?, telephone_cabinet = ?, email_cabinet = ?,
+                    siret = ?, code_ape = ?, mentions_facture = ?,
+                    premiere_heure_agenda = ?, derniere_heure_agenda = ?, duree_rdv_defaut = ?,
+                    trame_v2_enabled = ?
+                WHERE user_id = ?
+            ");
+            $stmt->execute([
+                $nomCabinet, $siteWeb, $adresseCabinet, $telephoneCabinet, $emailCabinet,
+                $siret, $codeApe, $mentionsFacture,
+                $premiereHeure, $derniereHeure, $dureeRdv, $trameV2,
+                $userId
+            ]);
+        } catch (PDOException $e) {
+            // Colonne trame_v2_enabled absente -> fallback sans elle
+            $stmt = $db->prepare("
+                UPDATE user_settings SET
+                    nom_cabinet = ?, site_web = ?, adresse_cabinet = ?, telephone_cabinet = ?, email_cabinet = ?,
+                    siret = ?, code_ape = ?, mentions_facture = ?,
+                    premiere_heure_agenda = ?, derniere_heure_agenda = ?, duree_rdv_defaut = ?
+                WHERE user_id = ?
+            ");
+            $stmt->execute([
+                $nomCabinet, $siteWeb, $adresseCabinet, $telephoneCabinet, $emailCabinet,
+                $siret, $codeApe, $mentionsFacture,
+                $premiereHeure, $derniereHeure, $dureeRdv,
+                $userId
+            ]);
+            flashSet('error', "Migration SQL manquante : exécuter app/sql/12-migration-trame-v2.sql via phpMyAdmin pour activer la trame V2.");
+            redirect('parametres');
+        }
     } else {
-        $stmt = $db->prepare("
-            INSERT INTO user_settings (user_id, nom_cabinet, site_web, adresse_cabinet, telephone_cabinet, email_cabinet, siret, code_ape, mentions_facture, premiere_heure_agenda, derniere_heure_agenda, duree_rdv_defaut, trame_v2_enabled)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ");
-        $stmt->execute([
-            $userId, $nomCabinet, $siteWeb, $adresseCabinet, $telephoneCabinet, $emailCabinet,
-            $siret, $codeApe, $mentionsFacture, $premiereHeure, $derniereHeure, $dureeRdv, $trameV2
-        ]);
+        try {
+            $stmt = $db->prepare("
+                INSERT INTO user_settings (user_id, nom_cabinet, site_web, adresse_cabinet, telephone_cabinet, email_cabinet, siret, code_ape, mentions_facture, premiere_heure_agenda, derniere_heure_agenda, duree_rdv_defaut, trame_v2_enabled)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ");
+            $stmt->execute([
+                $userId, $nomCabinet, $siteWeb, $adresseCabinet, $telephoneCabinet, $emailCabinet,
+                $siret, $codeApe, $mentionsFacture, $premiereHeure, $derniereHeure, $dureeRdv, $trameV2
+            ]);
+        } catch (PDOException $e) {
+            $stmt = $db->prepare("
+                INSERT INTO user_settings (user_id, nom_cabinet, site_web, adresse_cabinet, telephone_cabinet, email_cabinet, siret, code_ape, mentions_facture, premiere_heure_agenda, derniere_heure_agenda, duree_rdv_defaut)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ");
+            $stmt->execute([
+                $userId, $nomCabinet, $siteWeb, $adresseCabinet, $telephoneCabinet, $emailCabinet,
+                $siret, $codeApe, $mentionsFacture, $premiereHeure, $derniereHeure, $dureeRdv
+            ]);
+            flashSet('error', "Migration SQL manquante : exécuter app/sql/12-migration-trame-v2.sql via phpMyAdmin pour activer la trame V2.");
+            redirect('parametres');
+        }
     }
 
     // Mettre à jour SIRET dans users aussi
