@@ -132,6 +132,14 @@ $prestations = $prestationsStmt->fetchAll();
                         État actuel en base : <strong><?= !empty($settings['trame_v2_enabled']) ? '✅ V2 activée' : '⭕ V1 (par défaut)' ?></strong>
                         — user_settings.trame_v2_enabled = <code><?= var_export($settings['trame_v2_enabled'] ?? null, true) ?></code>
                     </p>
+
+                    <?php if (!empty($_SESSION['trame_v2_debug'])): $dbg = $_SESSION['trame_v2_debug']; unset($_SESSION['trame_v2_debug']); ?>
+                    <div style="background:#1e1e1e; color:#0f0; padding:.8rem; border-radius:6px; font-family:monospace; font-size:12px; white-space:pre-wrap; margin-top:.6rem;">🐛 DEBUG TRAME V2 (dernier save)
+<?php foreach ($dbg as $k => $v): ?>
+  <?= str_pad($k, 35) ?> : <?= is_scalar($v) ? var_export($v, true) : json_encode($v, JSON_UNESCAPED_UNICODE) ?>
+<?php endforeach; ?>
+</div>
+                    <?php endif; ?>
                 </div>
             </div>
 
