@@ -75,6 +75,30 @@ $sectionFile = __DIR__ . '/v2-sections/' . ($sectionSlugs[$currentStep] ?? '01-a
         </div>
     </div>
 
+    <?php // 🐛 DEBUG - à retirer plus tard
+    if (isset($_GET['debug'])): ?>
+    <div style="background:#1e1e1e; color:#0f0; padding:.8rem; border-radius:6px; font-family:monospace; font-size:12px; white-space:pre-wrap; margin-bottom:1rem;">🐛 DEBUG V2 DISPATCHER
+  currentStep (?step=)       : <?= $currentStep ?>
+
+  consultation.id            : <?= $consultation['id'] ?>
+
+  consultation.trame_version : <?= $consultation['trame_version'] ?? '(colonne absente)' ?>
+
+  consultation.current_step  : <?= $consultation['current_step'] ?>
+
+  section slug               : <?= $sectionSlugs[$currentStep] ?? '(non mappé)' ?>
+
+  section file path          : <?= $sectionFile ?>
+
+  section file EXISTS        : <?= file_exists($sectionFile) ? '✅ OUI' : '❌ NON' ?>
+
+  PHP version                : <?= PHP_VERSION ?>
+
+  dispatcher mtime           : <?= date('Y-m-d H:i:s', filemtime(__FILE__)) ?>
+
+</div>
+    <?php endif; ?>
+
     <form method="POST" action="<?= url('consultation-v2', ['id' => $consultId, 'step' => $currentStep]) ?>">
         <input type="hidden" name="action" value="consultation-save-step-v2">
         <input type="hidden" name="consultation_id" value="<?= $consultId ?>">
