@@ -209,6 +209,23 @@ function generatePhvPrefill(array $consultation, array $reponses): array {
         $alimEviter = array_merge($alimEviter, ['Café (max 1/jour le matin)', 'Alcool', 'Sucres rapides (pics glycémiques)']);
     }
 
+    // Problèmes cutanés - nutriments clé peau
+    $hasPeauIssue = str_contains($motif, 'peau') || str_contains($motif, 'acné') || str_contains($motif, 'eczéma') ||
+                    str_contains($motif, 'psoriasis') || str_contains($motif, 'rosacée') || str_contains($motif, 'cutané') ||
+                    str_contains($priorite1, 'peau') || str_contains($priorite1, 'cutané') || str_contains($priorite2, 'peau');
+    if ($hasPeauIssue) {
+        $alimPrivilegier = array_merge($alimPrivilegier, [
+            'Poissons gras (sardines, maquereaux) 3x/sem - oméga-3',
+            'Huile de bourrache ou onagre - oméga-6 GLA',
+            'Graines de courge, huîtres - zinc (cicatrisation)',
+            'Patate douce, carotte - bêta-carotène / vitamine A',
+            'Baies, kiwi, poivron - vitamine C (collagène)',
+            'Avocat, amandes - vitamine E antioxydante',
+            'Prêle, ortie - silicium (structure cutanée)',
+        ]);
+        $alimEviter = array_merge($alimEviter, ['Sucres rapides et produits laitiers (pro-inflammatoires peau)', 'Charcuteries (IGF-1)']);
+    }
+
     $prefill['alimentation'] = implode("\n", array_unique($alimConseils));
     $prefill['alimentation_eviter'] = implode("\n", array_map(fn($a) => "• $a", array_unique($alimEviter)));
     $prefill['alimentation_privilegier'] = implode("\n", array_map(fn($a) => "• $a", array_unique($alimPrivilegier)));
@@ -335,8 +352,27 @@ DÎNER (léger, digeste) :
         'duree' => 'Octobre à avril (ou selon dosage sanguin)'
     ];
 
-    // Limiter à 3 compléments
-    $prefill['complements'] = array_slice($complements, 0, 3);
+    // Nutriments clé peau (acné, eczéma, psoriasis, rosacée)
+    if ($hasPeauIssue) {
+        $complements[] = [
+            'nom' => 'Zinc bisglycinate',
+            'posologie' => '15-30 mg/jour au repas',
+            'duree' => '2-3 mois'
+        ];
+        $complements[] = [
+            'nom' => 'Oméga-3 EPA/DHA + Bourrache (oméga-7)',
+            'posologie' => '1 g EPA+DHA/j + 500 mg bourrache/j',
+            'duree' => '3 mois minimum'
+        ];
+        $complements[] = [
+            'nom' => 'Vitamine A / bêta-carotène + Silicium organique',
+            'posologie' => '5 000 UI vit A + 5-10 mL silicium/jour',
+            'duree' => '2-3 mois'
+        ];
+    }
+
+    // Limiter à 5 compléments si profil peau, sinon 3
+    $prefill['complements'] = array_slice($complements, 0, $hasPeauIssue ? 5 : 3);
 
     // === RECOMMANDATIONS COMPLÉMENTAIRES ===
     $reco = [];

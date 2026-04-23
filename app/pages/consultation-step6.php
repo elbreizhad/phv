@@ -2202,11 +2202,11 @@ function generateAutoPhvContent(array $consultation, ?array $synthese, array $re
     // Conseils de base toujours présents
     $alimConseils[] = "• Mastiquer longuement chaque bouchée (20-30 fois)";
     $alimConseils[] = "• Manger dans le calme, sans écran, en pleine conscience";
+    $alimConseils[] = "• Boire 1,5 L d'eau par jour (faiblement minéralisée), en dehors des repas (arrêter 30 min avant, reprendre 1h après)";
 
-    // Hydratation
-    if (empty($hydratation) || str_contains($hydratation, 'café') || str_contains($hydratation, '1l') || str_contains($hydratation, 'peu')) {
-        $alimConseils[] = "• Boire 1,5 à 2L d'eau par jour, en dehors des repas";
-        $alimAlertes[] = "Hydratation insuffisante détectée";
+    // Alerte si hydratation insuffisante détectée dans le questionnaire
+    if (!empty($hydratation) && (str_contains($hydratation, 'café') || str_contains($hydratation, '1l') || str_contains($hydratation, 'peu'))) {
+        $alimAlertes[] = "Hydratation insuffisante détectée - insister sur 1,5 L/jour minimum";
     }
 
     // Troubles digestifs
@@ -2276,6 +2276,24 @@ function generateAutoPhvContent(array $consultation, ?array $synthese, array $re
         $alimPrivilegier[] = "Graines de lin fraîchement moulues";
         $alimPrivilegier[] = "Légumes crucifères (brocoli, chou)";
         $alimEviter[] = "Perturbateurs endocriniens (plastiques, conserves)";
+    }
+
+    // Problèmes cutanés - nutriments clé pour la peau
+    $hasPeauIssue = str_contains($motif, 'peau') || str_contains($motif, 'acné') || str_contains($motif, 'eczéma') ||
+                    str_contains($motif, 'psoriasis') || str_contains($motif, 'rosacée') || str_contains($motif, 'cutané') ||
+                    str_contains($motifCat, 'peau') || str_contains($allPriorites, 'peau') || str_contains($allPriorites, 'cutané') ||
+                    str_contains($allPriorites, 'tégumentaire');
+    if ($hasPeauIssue) {
+        $alimPrivilegier[] = "Poissons gras (sardines, maquereaux) 3x/sem - oméga-3 anti-inflammatoires";
+        $alimPrivilegier[] = "Huile de bourrache ou onagre - oméga-6 GLA (peau)";
+        $alimPrivilegier[] = "Graines de courge, huîtres, légumineuses - zinc (cicatrisation)";
+        $alimPrivilegier[] = "Patate douce, carotte, épinards - bêta-carotène / vitamine A";
+        $alimPrivilegier[] = "Baies, kiwi, poivron - vitamine C (collagène)";
+        $alimPrivilegier[] = "Avocat, amandes, huile d'olive - vitamine E antioxydante";
+        $alimPrivilegier[] = "Prêle, ortie, eau silicatée - silicium (structure cutanée)";
+        $alimPrivilegier[] = "Jaune d'œuf, foie, saumon - biotine (B8) pour phanères";
+        $alimEviter[] = "Sucres rapides et produits laitiers (pro-inflammatoires peau)";
+        $alimEviter[] = "Charcuteries et viandes transformées (IGF-1 / acné)";
     }
 
     $content['alimentation']['conseils'] = implode("\n", array_unique($alimConseils));
@@ -2610,7 +2628,35 @@ DÎNER (léger, 3h avant coucher) :
         ];
     }
 
-    $content['complements'] = array_slice($complements, 0, 3);
+    // Nutriments clé peau (acné, eczéma, psoriasis, rosacée...)
+    if ($hasPeauIssue) {
+        $complements[] = [
+            'nom' => 'Zinc bisglycinate',
+            'posologie' => '15-30 mg/jour au repas',
+            'duree' => '2-3 mois',
+            'raison' => 'Cicatrisation, régulation sébum, anti-inflammatoire cutané'
+        ];
+        $complements[] = [
+            'nom' => 'Oméga-3 EPA/DHA + Oméga-7 (bourrache ou onagre)',
+            'posologie' => '1 g EPA+DHA/j + 500 mg huile de bourrache/j',
+            'duree' => '3 mois minimum',
+            'raison' => 'Hydratation de la peau, anti-inflammatoire (oméga-3), GLA (oméga-7)'
+        ];
+        $complements[] = [
+            'nom' => 'Vitamine A + bêta-carotène',
+            'posologie' => '5 000 UI/j (ou 7 mg bêta-carotène) au repas',
+            'duree' => '2-3 mois',
+            'raison' => 'Renouvellement cellulaire cutané'
+        ];
+        $complements[] = [
+            'nom' => 'Silicium organique + Biotine (B8)',
+            'posologie' => 'Silicium : 5-10 mL/j - Biotine : 5 mg/j',
+            'duree' => '3 mois',
+            'raison' => 'Structure tissu conjonctif, phanères (cheveux, ongles, peau)'
+        ];
+    }
+
+    $content['complements'] = array_slice($complements, 0, $hasPeauIssue ? 5 : 3);
 
     // ============================================
     // RECOMMANDATIONS COMPLÉMENTAIRES

@@ -68,6 +68,7 @@ $allReponses = getReponses($consultId);
                         'Stress oxydatif',
                         'Inflammation chronique',
                         'Déséquilibre hormonal',
+                        'Insulino-résistance',
                         'Surmenage nerveux',
                         'Troubles du sommeil',
                         'Sédentarité',
