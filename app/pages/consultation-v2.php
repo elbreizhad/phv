@@ -75,7 +75,15 @@ $sectionFile = __DIR__ . '/v2-sections/' . ($sectionSlugs[$currentStep] ?? '01-a
         </div>
     </div>
 
-    <?php // 🐛 DEBUG - à retirer plus tard
+    <?php if (!empty($_SESSION['v2_save_debug'])): $sdbg = $_SESSION['v2_save_debug']; unset($_SESSION['v2_save_debug']); ?>
+    <div style="background:#1e1e1e; color:#0f0; padding:.8rem; border-radius:6px; font-family:monospace; font-size:12px; white-space:pre-wrap; margin-bottom:1rem;">🐛 DEBUG DERNIER SAVE V2
+<?php foreach ($sdbg as $k => $v): ?>
+  <?= str_pad($k, 26) ?> : <?= is_scalar($v) ? var_export($v, true) : json_encode($v, JSON_UNESCAPED_UNICODE) ?>
+<?php endforeach; ?>
+</div>
+    <?php endif; ?>
+
+    <?php // 🐛 DEBUG dispatcher - à retirer plus tard
     if (isset($_GET['debug'])): ?>
     <div style="background:#1e1e1e; color:#0f0; padding:.8rem; border-radius:6px; font-family:monospace; font-size:12px; white-space:pre-wrap; margin-bottom:1rem;">🐛 DEBUG V2 DISPATCHER
   currentStep (?step=)       : <?= $currentStep ?>
