@@ -1195,6 +1195,49 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
             </div>
         </div>
     </form>
+
+    <!-- ============================================ -->
+    <!-- EXPORT PDF (à la fin du PHV) -->
+    <!-- ============================================ -->
+    <div class="card mb-3" style="margin-top:2rem; border:2px solid #4a6741; background:#f9f9f7;">
+        <div class="card-header" style="background:#4a6741; color:#fff;">
+            <h3 style="color:#fff; margin:0;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" style="vertical-align:middle; margin-right:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Exporter en PDF
+            </h3>
+        </div>
+        <div class="card-body">
+            <p class="text-muted" style="margin-bottom:1rem;">
+                <?php if (!$phv): ?>
+                    ⚠️ Enregistre d'abord le PHV pour pouvoir l'exporter en PDF.
+                <?php else: ?>
+                    Deux versions disponibles selon le destinataire :
+                <?php endif; ?>
+            </p>
+
+            <div class="d-flex gap-1" style="flex-wrap:wrap;">
+                <?php if ($phv): ?>
+                <a href="<?= url('phv-pdf', ['id' => $consultId]) ?>" class="btn btn-terra btn-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    PDF Client
+                    <small style="display:block; font-weight:normal; opacity:.85; font-size:11px;">Programme d'hygiène de vie à remettre au consultant</small>
+                </a>
+                <?php endif; ?>
+
+                <a href="<?= url('phv-pdf-praticien', ['id' => $consultId]) ?>" class="btn btn-primary btn-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    PDF Praticien
+                    <small style="display:block; font-weight:normal; opacity:.85; font-size:11px;">Dossier complet : questionnaire + synthèse + PHV + notes (archivage interne)</small>
+                </a>
+
+                <?php if ($phv): ?>
+                <a href="<?= url('phv-export', ['id' => $consultId, 'preview' => 1]) ?>" class="btn btn-outline" target="_blank">
+                    👁️ Aperçu HTML
+                </a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
