@@ -787,6 +787,62 @@ if (!empty($pathologiesIds)) {
         </div>
         <?php endif; ?>
 
+        <!-- Compléments alimentaires (texte libre) -->
+        <?php if (!empty($phv['complements_texte'])): ?>
+        <div class="section">
+            <div class="section-title">Compléments alimentaires</div>
+            <div class="content"><p><?= nl2br(e(fixPdfChars($phv['complements_texte']))) ?></p></div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Phytologie -->
+        <?php if (!empty($phv['phytologie'])): ?>
+        <div class="section">
+            <div class="section-title">Phytologie</div>
+            <div class="content"><p><?= nl2br(e(fixPdfChars($phv['phytologie']))) ?></p></div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Aromathérapie -->
+        <?php if (!empty($phv['aromatherapie'])): ?>
+        <div class="section">
+            <div class="section-title">Aromathérapie</div>
+            <div class="content"><p><?= nl2br(e(fixPdfChars($phv['aromatherapie']))) ?></p></div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Gemmothérapie -->
+        <?php if (!empty($phv['gemmotherapie'])): ?>
+        <div class="section">
+            <div class="section-title">Gemmothérapie</div>
+            <div class="content"><p><?= nl2br(e(fixPdfChars($phv['gemmotherapie']))) ?></p></div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Programme Détox / Protocole -->
+        <?php if (!empty($phv['programme_detox'])): ?>
+        <div class="section">
+            <div class="section-title">Programme Détox / Protocole</div>
+            <div class="content"><p><?= nl2br(e(fixPdfChars($phv['programme_detox']))) ?></p></div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Hydrologie -->
+        <?php if (!empty($phv['hydrologie'])): ?>
+        <div class="section">
+            <div class="section-title">Hydrologie</div>
+            <div class="content"><p><?= nl2br(e(fixPdfChars($phv['hydrologie']))) ?></p></div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Examens biologiques -->
+        <?php if (!empty($phv['examens_bio'])): ?>
+        <div class="section">
+            <div class="section-title">Examens biologiques suggérés</div>
+            <div class="content"><p><?= nl2br(e(fixPdfChars($phv['examens_bio']))) ?></p></div>
+        </div>
+        <?php endif; ?>
+
         <!-- Recommandations complémentaires -->
         <?php if ($phv['recommandations_complementaires']): ?>
         <div class="section">
