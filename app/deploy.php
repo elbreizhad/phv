@@ -96,18 +96,45 @@ function deployRun(string $targetDir): array {
 
     deployDeleteRecursive($tmpDir);
 
+    require_once $targetDir . '/config/database.php';
+
     $log[] = "Synchronisation des fiches pathologies en base...";
     try {
-        require_once $targetDir . '/config/database.php';
         require_once $targetDir . '/data/fiches-pathologies.php';
         $added = syncFichesPathologies(getDB());
-        if (empty($added)) {
-            $log[] = "Aucune nouvelle fiche à ajouter (déjà à jour).";
-        } else {
-            $log[] = "Fiches ajoutées en base (" . count($added) . ") : " . implode(', ', $added);
-        }
+        $log[] = empty($added)
+            ? "Aucune nouvelle fiche à ajouter (déjà à jour)."
+            : "Fiches ajoutées en base (" . count($added) . ") : " . implode(', ', $added);
     } catch (Throwable $e) {
         $log[] = "Attention : la synchronisation des fiches a échoué (" . $e->getMessage() . ").";
+    }
+
+    $log[] = "Synchronisation des recettes en base...";
+    try {
+        if (!file_exists($targetDir . '/data/recettes.php')) {
+            throw new RuntimeException('fichier data/recettes.php introuvable');
+        }
+        require_once $targetDir . '/data/recettes.php';
+        $added = syncRecettesTypes(getDB());
+        $log[] = empty($added)
+            ? "Aucune nouvelle recette à ajouter (déjà à jour)."
+            : "Recettes ajoutées en base (" . count($added) . ") : " . implode(', ', $added);
+    } catch (Throwable $e) {
+        $log[] = "Attention : la synchronisation des recettes a échoué (" . $e->getMessage() . ").";
+    }
+
+    $log[] = "Synchronisation des protocoles en base...";
+    try {
+        if (!file_exists($targetDir . '/data/protocoles.php')) {
+            throw new RuntimeException('fichier data/protocoles.php introuvable');
+        }
+        require_once $targetDir . '/data/protocoles.php';
+        $added = syncProtocoles(getDB());
+        $log[] = empty($added)
+            ? "Aucun nouveau protocole à ajouter (déjà à jour)."
+            : "Protocoles ajoutés en base (" . count($added) . ") : " . implode(', ', $added);
+    } catch (Throwable $e) {
+        $log[] = "Attention : la synchronisation des protocoles a échoué (" . $e->getMessage() . ").";
     }
 
     $log[] = "Déploiement terminé avec succès.";
