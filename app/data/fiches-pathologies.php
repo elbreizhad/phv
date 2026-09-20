@@ -478,3 +478,33 @@ function insertFichesPathologies(PDO $db): int {
 
     return $count;
 }
+
+/**
+ * Ajoute en base uniquement les fiches de getFichesPathologies() qui n'existent
+ * pas encore (comparaison par nom), sans toucher aux fiches déjà présentes.
+ * @return array Liste des noms de fiches effectivement ajoutées
+ */
+function syncFichesPathologies(PDO $db): array {
+    $fiches = getFichesPathologies();
+
+    $existingNoms = $db->query("SELECT nom FROM fiches_pathologies")->fetchAll(PDO::FETCH_COLUMN);
+    $existingNoms = array_map('mb_strtolower', $existingNoms);
+
+    $stmt = $db->prepare("INSERT INTO fiches_pathologies (nom, systeme, description, causes, signes_cliniques, conseils_alimentation, aliments_eviter, aliments_privilegier, conseils_activite, conseils_stress, conseils_routine, complements, phytotherapie, aromatherapie, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+    $added = [];
+    foreach ($fiches as $f) {
+        if (in_array(mb_strtolower($f['nom']), $existingNoms, true)) {
+            continue;
+        }
+        $stmt->execute([
+            $f['nom'], $f['systeme'], $f['description'], $f['causes'], $f['signes_cliniques'],
+            $f['conseils_alimentation'], $f['aliments_eviter'], $f['aliments_privilegier'],
+            $f['conseils_activite'], $f['conseils_stress'], $f['conseils_routine'],
+            $f['complements'], $f['phytotherapie'], $f['aromatherapie'], $f['notes'],
+        ]);
+        $added[] = $f['nom'];
+    }
+
+    return $added;
+}

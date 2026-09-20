@@ -82,6 +82,23 @@ copyRecursive($sourceDir, $targetDir, $excludeFromOverwrite);
 
 deleteRecursive($tmpDir);
 
+echo "Synchronisation des fiches pathologies en base...\n";
+try {
+    require __DIR__ . '/config/database.php';
+    require __DIR__ . '/data/fiches-pathologies.php';
+    $added = syncFichesPathologies(getDB());
+    if (empty($added)) {
+        echo "Aucune nouvelle fiche à ajouter (déjà à jour).\n";
+    } else {
+        echo "Fiches ajoutées en base (" . count($added) . ") :\n";
+        foreach ($added as $nom) {
+            echo "  - $nom\n";
+        }
+    }
+} catch (Throwable $e) {
+    echo "Attention : la synchronisation des fiches a échoué (" . $e->getMessage() . ").\n";
+}
+
 echo "Déploiement terminé avec succès.\n";
 
 // ---- Fonctions utilitaires ----
