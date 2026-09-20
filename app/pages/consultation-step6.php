@@ -2191,14 +2191,18 @@ function matchRecettesToConsultation(array $consultation, ?array $synthese, arra
         $score = 0;
         $regimes = json_decode($recette['regimes'] ?? '[]', true) ?: [];
         $regimesLower = array_map('strtolower', $regimes);
+        // 'détox', 'digestive' et 'ig bas' ne sont pas des régimes cochables
+        // dans le formulaire recette (voir $regimesList dans recette-edit.php),
+        // donc ces besoins se matchent sur le nom/la source de la recette.
+        $texteRecette = strtolower(($recette['nom'] ?? '') . ' ' . ($recette['source'] ?? ''));
 
         // Bonus selon besoins détectés
         if ($needsVegan && in_array('vegan', $regimesLower)) $score += 3;
         if ($needsGlutenFree && in_array('sans gluten', $regimesLower)) $score += 3;
-        if ($needsAntiInflam && in_array('anti-inflammatoire', $regimesLower)) $score += 4;
-        if ($needsDetox && in_array('détox', $regimesLower)) $score += 4;
-        if ($needsDigestif && in_array('digestive', $regimesLower)) $score += 4;
-        if ($needsIGBas && in_array('ig bas', $regimesLower)) $score += 4;
+        if ($needsAntiInflam && (in_array('anti-inflammatoire', $regimesLower) || str_contains($texteRecette, 'inflam'))) $score += 4;
+        if ($needsDetox && (str_contains($texteRecette, 'détox') || str_contains($texteRecette, 'detox') || str_contains($texteRecette, 'foie'))) $score += 4;
+        if ($needsDigestif && (str_contains($texteRecette, 'digest') || in_array('fodmap', $regimesLower))) $score += 4;
+        if ($needsIGBas && (str_contains($texteRecette, 'glycémique') || str_contains($texteRecette, 'glycemique') || str_contains($texteRecette, 'sucre'))) $score += 4;
 
         // Bonus petit bonus pour variété
         if (!empty($regimes)) $score += 1;
