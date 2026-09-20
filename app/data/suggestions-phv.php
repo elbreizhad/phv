@@ -1305,4 +1305,388 @@ Après irrigation : restaurer flore avec probiotiques"
 - Cure de 3 semaines
 - Particulièrement indiqué en cas d'hyperœstrogénie relative associée à un stress chronique"
     ],
+
+    // ============================================
+    // DIABÈTE, GLYCÉMIE ET ARRÊT DU SUCRE
+    // ============================================
+    [
+        'categorie' => 'alimentation',
+        'tags' => ['diabete', 'metabolique', 'poids'],
+        'titre' => 'Alimentation diabète de type 2 - stratégie pragmatique',
+        'contenu' => "ALIMENTATION DIABÈTE DE TYPE 2 (sans frustration) :
+- Réduire les graisses saturées (fromage, beurre, charcuterie) au profit de l'huile d'olive et de l'avocat
+- Gérer l'envie de dessert sans interdit total : fruits frais, skyr/yaourt + cannelle en poudre (régule le transporteur GLUT4, effet hypoglycémiant naturel)
+- Minimum 1/3 de l'assiette en légumes à chaque repas (ralentit l'absorption des glucides, production de butyrate protecteur)
+- Remplacer les féculents blancs par des féculents complets ou IG bas (riz complet, pâtes complètes, pain d'épeautre)
+- S'inspirer du régime méditerranéen : légumes, légumineuses, céréales complètes, poissons, huile d'olive
+- Position nuancée sur les édulcorants : mieux vaut réduire sucre ET beurre que diaboliser l'édulcorant - ne pas culpabiliser inutilement"
+    ],
+    [
+        'categorie' => 'alimentation',
+        'tags' => ['grossesse', 'diabete', 'hormonal'],
+        'titre' => 'Alimentation diabète gestationnel',
+        'contenu' => "DIABÈTE GESTATIONNEL - HYGIÈNE DE VIE :
+- Augmenter les protéines et les produits de la mer : poissons blancs et gras (oméga-3 + iode)
+- Ne jamais mettre en place de régime hypocalorique pendant la grossesse (risque de malnutrition fœtale)
+- Limiter le café (passage au décaféiné) : protège le magnésium et réduit le cortisol
+- Valoriser l'existant (fibres, alimentation non transformée) plutôt que tout bouleverser
+- Contre le RGO de fin de grossesse : dormir surélevée, repas du soir tôt et léger, se coucher sur le côté gauche
+- Poursuivre une activité physique douce et régulière (marche, étirements) sauf contre-indication, sans introduire de sport intense"
+    ],
+    [
+        'categorie' => 'alimentation',
+        'tags' => ['metabolique', 'inflammation', 'digestif'],
+        'titre' => 'Corps gras de cuisson et insulinorésistance sans surpoids',
+        'contenu' => "CORPS GRAS DE CUISSON - PRÉVENTION DE L'ENDOTOXÉMIE MÉTABOLIQUE :
+- Une insulinorésistance peut exister avec un poids normal : les graisses saturées de cuisson (ghee, huile de coco en excès) augmentent le passage d'endotoxines (LPS) dans le sang
+- Remplacer ghee/huile de coco à la cuisson par de l'huile d'olive (monoinsaturée) ou de l'huile de colza pour les cuissons douces
+- Réintroduire progressivement légumes et FODMAPs même en cas d'éviction ancienne : leur fermentation nourrit le microbiote et produit des acides gras protecteurs de la barrière intestinale
+- Commencer par des légumes cuits bien digestes (courgette, carotte, poireau) puis augmenter la diversité sur plusieurs semaines
+- Une alimentation \"saine en apparence\" (peu de sucre, beaucoup de protéines) peut rester pro-inflammatoire si elle est pauvre en légumes et riche en graisses saturées"
+    ],
+    [
+        'categorie' => 'routine_matin',
+        'tags' => ['poids', 'diabete', 'stress', 'metabolique'],
+        'titre' => 'Petit-déjeuner protéiné anti-fringales',
+        'contenu' => "PETIT-DÉJEUNER PROTÉINÉ (≥25 g de protéines) - 3 EXEMPLES :
+- Salé œufs : 2-3 œufs + galette de sarrasin + un peu de fromage + fruits rouges + salade + 1 c.à.c. huile d'olive
+- Sucré bowlcake : 1 œuf + protéine en poudre + flocons d'avoine + compote + topping chocolat noir ou purée d'oléagineux (préparable la veille)
+- Salé tartine : jambon/protéine + pain au levain + huile d'olive + tomates + un peu de fromage
+- Objectif : ≈30 g de protéines + 1-2 sources de bonnes graisses + un peu de glucides de qualité, pour stabiliser la glycémie et éviter la fringale de 10h
+- Manger assis, sans écran, environ 20 minutes, bien mastiquer
+- Tester le petit-déjeuner salé le week-end pour comparer les sensations (moins d'envie de sucré en 2e partie de journée)"
+    ],
+    [
+        'categorie' => 'alimentation',
+        'tags' => ['poids', 'stress', 'metabolique'],
+        'titre' => 'Stratégie d\'arrêt progressif du sucre',
+        'contenu' => "ARRÊT DU SUCRE - APPROCHE PROGRESSIVE :
+- Dépister toutes les sources de sucre : boissons sucrées, produits transformés, desserts aromatisés, féculents et farines raffinées, alcool du week-end
+- Privilégier la suppression progressive plutôt que l'arrêt net chez la plupart des consultants : moins de frustration, plus tenable sur la durée (l'arrêt net expose à un risque de trouble du comportement alimentaire)
+- Structurer les 3 repas avec protéines + fibres à chaque prise pour réduire les compulsions
+- Dessert sucré possible et non culpabilisant : fruit, chocolat noir, pâtisserie maison 1x/semaine
+- Ne jamais consommer un produit sucré isolé : toujours l'intégrer à un repas (ralentit l'absorption)
+- Outils pratiques : carnet alimentaire sur au moins une semaine, fiches recettes alternatives, batch cooking pour éviter le grignotage de dépannage"
+    ],
+    [
+        'categorie' => 'examens',
+        'tags' => ['diabete', 'poids', 'metabolique'],
+        'titre' => 'Bilan biologique avant rééquilibrage glycémique',
+        'contenu' => "BILAN BIOLOGIQUE - RÉGULATION DE LA GLYCÉMIE :
+- Indice HOMA (insulinorésistance) : cible < 1,5, zone grise 1,6-2,4, insulinorésistance > 2,4
+- Insulinémie à jeun : cible < 6 µU/mL
+- Glycémie à jeun : cible < 0,90 g/L (prédiabète 1,10-1,25 ; diabète ≥ 1,26 g/L confirmé sur 2 dosages)
+- HbA1c : reflet des 3 derniers mois
+- CRP ultrasensible : cible < 1 mg/L (inflammation de bas grade associée à l'insulinorésistance)
+- Profil en acides gras érythrocytaires (rapport oméga-3/oméga-6, ratio AA/EPA) si terrain inflammatoire"
+    ],
+    [
+        'categorie' => 'complements',
+        'tags' => ['diabete', 'poids', 'metabolique'],
+        'titre' => 'Régulateurs de glycémie complémentaires',
+        'contenu' => "COMPLÉMENTS RÉGULATION DE LA GLYCÉMIE :
+- Chrome (picolinate) : 25-250 µg/jour - régulation de la glycémie
+- Cannelle de Ceylan : 2,5-5 g/jour - réduit glycémie, cholestérol total et LDL, augmente le HDL
+- Gymnema sylvestre : à individualiser - réduit l'absorption du glucose et les envies de sucré
+- Resvératrol : 250-500 mg/repas - réduit glycémie à jeun, résistance à l'insuline, HbA1c
+- Acide alpha-lipoïque : 200-600 mg/jour - antioxydant, améliore la sensibilité à l'insuline, protège le système nerveux
+- Magnésium (bisglycinate/citrate/malate) : jusqu'à 800 mg/jour - stress, sommeil, insulinorésistance
+- Décaler la première prise de café après 9h pour ne pas cumuler son pic de cortisol avec le pic naturel du matin"
+    ],
+
+    // ============================================
+    // DIGESTIF, DYSBIOSE ET PERMÉABILITÉ INTESTINALE
+    // ============================================
+    [
+        'categorie' => 'alimentation',
+        'tags' => ['digestif', 'permeabilite', 'inflammation'],
+        'titre' => 'Alimentation réparatrice de la muqueuse intestinale',
+        'contenu' => "ALIMENTATION PHASE \"RÉPARER\" - MUQUEUSE INTESTINALE :
+- Bouillon d'os de cuisson longue (collagène, glycine, proline) : 2-3 fois par semaine, en début de repas
+- Légumes cuits riches en polyphénols : myrtille, grenade, légumes colorés
+- Poissons gras 3x/semaine (oméga-3 EPA/DHA)
+- Aliments riches en vitamine A (jaune d'œuf, foie, beurre cru), zinc et vitamine D
+- Mastication renforcée (viser 30-40 mastications par bouchée), repas au calme sans écran
+- Réintroduction progressive des aliments fermentés (kéfir, kombucha, légumes lacto-fermentés) et des prébiotiques (oignon, ail cuit, poireau, asperge, topinambour) une fois la muqueuse apaisée"
+    ],
+    [
+        'categorie' => 'complements',
+        'tags' => ['permeabilite', 'digestif', 'allergies'],
+        'titre' => 'Zinc-carnosine et quercétine - renforcer la barrière intestinale',
+        'contenu' => "RENFORCEMENT DE LA BARRIÈRE INTESTINALE (hyperperméabilité, sensibilités multiples) :
+- Zinc-carnosine : 75 mg x2/jour - renforce les jonctions serrées (ZO-1, claudines), bonne preuve scientifique
+- Quercétine : 500 mg x2/jour - module les jonctions serrées, effet anti-inflammatoire et anti-histaminique
+- L-Glutamine : si utilisée, viser 10-15 g/jour en cure de 4-6 semaines (les doses classiques de 3-5 g sont probablement sous-dosées pour un effet barrière)
+- Vitamine D3 : selon dosage sanguin, viser 40-60 ng/mL - module aussi les jonctions serrées
+- Éviter la glutamine en cas de suspicion de SIBO actif (peut nourrir certaines bactéries du grêle) - préférer zinc-carnosine et quercétine dans ce cas"
+    ],
+    [
+        'categorie' => 'complements',
+        'tags' => ['inflammation', 'digestif', 'articulaire'],
+        'titre' => 'Curcumine biodisponible - anti-inflammatoire de référence',
+        'contenu' => "CURCUMINE BIODISPONIBLE :
+- Posologie : 1500-3000 mg/jour de curcumine (formulation biodisponible type BCM-95, Meriva ou Theracurmin - la curcumine seule est très mal absorbée)
+- Bon niveau de preuve scientifique sur l'inflammation digestive et articulaire, profil de sécurité excellent
+- En entretien après une phase aiguë : réduire à environ 1000 mg/jour
+- Attention en cas de traitement anticoagulant (effet antiagrégant) ou de calculs biliaires (jamais en cas d'obstruction/lithiase symptomatique)
+- Associer à du poivre noir (pipérine) ou des phospholipides pour améliorer l'absorption si forme non biodisponible utilisée"
+    ],
+    [
+        'categorie' => 'detox',
+        'tags' => ['digestif', 'dysbiose', 'permeabilite', 'inflammation'],
+        'titre' => 'Protocole 4R terrain fragile (hyperperméabilité, MICI)',
+        'contenu' => "PROTOCOLE 4R - ORDRE ADAPTÉ AU TERRAIN FRAGILE :
+Sur muqueuse très inflammatoire ou hyperperméable, on retire et on répare AVANT de réensemencer ou de stimuler la digestion (les probiotiques et stimulants digestifs peuvent irriter un terrain trop fragile) :
+
+1. RETIRER (3-4 semaines) : régime d'éviction ciblé (gluten, laitages, FODMAPs si besoin), réduire sucres rapides, alcool, ultra-transformés et additifs
+
+2. RÉPARER (6-12 semaines, la phase la plus longue) : bouillon d'os, légumes cuits riches en polyphénols, poissons gras, vitamine A/zinc/vitamine D - viser 2 à 4 compléments ciblés selon le mécanisme dominant (inflammation, perméabilité, atrophie), jamais tout donner en même temps
+
+3. REMPLACER (2-4 semaines, en parallèle de la phase 2) : mastication +++, vinaigre de cidre ou citron en début de repas si hypochlorhydrie, amers avant repas (artichaut, pissenlit)
+
+4. RÉINOCULER (4-8 semaines) : aliments fermentés progressifs, prébiotiques doux, viser 30 végétaux différents par semaine, probiotiques multi-souches en cure
+
+Suivi possible : reflet symptomatique, calprotectine fécale, test respiratoire H2/CH4 selon le contexte"
+    ],
+    [
+        'categorie' => 'examens',
+        'tags' => ['digestif', 'sii', 'permeabilite', 'dysbiose'],
+        'titre' => 'Bilan digestif fonctionnel approfondi',
+        'contenu' => "BILAN DIGESTIF FONCTIONNEL (biologies d'investigation) :
+- Métabolites organiques urinaires (MOU/DMI) : oriente vers une dysbiose de fermentation ou de putréfaction selon les métabolites élevés
+- CRP ultrasensible + ferritine + coefficient de saturation : recherche d'une inflammation de bas grade et d'une anémie par défaut d'assimilation (pas seulement par manque de fer)
+- IgG alimentaires + test d'intolérance au lactose : les IgG multiples sont souvent la CONSÉQUENCE d'une hyperperméabilité et non sa cause - éviction temporaire des aliments \"réactifs\", pas définitive
+- LBP/LPS : marqueur d'hyperperméabilité intestinale (passage de lipopolysaccharides bactériens dans la circulation)
+- Test génétique FUT2 en cas de dysbiose récidivante inexpliquée : un profil non-sécréteur favorise un terrain propice à la dysbiose chronique (un complément en fucosyl-lactose peut alors soutenir la qualité du mucus)
+- Toujours croiser anamnèse, signes cliniques et alimentation avant de choisir une biologie : chaque test doit répondre à une hypothèse précise"
+    ],
+    [
+        'categorie' => 'alimentation',
+        'tags' => ['sii', 'digestif'],
+        'titre' => 'Guide de substitution FODMAPs au quotidien',
+        'contenu' => "SUBSTITUTIONS PRATIQUES POUR RÉDUIRE LES FODMAPs :
+- Café → infusion ou eau citronnée
+- Beurre → ghee ou purée de noisette/amande
+- Pâtes/semoule de blé → pâtes de riz ou de maïs, millet
+- Crudités → légumes cuits entiers ou en soupe/velouté (formes mixées mieux tolérées)
+- Fromage au lait de vache → fromage sans lactose, fromages à pâte molle (camembert, brie) ou tartare végétal
+- Crème fraîche → crème de riz ou de coco ; Parmesan → levure maltée ; Lait de vache → lait d'amande ou de coco
+- Fruits bien tolérés : banane mûre, ananas, raisin, mandarine, orange, kiwi (à consommer avec lipides/protéines pour limiter l'impact glycémique)
+- Protocole en 2 phases sur environ 6 semaines : éviction stricte 4 semaines puis réintroduction d'un aliment à la fois pour identifier les vrais déclencheurs individuels"
+    ],
+    [
+        'categorie' => 'complements',
+        'tags' => ['fatigue', 'anemie', 'inflammation', 'femme'],
+        'titre' => 'Fer et lactoferrine en cas d\'anémie résistante',
+        'contenu' => "ANÉMIE RÉSISTANTE À LA SUPPLÉMENTATION CLASSIQUE :
+- Une anémie qui ne remonte pas malgré une supplémentation en fer classique oriente vers un défaut d'assimilation lié à un terrain inflammatoire intestinal, plus qu'un simple manque d'apport
+- Ferritine liposomale + lactoferrine à jeun le matin : meilleure tolérance et meilleure absorption qu'un fer classique en cas de terrain digestif fragile
+- Toujours associer les aliments riches en fer à de la vitamine C au même repas pour multiplier l'absorption par 2 à 3 (le corps humain ne synthétise pas sa vitamine C)
+- Écarter thé, café et produits laitiers des repas riches en fer (chélateurs)
+- Objectiver systématiquement par un dosage de ferritine et du coefficient de saturation avant et après 3 mois de cure
+- Si flux menstruel abondant associé : rechercher la cause (stérilet au cuivre notamment) avant d'espérer normaliser durablement le fer"
+    ],
+
+    // ============================================
+    // FOIE, DÉTOX HÉPATIQUE ET HORMONES
+    // ============================================
+    [
+        'categorie' => 'detox',
+        'tags' => ['hepatique', 'foie', 'hormonal', 'menopause'],
+        'titre' => 'Détox hépatique et métabolisme des œstrogènes en périménopause',
+        'contenu' => "SOUTIEN HÉPATIQUE DES ŒSTROGÈNES (périménopause, SPM, fibromes, mastodynies) :
+- Le métabolisme des œstrogènes en excès dépend de la phase 2 hépatique (sulfo- et glucuro-conjugaison) puis de leur élimination biliaire et fécale (phase 3)
+- Une carence en B6, B9 (méthylfolate), magnésium ou une dysbiose intestinale favorise la réabsorption des œstrogènes déjà conjugués (déconjugaison par la bêta-glucuronidase)
+- Aliments soutenant la phase 2 : brocolis et choux (sulforaphane), ail et oignon (composés soufrés)
+- Aliments cholérétiques/cholagogues pour l'élimination : artichaut, romarin, curcuma, radis noir, pissenlit
+- Fibres solubles et insolubles quotidiennes : limitent la réabsorption intestinale des œstrogènes déconjugués
+- Probiotiques : soutiennent un microbiote qui régule mieux la bêta-glucuronidase (\"estrobolome\")
+- Toujours vérifier le transit avant toute détox : une constipation non résolue fait réabsorber les toxines mobilisées - régler le transit AVANT de poursuivre"
+    ],
+    [
+        'categorie' => 'detox',
+        'tags' => ['hepatique', 'foie'],
+        'titre' => 'Cure détox hépatique en 3 phases (transformation-conjugaison-élimination)',
+        'contenu' => "PROGRAMME DÉTOX HÉPATIQUE STRUCTURÉ (3 à 6 semaines, jamais en continu sur l'année) :
+
+RÈGLE D'OR : toujours préparer la phase de conjugaison AVANT de stimuler la transformation, sous peine de \"crise de détox\" (maux de tête, nausées, fatigue) par accumulation de métabolites réactifs.
+
+Semaine 1-2 - Chargement (cofacteurs de conjugaison) : vitamines B (B2, B3, B6, B9, B12), magnésium, vitamine C, NAC - préparer le terrain avant de stimuler quoi que ce soit
+
+Semaine 2-4 - Cœur de cure : glycine, taurine, chardon-marie (silymarine), curcuma, romarin, crucifères (sulforaphane) - phase la plus exigeante, ne jamais la sous-supporter
+
+Semaine 3-5 - Élimination active dès le début : hydratation 1,5-2L/jour, fibres solubles et insolubles, plantes cholérétiques (artichaut, romarin) et cholagogues (radis noir, pissenlit), drainage rénal (ortie, bouleau)
+
+Signal d'alerte : une constipation qui apparaît pendant la cure impose un arrêt de la stimulation hépatique tant que le transit n'est pas réglé (risque de réabsorption des toxines mobilisées)"
+    ],
+    [
+        'categorie' => 'examens',
+        'tags' => ['hepatique', 'foie', 'fatigue'],
+        'titre' => 'Signes d\'appel justifiant une détox hépatique',
+        'contenu' => "QUAND UNE DÉTOX HÉPATIQUE EST-ELLE VRAIMENT JUSTIFIÉE ?
+La détox \"printanière systématique\" n'a pas de justification physiologique : le foie détoxifie en continu, ce n'est pas un organe qui se \"vide\". On propose une détox sur des signes précis, pas par habitude saisonnière :
+- Fatigue post-prandiale marquée, surtout après un repas gras
+- Migraines dites \"hépatiques\" (matinales, hémifaciales)
+- Langue chargée le matin, haleine forte
+- Démangeaisons inexpliquées, acné hormonale persistante (mauvaise élimination des œstrogènes)
+- Exposition professionnelle à des toxiques, polymédication chronique au long cours
+- Bilan hépatique légèrement altéré (ALAT/ASAT, GGT) après exclusion d'une cause médicale grave
+- Contre-indications absolues à connaître : lithiase vésiculaire symptomatique (pas de cholérétique), grossesse/allaitement, anticoagulants (prudence curcuma), poussée inflammatoire active (MICI) - toujours différer la détox jusqu'à rémission stable"
+    ],
+
+    // ============================================
+    // PEAU : ACNÉ HORMONALE ET PSORIASIS
+    // ============================================
+    [
+        'categorie' => 'complements',
+        'tags' => ['peau', 'inflammation'],
+        'titre' => 'Huile de krill et argile verte interne - acné et peau inflammatoire',
+        'contenu' => "SOUTIEN INTERNE DE LA PEAU INFLAMMATOIRE (acné, psoriasis) :
+- Huile de krill : cure de 2 mois, à renouveler selon l'évolution des symptômes - forme d'oméga-3 bien absorbée, anti-inflammatoire
+- Argile verte par voie interne : en complément de l'alimentation anti-inflammatoire, favorise le drainage émonctoriel
+- Curcuma + gingembre + graines de chia et de lin : à intégrer quotidiennement à l'alimentation
+- Alimentation stimulant les émonctoires : crucifères, radis noir, brocoli, légumes verts, romarin
+- Zinc, vitamine A, vitamine B, vitamine D : bilan à demander en cas d'acné ou de psoriasis persistant avant de complémenter
+- Toujours coupler ce soutien interne à une prise en charge du sommeil et du stress : le cortisol chronique aggrave directement l'inflammation cutanée"
+    ],
+    [
+        'categorie' => 'aromatherapie',
+        'tags' => ['peau', 'inflammation', 'infections'],
+        'titre' => 'Soins locaux acné - hydrolats et huiles essentielles',
+        'contenu' => "SOINS LOCAUX DE LA PEAU ACNÉIQUE :
+- Nettoyage : savon au charbon végétal ou savon d'Alep en cas de peau à tendance acnéique
+- Hydrolats antibactériens : Tea Tree, Romarin à verbénone, Citron
+- Hydrolats cicatrisants : Calendula, Hélichryse italienne
+- HE cicatrisantes en application ponctuelle sur les lésions : Ciste ladanifère, Carotte, Lavande aspic
+- HE antibactériennes : Tea Tree, Géranium, Lavande vraie
+- Application locale uniquement, jamais sur l'ensemble du visage, et toujours diluées pour les peaux sensibles"
+    ],
+    [
+        'categorie' => 'alimentation',
+        'tags' => ['peau', 'inflammation', 'digestif'],
+        'titre' => 'Rééquilibrage alimentaire psoriasis',
+        'contenu' => "ALIMENTATION ANTI-INFLAMMATOIRE - PSORIASIS :
+- Éliminer le gluten industriel (gâteaux, viennoiseries), les fast-foods et les huiles riches en oméga-6 (tournesol, sésame)
+- Réduire la viande rouge, conserver ponctuellement les plats traditionnels/culturels du consultant plutôt que de tout interdire d'un coup
+- Structure de journée type : matin protéiné et lipidique + féculent sans gluten ; midi protéine + légumes alcalinisants + féculent sans gluten (riz basmati, quinoa, patate douce, sarrasin) ; soir repas léger (soupe, légumineuses, crêpe de sarrasin) + 1 c.à.c. huile lin/colza/noix
+- Ajouter des fibres progressivement (légumineuses, légumes verts, oléagineux) pour soutenir le microbiote et la barrière intestinale
+- Le psoriasis répond lentement : prévenir le consultant que la patience est nécessaire et que le stress reste souvent le principal facteur déclenchant des poussées"
+    ],
+
+    // ============================================
+    // ACCOMPAGNEMENT DE L'ENFANT
+    // ============================================
+    [
+        'categorie' => 'alimentation',
+        'tags' => ['pediatrique', 'immunite', 'digestif'],
+        'titre' => 'Alimentation de l\'enfant fiévreux ou malade',
+        'contenu' => "ALIMENTATION PENDANT UNE MALADIE INFANTILE (après avis médical) :
+- Ne pas forcer à manger un enfant de plus de 2 ans qui n'a pas faim : faire confiance au repos digestif, la digestion est neutralisée pendant la fièvre
+- Aliments conseillés : légumes cuits, soupes et bouillons, céréales sans gluten (riz, quinoa, sarrasin, polenta), fruits frais et compotes sans sucre ajouté
+- À réduire pendant la phase aiguë : produits laitiers, protéines animales, sucres transformés, crudités et fruits crus en excès
+- Hydratation renforcée (eau, tisanes) : objectif drainage des toxines
+- Repos sensoriel : limiter les écrans, privilégier musique douce, histoires audio, présence calme et rassurante
+- Revoir un médecin si l'enfant ne mange/boit plus depuis environ 10h, reste prostré, ou si la fièvre persiste au-delà de 24h"
+    ],
+    [
+        'categorie' => 'hydrologie',
+        'tags' => ['pediatrique'],
+        'titre' => 'Bain dérivatif chez l\'enfant',
+        'contenu' => "BAIN DÉRIVATIF - ENFANT :
+- Bébé : allonger sur une serviette (par exemple lors du change) ; enfant plus grand : assis sur un petit tabouret
+- Passer un gant humide d'eau fraîche (pas glacée) de chaque côté de l'aine, entre les jambes, du pubis vers l'anus - jamais sur le sexe
+- Durée selon l'âge : petit bébé 1 min, vers 12 mois 2 min, vers 3 ans 3-4 min, vers 7 ans 5 min
+- Bien habiller l'enfant et garder les jambes au chaud pendant et après le soin
+- Indications : fièvre, constipation, troubles digestifs, nervosité, aide au sommeil et à l'immunité lors d'infections
+- Reprendre la température après le bain ; si elle ne baisse pas, renouveler 30 min après puis toutes les 3h ; consulter si toujours pas de baisse après 2 renouvellements"
+    ],
+    [
+        'categorie' => 'hydrologie',
+        'tags' => ['pediatrique', 'fatigue'],
+        'titre' => 'Bouillotte et enveloppements froids pour l\'enfant fiévreux',
+        'contenu' => "TECHNIQUES D'HYDROLOGIE DOUCES POUR L'ENFANT :
+- Bouillotte (sèche, type noyaux de cerise, de préférence) : indiquée pour maux de ventre, coliques du nourrisson, douleurs de règles, anxiété, troubles du sommeil - jamais trop chaude, tester en laissant la main posée 1 minute et vérifier la peau de l'enfant régulièrement
+- Enveloppement des mollets en cas de fièvre élevée : serviette imbibée d'eau à 15-25°C légèrement essorée, recouverte d'une serviette sèche, maintenir 3-10 min, répéter 2-3 fois, changer dès que la serviette se réchauffe
+- Chaussettes mouillées passées au frigo + chaussettes de laine sèches par-dessus : effet dérivatif sur la fièvre
+- Eau fraîche sur la nuque : centre de régulation thermique
+- Pour le nourrisson : peau à peau avec la mère pour aider à réguler sa température
+- Chambre à 19-20°C, ne pas surchauffer un enfant fiévreux, le découvrir légèrement plutôt que l'emmitoufler"
+    ],
+    [
+        'categorie' => 'complements',
+        'tags' => ['pediatrique', 'digestif', 'immunite'],
+        'titre' => 'Probiotiques adaptés à l\'âge de l\'enfant',
+        'contenu' => "PROBIOTIQUES SELON L'ÂGE DE L'ENFANT :
+- Avant 2 ans : privilégier les souches de Bifidobactéries (B. longum, B. lactis, B. bifidum, B. infantis, B. breve) - flore dominante du nourrisson
+- Après 2 ans : les Lactobacillus prennent le relais (L. rhamnosus, L. acidophilus, L. casei/paracasei, L. reuteri, L. plantarum)
+- L. rhamnosus GG : souche à effet clinique démontré sur la dermatite atopique, les allergies et l'asthme
+- En cas de naissance par césarienne : favoriser l'allaitement autant que possible et envisager un apport de probiotiques mère et/ou bébé pour soutenir la colonisation du microbiote
+- Toujours privilégier l'allaitement et une alimentation maternelle de qualité, qui influence directement le microbiote de l'enfant"
+    ],
+
+    // ============================================
+    // RESPIRATION ET GESTION DU STRESS
+    // ============================================
+    [
+        'categorie' => 'stress',
+        'tags' => ['stress', 'anxiete', 'sommeil'],
+        'titre' => 'Respiration carrée et boîte à outils respiratoire',
+        'contenu' => "BOÎTE À OUTILS RESPIRATOIRE SELON LE BESOIN :
+- Respiration carrée (4 temps égaux, ex. 4-4-4-4) : harmonise, relaxation profonde, bon pour la vitalité et l'équilibre émotionnel
+- Respiration anti-stress (expiration allongée, ex. inspire 3s / rétention 3s / expire 7s) : active le système nerveux parasympathique, utile pour le trac, l'anxiété, avant un moment stressant
+- Le soupir (3 répétitions ou plus, épaules qui montent puis relâchent d'un coup) : libère les tensions du cou et des trapèzes, bonne préparation aux autres exercices
+- Respiration alternée (par les narines) : rééquilibre le système nerveux, favorise le calme et la concentration, à pratiquer ventre vide, matin ou soir, 3 à 30 minutes
+- Le bâillement volontaire (plusieurs fois, avec étirements) : apport d'oxygène supplémentaire, combat la fatigue passagère, détend le diaphragme
+- Choisir la technique selon le moment de la journée : respiration triangulaire dynamisante le matin, respiration ventrale ou alternée apaisante le soir"
+    ],
+    [
+        'categorie' => 'stress',
+        'tags' => ['stress', 'digestif', 'sommeil'],
+        'titre' => 'Respiration ventrale - apaiser le système nerveux et la digestion',
+        'contenu' => "RESPIRATION VENTRALE (ABDOMINALE) :
+- Technique : inspirer par le nez en gonflant le ventre comme un ballon, expirer lentement en le relâchant
+- S'aider d'une image simple : un ballon qui se gonfle et se dégonfle, ou une vague qui monte et descend
+- Bienfaits : calme le stress, favorise la digestion et le péristaltisme intestinal, favorise l'endormissement et le retour veineux
+- Assouplit le diaphragme et masse les viscères en profondeur
+- Particulièrement indiquée pour les profils stressés/anxieux, les troubles digestifs, la constipation, l'insomnie et pour les personnes qui mangent vite
+- Peut être plus difficile en fin de grossesse (après le 5e mois), en cas de surpoids important ou de diaphragme très bloqué - adapter la durée dans ce cas"
+    ],
+
+    // ============================================
+    // MICRONUTRITION : ANTIOXYDANTS ET VITAMINES B
+    // ============================================
+    [
+        'categorie' => 'complements',
+        'tags' => ['fatigue', 'inflammation', 'general'],
+        'titre' => 'Antioxydants en synergie contre le stress oxydant',
+        'contenu' => "SOUTIEN ANTIOXYDANT GLOBAL (stress oxydant, vieillissement cellulaire) :
+- Les antioxydants agissent en réseau et se régénèrent mutuellement (la vitamine E régénérée par la vitamine C, elle-même régénérée par le glutathion) : privilégier une association plutôt qu'un antioxydant isolé à haute dose
+- Sélénium : 100 µg/jour (sélénométhionine) - cofacteur indispensable de la glutathion peroxydase, quelques noix du Brésil par jour suffisent en apport alimentaire
+- Coenzyme Q10 : essentiel au fonctionnement mitochondrial, à envisager systématiquement chez toute personne sous statines (qui réduisent sa synthèse endogène)
+- Acide alpha-lipoïque : antioxydant universel (actif en milieu aqueux et lipidique, passe la barrière hémato-encéphalique), utile en cas de terrain diabétique ou de fatigue liée au stress oxydatif
+- Polyphénols alimentaires : agrumes entiers (hespéridine, lutéine), légumes colorés, thé vert - à privilégier sur l'antioxydant en gélule isolé quand c'est possible
+- Attention à ne pas associer systématiquement vitamine C et fer en supplémentation : en présence de fer, la vitamine C peut favoriser la réaction de Fenton (production de radicaux libres) plutôt que de la freiner"
+    ],
+    [
+        'categorie' => 'complements',
+        'tags' => ['fatigue', 'stress', 'depression'],
+        'titre' => 'Vitamines du groupe B - énergie et système nerveux',
+        'contenu' => "COMPLEXE B - ÉNERGIE ET SYSTÈME NERVEUX :
+- B1+B2+B3+B5 (complexe énergétique) : agissent ensemble dans le cycle de Krebs et la chaîne respiratoire mitochondriale - un déficit sur l'une ralentit toute la production d'énergie
+- B6 (pyridoxal-5-phosphate de préférence) : indispensable à la synthèse de la sérotonine, la dopamine et le GABA - à évaluer systématiquement chez une personne anxieuse, dépressive ou insomniaque, surtout sous pilule contraceptive (qui déplète en B6, B9, B12)
+- B5 : \"vitamine du stress\", épuisée en priorité lors d'un stress chronique (synthèse du cortisol) - signe évocateur de carence : syndrome des pieds brûlants
+- Triode B6+B9+B12 : régule l'homocystéine (facteur de risque cardiovasculaire et neurologique) - à doser ensemble en cas de fatigue, troubles de l'humeur ou antécédents cardiovasculaires
+- B6 + magnésium : synergie classique anti-stress, le magnésium étant cofacteur de l'activation de la B6"
+    ],
+    [
+        'categorie' => 'complements',
+        'tags' => ['grossesse', 'fertilite'],
+        'titre' => 'Folates (B9) et méthylation en projet de grossesse',
+        'contenu' => "FOLATES ET PROJET DE GROSSESSE :
+- Supplémentation en B9 recommandée dès le désir de conception (1 mois avant) et pendant tout le 1er trimestre : prévention des anomalies du tube neural
+- Alimentation riche en folates naturels : légumineuses, légumes à feuilles (épinards, cresson), foie, germe de blé
+- Environ 10-15% de la population est porteuse homozygote de la mutation MTHFR C677T (activité enzymatique réduite à 30-40%) : chez ces profils, privilégier une supplémentation en 5-méthylfolate (forme active) plutôt qu'en acide folique classique
+- Toujours associer B9 avec B12 (uniquement présente dans les produits animaux) et B6 pour une méthylation optimale, en particulier chez les profils végétariens/végans, sous contraception récente, ou en cas de fausses couches à répétition
+- Un dosage de l'homocystéine peut orienter vers un besoin accru en cette triode vitaminique"
+    ],
 ];
