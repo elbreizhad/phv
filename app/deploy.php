@@ -9,6 +9,9 @@
 define('DEPLOY_KEY', 'CHANGE_MOI_PAR_UNE_CLE_SECRETE_LONGUE');
 define('GITHUB_REPO', 'elbreizhad/phv');
 define('GITHUB_BRANCH', 'main');
+// Dépôt privé : jeton d'accès GitHub (Settings > Developer settings > Personal access tokens,
+// droit "repo" en lecture suffit).
+define('GITHUB_TOKEN', 'CHANGE_MOI_PAR_TON_TOKEN_GITHUB');
 
 // Dossiers/fichiers à ne jamais écraser lors du déploiement
 $excludeFromOverwrite = [
@@ -34,10 +37,12 @@ if (!class_exists('ZipArchive')) {
 
 echo "Téléchargement de la branche " . GITHUB_BRANCH . " depuis GitHub...\n";
 
-$zipUrl = "https://github.com/" . GITHUB_REPO . "/archive/refs/heads/" . GITHUB_BRANCH . ".zip";
+// L'API GitHub (zipball) accepte l'authentification par jeton, contrairement
+// au lien "archive/refs/heads/...zip" qui ne fonctionne que sur un dépôt public.
+$zipUrl = "https://api.github.com/repos/" . GITHUB_REPO . "/zipball/" . GITHUB_BRANCH;
 $tmpZip = tempnam(sys_get_temp_dir(), 'deploy_') . '.zip';
 
-$zipContent = downloadFile($zipUrl);
+$zipContent = downloadFile($zipUrl, GITHUB_TOKEN);
 if ($zipContent === false) {
     http_response_code(500);
     exit("Échec du téléchargement depuis GitHub.\n");
@@ -81,14 +86,19 @@ echo "Déploiement terminé avec succès.\n";
 
 // ---- Fonctions utilitaires ----
 
-function downloadFile(string $url)
+function downloadFile(string $url, string $token = '')
 {
+    $headers = ['User-Agent: php-deploy-script'];
+    if ($token !== '') {
+        $headers[] = 'Authorization: token ' . $token;
+    }
+
     if (function_exists('curl_init')) {
         $ch = curl_init($url);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_USERAGENT => 'php-deploy-script',
+            CURLOPT_HTTPHEADER => $headers,
             CURLOPT_TIMEOUT => 120,
         ]);
         $content = curl_exec($ch);
@@ -97,7 +107,10 @@ function downloadFile(string $url)
         return $ok ? $content : false;
     }
 
-    return @file_get_contents($url);
+    $context = stream_context_create([
+        'http' => ['header' => implode("\r\n", $headers)],
+    ]);
+    return @file_get_contents($url, false, $context);
 }
 
 function copyRecursive(string $source, string $target, array $excludeFromOverwrite, string $relative = '')
