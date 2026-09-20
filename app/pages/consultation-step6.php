@@ -23,7 +23,7 @@ $db = getDB();
 $consultId = (int) getGet('id');
 $userId = currentUserId();
 
-$stmt = $db->prepare("SELECT c.*, cl.nom AS client_nom, cl.prenom AS client_prenom, cl.sexe AS client_sexe FROM consultations c JOIN clients cl ON c.client_id = cl.id WHERE c.id = ? AND c.user_id = ?");
+$stmt = $db->prepare("SELECT c.*, cl.nom AS client_nom, cl.prenom AS client_prenom, cl.sexe AS client_sexe, cl.date_naissance AS client_dob FROM consultations c JOIN clients cl ON c.client_id = cl.id WHERE c.id = ? AND c.user_id = ?");
 $stmt->execute([$consultId, $userId]);
 $consultation = $stmt->fetch();
 if (!$consultation) { redirect('dashboard'); }

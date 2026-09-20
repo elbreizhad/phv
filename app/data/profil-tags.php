@@ -19,6 +19,15 @@ function detecterTagsProfil(array $consultation, ?array $synthese, array $repons
     $motifCat = strtolower($consultation['motif_categorie'] ?? '');
     $sexe = strtoupper($consultation['client_sexe'] ?? '');
 
+    $age = null;
+    if (!empty($consultation['client_dob'])) {
+        try {
+            $age = (new DateTime($consultation['client_dob']))->diff(new DateTime())->y;
+        } catch (Exception $e) {
+            $age = null;
+        }
+    }
+
     $priorite1 = strtolower($synthese['priorite_1'] ?? '');
     $priorite2 = strtolower($synthese['priorite_2'] ?? '');
     $priorite3 = strtolower($synthese['priorite_3'] ?? '');
@@ -50,11 +59,34 @@ function detecterTagsProfil(array $consultation, ?array $synthese, array $repons
     if (contientMot($motif . $antecedents . $traitements, ['diabète', 'diabete', 'glycémie', 'glycemie', 'insuline', 'metformine'])) {
         $tags['diabete'] = 10;
         $tags['metabolique'] = 8;
+        $tags['glycemie'] = 8;
+    }
+
+    // Glycémie (hors diagnostic de diabète : pré-diabète, hypoglycémies réactionnelles)
+    if (contientMot($motif . $allPriorites, ['hyperglycémie', 'hyperglycemie', 'hypoglycémie', 'hypoglycemie', 'glycémie', 'glycemie', 'pré-diabète', 'prediabete'])) {
+        $tags['glycemie'] = isset($tags['glycemie']) ? $tags['glycemie'] : 8;
     }
 
     // Troubles digestifs
     if (contientMot($motif . $digTroubles . $desequilibres, ['digestif', 'digestion', 'ballonnement', 'gaz', 'constipation', 'diarrhée', 'diarrhee', 'intestin', 'colon', 'ventre'])) {
         $tags['digestif'] = 10;
+    }
+
+    // Ballonnements spécifiques
+    if (contientMot($motif . $digTroubles, ['ballonnement', 'gaz', 'gonflement abdominal', 'ventre gonflé', 'ventre gonfle'])) {
+        $tags['ballonnements'] = 9;
+        $tags['digestif'] = isset($tags['digestif']) ? $tags['digestif'] : 8;
+    }
+
+    // Constipation spécifique
+    if (contientMot($motif . $digTroubles, ['constipation', 'transit lent', 'selles dures'])) {
+        $tags['constipation'] = 9;
+        $tags['digestif'] = isset($tags['digestif']) ? $tags['digestif'] : 8;
+    }
+
+    // Nausées
+    if (contientMot($motif . $digTroubles . $antecedents, ['nausée', 'nausee', 'nausées', 'nausees', 'vomissement', 'mal au coeur'])) {
+        $tags['nausees'] = 9;
     }
 
     // SII spécifique
@@ -63,11 +95,17 @@ function detecterTagsProfil(array $consultation, ?array $synthese, array $repons
         $tags['digestif'] = 8;
     }
 
-    // Candidose
-    if (contientMot($motif . $antecedents . $digTroubles, ['candidose', 'candida', 'mycose'])) {
+    // Candidose (digestive)
+    if (contientMot($motif . $antecedents . $digTroubles, ['candidose', 'candida'])) {
         $tags['candidose'] = 10;
         $tags['digestif'] = 8;
         $tags['dysbiose'] = 8;
+    }
+
+    // Mycose (génitale, distincte de la candidose digestive)
+    if (contientMot($motif . $antecedents . $digTroubles, ['mycose vaginale', 'mycose génitale', 'mycose genitale', 'mycose vulvaire', 'mycose récidivante', 'mycose recidivante']) || contientMot($motif . $antecedents, ['mycose'])) {
+        $tags['mycose'] = 9;
+        $tags['femme'] = isset($tags['femme']) ? $tags['femme'] : 6;
     }
 
     // Perméabilité intestinale
@@ -93,6 +131,11 @@ function detecterTagsProfil(array $consultation, ?array $synthese, array $repons
     if ($stressNiveau >= 7 || contientMot($motif . $allPriorites, ['stress', 'anxiété', 'anxiete', 'angoisse', 'nervosité', 'nervosite'])) {
         $tags['stress'] = $stressNiveau >= 7 ? 10 : 8;
         $tags['anxiete'] = 8;
+    }
+
+    // Nervosité (irritabilité, tension nerveuse, sans forcément un stress global élevé)
+    if (contientMot($motif . $allPriorites, ['nervosité', 'nervosite', 'irritabilité', 'irritabilite', 'tension nerveuse', 'nerveux'])) {
+        $tags['nervosite'] = 8;
     }
 
     // Burnout
@@ -129,6 +172,17 @@ function detecterTagsProfil(array $consultation, ?array $synthese, array $repons
         $tags['articulaire'] = 10;
         $tags['inflammation'] = 8;
         $tags['douleurs'] = 8;
+    }
+
+    // Musculaire (courbatures, crampes, tendinites - distinct de l'articulaire)
+    if (contientMot($motif . $antecedents, ['musculaire', 'muscle', 'courbature', 'crampe', 'tendinite', 'contracture'])) {
+        $tags['musculaire'] = 9;
+        $tags['douleurs'] = isset($tags['douleurs']) ? $tags['douleurs'] : 6;
+    }
+
+    // Os / densité osseuse
+    if (contientMot($motif . $antecedents, ['ostéoporose', 'osteoporose', 'ostéopénie', 'osteopenie', 'densité osseuse', 'densite osseuse', 'fracture'])) {
+        $tags['os'] = 9;
     }
 
     // Thyroïde
@@ -191,9 +245,25 @@ function detecterTagsProfil(array $consultation, ?array $synthese, array $repons
     }
 
     // Fertilité
-    if (contientMot($motif, ['fertilité', 'fertilite', 'grossesse', 'conception', 'pma'])) {
+    if (contientMot($motif, ['fertilité', 'fertilite', 'conception', 'pma'])) {
         $tags['fertilite'] = 10;
         $tags['hormonal'] = 8;
+    }
+
+    // Grossesse / post-partum
+    if (contientMot($motif . $antecedents . $allPriorites, ['grossesse', 'enceinte', 'enceinte de', 'post-partum', 'postpartum', 'allaitement'])) {
+        $tags['grossesse'] = 10;
+        $tags['femme'] = isset($tags['femme']) ? $tags['femme'] : 8;
+    }
+
+    // Profil sportif
+    if (contientMot($motif . $antecedents . $allPriorites, ['sport', 'sportif', 'sportive', 'musculation', 'course à pied', 'course a pied', 'trail', 'compétition', 'competition', 'entraînement', 'entrainement', 'triathlon', 'crossfit'])) {
+        $tags['sportif'] = 9;
+    }
+
+    // Accompagnement pédiatrique (âge < 18 ans, ou motif explicite)
+    if (($age !== null && $age < 18) || contientMot($motif, ['enfant', 'pédiatrique', 'pediatrique', 'nourrisson', 'bébé', 'bebe'])) {
+        $tags['pediatrique'] = 10;
     }
 
     // ============================================
