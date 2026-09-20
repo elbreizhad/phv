@@ -201,6 +201,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             require __DIR__ . '/pages/actions/settings-save.php';
             break;
 
+        case 'site-update':
+            require __DIR__ . '/pages/actions/site-update.php';
+            break;
+
         case 'prestation-save':
             require __DIR__ . '/pages/actions/prestation-save.php';
             break;

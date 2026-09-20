@@ -34,6 +34,7 @@ $prestations = $prestationsStmt->fetchAll();
         <button class="tab-btn active" data-tab="cabinet">Cabinet</button>
         <button class="tab-btn" data-tab="prestations">Prestations</button>
         <button class="tab-btn" data-tab="profil">Mon profil</button>
+        <button class="tab-btn" data-tab="systeme">Système</button>
     </div>
 
     <!-- Tab Cabinet -->
@@ -250,6 +251,22 @@ $prestations = $prestationsStmt->fetchAll();
 
             <button type="submit" class="btn btn-primary mt-2">Enregistrer mon profil</button>
         </form>
+    </div>
+
+    <!-- Tab Système -->
+    <div class="tab-content" id="tab-systeme" style="display: none;">
+        <div class="card">
+            <div class="card-header">
+                <h3>Mise à jour du site</h3>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-2">Télécharge la dernière version du site depuis GitHub et l'installe. Vos données (base de données, exports) ne sont pas affectées.</p>
+                <form method="POST" onsubmit="return confirm('Actualiser le site depuis GitHub ?');">
+                    <input type="hidden" name="action" value="site-update">
+                    <button type="submit" class="btn btn-primary">Actualiser le site</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 

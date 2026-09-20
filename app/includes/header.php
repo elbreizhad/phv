@@ -79,7 +79,7 @@
 $flash = flashGet();
 if ($flash): ?>
     <div class="page-body" style="padding-bottom:0;">
-        <div class="alert alert-<?= e($flash['type']) ?> animate-in">
+        <div class="alert alert-<?= e($flash['type']) ?> animate-in" style="white-space:pre-line;">
             <?= e($flash['message']) ?>
         </div>
     </div>
