@@ -1019,4 +1019,290 @@ Alternative maison : lavement doux à l'eau tiède
 
 Après irrigation : restaurer flore avec probiotiques"
     ],
+
+    // ============================================
+    // ALIMENTATION SPORT & TERRAIN INFLAMMATOIRE (issues de cas pratiques PHV)
+    // ============================================
+    [
+        'categorie' => 'alimentation',
+        'tags' => ['sportif', 'inflammation', 'douleurs', 'articulaire'],
+        'titre' => 'Alimentation anti-inflammatoire sportif blessé',
+        'contenu' => "ALIMENTATION SPORTIF - BLESSURES À RÉPÉTITION :
+- Petit-déjeuner protéiné impératif (œufs, jambon qualité, saumon fumé) + glucides complexes (pain complet au levain, flocons d'avoine)
+- Limiter 3 mois : produits laitiers et gluten industriel (terrain pro-inflammatoire)
+- Protéines variées à chaque repas : varier viandes blanches, poissons gras 2-3x/sem, légumineuses
+- Grande portion de légumes variés midi ET soir (pas seulement crudités râpées)
+- Bien mastiquer (30x/bouchée) pour soutenir la digestion
+- Après l'effort : boisson de récupération (eau + électrolytes + protéines), pas d'alcool"
+    ],
+    [
+        'categorie' => 'activite',
+        'tags' => ['sportif', 'articulaire', 'douleurs'],
+        'titre' => 'Prévention des blessures : étirements et renforcement',
+        'contenu' => "PROGRAMME PRÉVENTION BLESSURES SPORTIF :
+- Étirements quotidiens 15-20 min, même les jours sans entraînement (ischios, mollets, tendon d'Achille, adducteurs, psoas, quadriceps, dos)
+- Jamais d'étirement juste après l'effort intense (2h après ou le lendemain)
+- Renforcement musculaire 2x/semaine 30-40 min : squats, fentes, gainage, pont fessier, proprioception (équilibre sur 1 pied, plateau instable)
+- Automassages voûte plantaire / zones sensibles au réveil et au coucher (balle de tennis, 5-10 min)
+- Consultation kiné du sport et vérification des chaussures/semelles si douleurs récurrentes"
+    ],
+    [
+        'categorie' => 'complements',
+        'tags' => ['articulaire', 'douleurs', 'sportif'],
+        'titre' => 'Collagène et curcuma - tendons, ligaments, articulations',
+        'contenu' => "PROTOCOLE TENDONS / LIGAMENTS / ARTICULATIONS :
+- Collagène marin : cure d'attaque 20g/j pendant 2 mois puis entretien 10g/j pendant 2 mois (confort articulaire, tendons, ligaments, tissus conjonctifs)
+- Curcuma : 3 gélules/j pendant 1 mois minimum (réduction inflammation, douleurs articulaires/tendineuses)
+- Magnésium bisglycinate : prévention des crampes et récupération musculaire
+- Vitamine D3/K2 : minéralisation osseuse et construction des tendons/ligaments
+- Phytothérapie : Harpagophytum (griffe du diable) en cure d'attaque 3 semaines puis entretien - anti-inflammatoire pour tendinites, entorses, arthrose"
+    ],
+    [
+        'categorie' => 'stress',
+        'tags' => ['sportif', 'stress', 'sommeil'],
+        'titre' => 'Respiration carrée pour sportif réservé/stress contenu',
+        'contenu' => "RESPIRATION CARRÉE - GESTION DU STRESS CONTENU :
+- Méthode : 4 sec inspiration + 4 sec rétention + 4 sec expiration + 4 sec rétention
+- Fréquence : 2-3x/jour, 5 minutes (matin, avant l'effort, soir avant coucher)
+- Utile chez les profils qui minimisent leur stress ressenti (fatigue post-prandiale, coups de mou inexpliqués = signes de stress latent)
+- Bénéfices : anti-stress, gestion des émotions contenues, amélioration du sommeil et de la concentration
+- Orientation possible vers un(e) sophrologue pour libérer les tensions émotionnelles accumulées"
+    ],
+
+    // ============================================
+    // FERTILITÉ, AUTO-IMMUNITÉ & ÉPUISEMENT SURRÉNALIEN
+    // ============================================
+    [
+        'categorie' => 'alimentation',
+        'tags' => ['fertilite', 'thyroide', 'hormonal', 'inflammation'],
+        'titre' => 'Alimentation sans gluten - terrain auto-immun et fertilité',
+        'contenu' => "ALIMENTATION SANS GLUTEN - AUTO-IMMUNITÉ / FERTILITÉ :
+- Éviction impérative du gluten (lien auto-immunité thyroïdienne / fausses couches à répétition)
+- Remplacer par : pâtes riz/maïs/sarrasin, pain sans gluten, sarrasin, quinoa, patate douce
+- Remplacer les féculents à IG haut par : riz basmati, quinoa, sarrasin, patate douce, courges
+- Ajouter des fibres à chaque repas : légumes variés, légumineuses, fruits, oléagineux
+- Curcuma + poivre noir, sélénium (graines de sésame) en soutien thyroïdien
+- Dîner : protéines de qualité + féculents à IG bas + légumes"
+    ],
+    [
+        'categorie' => 'phytologie',
+        'tags' => ['immunite', 'inflammation', 'hormonal'],
+        'titre' => 'TM Astragale + Sureau - modulation immunitaire (Treg)',
+        'contenu' => "PHYTOTHÉRAPIE MODULATION IMMUNITAIRE :
+- TM Astragale + TM Sureau : 5 mL dans un verre d'eau matin et soir avant les repas
+- Objectif : augmenter les lymphocytes T régulateurs (Treg) pour moduler une auto-immunité
+- Astragale : immunomodulateur doux, adaptogène
+- Sureau : immunorégulateur, anti-inflammatoire
+- Cure de 3 semaines à réévaluer avant renouvellement"
+    ],
+    [
+        'categorie' => 'complements',
+        'tags' => ['fertilite', 'hormonal', 'thyroide'],
+        'titre' => 'Protocole micronutrition fertilité et auto-immunité',
+        'contenu' => "MICRONUTRITION - SOUTIEN FERTILITÉ / AUTO-IMMUNITÉ THYROÏDIENNE :
+- Vitamine D3/K2 : 3 gouttes/j le matin, après dosage sanguin
+- Sélénium : 200 µg/j en cure de 3 mois (cofacteur T4→T3, peut réduire les anticorps anti-TPO)
+- Zinc : selon bilan biologique (immunité, fertilité, barrière intestinale)
+- Oméga-3 EPA/DHA : 3 gélules/j le soir (anti-inflammatoire, qualité des ovocytes, humeur)
+- Magnésium B6 : 3 gélules/j fractionnées (anxiété, stress, soutien surrénalien)
+- Toujours demander un bilan thyroïdien complet et un dosage de vitamine D avant complémentation"
+    ],
+    [
+        'categorie' => 'stress',
+        'tags' => ['fatigue', 'burnout', 'hormonal'],
+        'titre' => 'Luminothérapie et soutien des surrénales',
+        'contenu' => "SOUTIEN SURRÉNALIEN - ÉPUISEMENT / CORTISOL BAS :
+- Luminothérapie ou exposition à la lumière naturelle : 20 minutes le matin (boost cortisol naturel)
+- Aromathérapie surrénales : HE Pin sylvestre + HE Épinette noire en olfaction/diffusion le matin, 10 min
+- Objectif coucher : avancer l'horaire pour gagner en sommeil réparateur (viser 22h30 max)
+- Envisager une réduction de la charge de travail (délégation) en parallèle
+- Sophrologie en soutien de la gestion du stress chronique"
+    ],
+    [
+        'categorie' => 'complements',
+        'tags' => ['anemie', 'fatigue', 'femme'],
+        'titre' => 'Carence martiale : ferritine liposomale et lactoferrine',
+        'contenu' => "PROTOCOLE CARENCE MARTIALE (ferritine basse) :
+- Ferritine liposomale + lactoferrine à jeun le matin, cure à évaluer selon dosage
+- Alimentaire : associer les aliments riches en fer (viande, boudin, légumineuses, légumes verts, oléagineux) à de la vitamine C pour l'absorption
+- Limiter les chélateurs du fer autour des repas riches en fer : thé, café, produits laitiers
+- Toujours objectiver par un dosage sanguin (ferritine) avant et après la cure"
+    ],
+
+    // ============================================
+    // ÉQUILIBRE HORMONAL FÉMININ & DOULEURS MENSTRUELLES
+    // ============================================
+    [
+        'categorie' => 'aromatherapie',
+        'tags' => ['regles', 'douleurs', 'femme'],
+        'titre' => 'Massage HE douleurs menstruelles',
+        'contenu' => "MASSAGE AROMATHÉRAPIE - DOULEURS MENSTRUELLES :
+- 2 gouttes HE Gaulthérie couchée (anti-inflammatoire, antalgique)
+- + 2 gouttes HE Camomille romaine (spasmolytique, apaisante)
+- Diluées dans 1 c.à.c. d'huile végétale (millepertuis ou noyau d'abricot)
+- Massage abdominal en cercles dans le sens des aiguilles d'une montre
+- 2-3 fois par jour pendant les règles, peut être commencé 2 jours avant
+- Associer une bouillotte chaude sur le ventre dès les premières douleurs"
+    ],
+    [
+        'categorie' => 'phytologie',
+        'tags' => ['hormonal', 'regles', 'femme'],
+        'titre' => 'TM Achillée millefeuille + Curcuma - balance œstro-progestative',
+        'contenu' => "PHYTOTHÉRAPIE BALANCE ŒSTROGÈNES / PROGESTÉRONE :
+- TM Achillée millefeuille + Curcuma en synergie
+- 5 mL dans un verre d'eau matin et soir avant les repas
+- Achillée millefeuille : emménagogue, régule le cycle, anti-inflammatoire pelvienne
+- Curcuma : anti-inflammatoire puissant, soutien hépatique (métabolisme des œstrogènes)
+- Cure de 3 semaines, à renouveler selon les symptômes
+- Compléter par de l'huile d'onagre en 2e partie de cycle (SPM, douleurs menstruelles)"
+    ],
+    [
+        'categorie' => 'stress',
+        'tags' => ['anxiete', 'sommeil', 'femme'],
+        'titre' => 'Cohérence cardiaque contre cauchemars et anxiété (GABA)',
+        'contenu' => "COHÉRENCE CARDIAQUE - ANXIÉTÉ / CAUCHEMARS FRÉQUENTS :
+- Protocole 5-5-5 : inspirer 5 secondes, retenir 5 secondes, expirer 5 secondes
+- 3 fois par jour, particulièrement le soir avant le coucher
+- Particulièrement efficace contre les cauchemars fréquents (active le système GABA)
+- Applications gratuites : RespiRelax, Kardia
+- Compléter par des techniques d'ancrage (5 sens : 5-4-3-2-1) et la lecture avant le sommeil plutôt que les écrans"
+    ],
+    [
+        'categorie' => 'alimentation',
+        'tags' => ['inflammation', 'permeabilite', 'sii', 'poids'],
+        'titre' => 'Alimentation anti-inflammatoire à petit budget',
+        'contenu' => "ALIMENTATION ANTI-INFLAMMATOIRE - PETIT BUDGET :
+- Tester l'éviction du gluten 4 semaines : pâtes riz/maïs (marques économiques), pain maison au maïs
+- Remplacer les yaourts vache par des yaourts végétaux (coco, soja) - prix comparables
+- Remplacer la viande rouge par des légumineuses (lentilles, pois chiches) et du poisson en conserve (sardines, maquereaux) - économique et riche en oméga-3
+- Légumes surgelés : aussi nutritifs que le frais et moins coûteux
+- Curcuma, gingembre frais, graines de lin moulues : petits prix, grand impact anti-inflammatoire
+- Prioriser les compléments à fort impact (oméga-3, magnésium) plutôt qu'une multiplication de produits"
+    ],
+
+    // ============================================
+    // PEAU, HORMONES ET ADOLESCENCE
+    // ============================================
+    [
+        'categorie' => 'complements',
+        'tags' => ['peau', 'digestif'],
+        'titre' => 'Cure de chlorophylle - transit et peau',
+        'contenu' => "CURE DE CHLOROPHYLLE - ACNÉ / CONSTIPATION :
+- Posologie : 10 gouttes pendant 3 jours puis 20 gouttes jusqu'à amélioration du transit
+- Cure d'environ 1 mois
+- Actions sur l'acné : réduit l'inflammation cutanée, protège contre l'oxydation du sébum, détoxifie le foie (moins d'hormones en excès), soutient la flore intestinale
+- Actions sur la constipation : stimule en douceur le transit, protège et répare l'intestin, améliore la flore"
+    ],
+    [
+        'categorie' => 'complements',
+        'tags' => ['peau', 'hormonal'],
+        'titre' => 'Zinc + probiotiques + ortie - acné hormonale',
+        'contenu' => "PROTOCOLE ACNÉ INFLAMMATOIRE HORMONALE (3 mois) :
+- Zinc : régule la production de sébum, anti-inflammatoire et antibactérien, favorise la cicatrisation, module les androgènes
+- Probiotiques : rééquilibrent le microbiote intestinal (axe intestin-peau), modulent l'immunité cutanée, restaurent la barrière cutanée
+- Ortie : dépurative (foie et reins), anti-inflammatoire, modulation des androgènes
+- Posologie type : 2 gélules le matin avant le petit-déjeuner
+- Compléter par une huile d'onagre/bourrache (GLA) en 2e intention pour la régulation hormonale et l'hydratation cutanée"
+    ],
+    [
+        'categorie' => 'alimentation',
+        'tags' => ['peau', 'inflammation', 'hormonal'],
+        'titre' => 'Rééquilibrage alimentaire acné adolescent',
+        'contenu' => "ALIMENTATION ANTI-ACNÉ (ADOLESCENT) :
+- Petit-déjeuner protéiné et lipidique obligatoire (œufs + pain complet + fromage OU porridge yaourt + flocons d'avoine + fruits rouges + oléagineux)
+- Répartition assiette midi et soir : 50% légumes (crus + cuits), 25% protéines, 15% glucides complexes, 10% bons gras
+- Diminuer drastiquement les sucres raffinés (bonbons, sodas, viennoiseries, gâteaux industriels)
+- Réduire les protéines animales excessives - viande rouge maximum 3x/mois, privilégier poissons gras 2-3x/semaine
+- Huiles riches en oméga-3 (colza, chanvre, lin) : 2 c.à.s./jour
+- Coucher plus tôt (22h/22h30) et écrans coupés dès 21h"
+    ],
+
+    // ============================================
+    // FEMME SPORTIVE : REPRISE, TFL, POST-PARTUM
+    // ============================================
+    [
+        'categorie' => 'activite',
+        'tags' => ['sportif', 'articulaire', 'femme'],
+        'titre' => 'Renforcement musculaire prévention TFL (syndrome essuie-glace)',
+        'contenu' => "PRÉVENTION TENDINOPATHIE TFL - COUREUSE :
+- Renforcement 2x/semaine, 20-30 min : abducteurs de hanche (coquillages, élastique), fessiers ++ (pont fessier, squats, fentes), gainage central (planche, superman)
+- Reprise progressive : ne jamais augmenter les distances de plus de 10%/semaine
+- Étirements post-séance : quadriceps, fessiers, TFL
+- Massage TFL à la balle : balle caoutchouc ferme allongée sur le côté, 10-12 pressions progressives
+- Cataplasme d'argile verte sur la zone douloureuse la nuit si besoin
+- HE Gaulthérie couchée diluée en huile végétale (calophylle), massage local 3x/j sur la zone"
+    ],
+    [
+        'categorie' => 'hydrologie',
+        'tags' => ['sportif'],
+        'titre' => 'Hydratation à l\'effort - calcul et repères',
+        'contenu' => "HYDRATATION À L'EFFORT :
+- Gourde systématique même pour les sorties courtes
+- Boire toutes les 15 minutes par petites gorgées
+- Minimum 500 mL par heure d'entraînement
+- Électrolytes ou boisson isotonique pour les efforts de plus d'1h
+- Calcul post-effort : (poids avant - poids après) × 1,5 = mL à boire pour compenser la perte
+- Au quotidien : 1er verre d'eau au lever, avant toute autre boisson, en dehors des repas"
+    ],
+    [
+        'categorie' => 'phytologie',
+        'tags' => ['articulaire', 'hormonal', 'douleurs'],
+        'titre' => 'Ortie piquante - reminéralisant tendons et hormones',
+        'contenu' => "ORTIE PIQUANTE - REMINÉRALISATION ET SOUTIEN HORMONAL :
+- 5 mL dans un verre d'eau, matin et soir avant les repas
+- Cure de 3 semaines, renouvelable
+- Riche en silice : soutient les tendons, douleurs articulaires
+- Riche en fer : intéressant en cas de fatigue/anémie associée
+- Action hormonale bénéfique documentée en complément d'un rééquilibrage alimentaire
+- Bien adaptée en période de reprise sportive post-partum ou de charge d'entraînement élevée"
+    ],
+    [
+        'categorie' => 'routine_matin',
+        'tags' => ['sportif', 'general'],
+        'titre' => 'Méthode SMART et journal de bord - reprise progressive',
+        'contenu' => "REPRISE D'ACTIVITÉ PROGRESSIVE - MÉTHODE SMART :
+- Formuler des objectifs Spécifiques, Mesurables, Atteignables, Réalistes, Temporellement définis
+- Exemple : « Je marche 30 min, 3x/semaine pendant 15 jours »
+- Tenir un journal de bord quotidien : activités physiques (durée, ressenti), alimentation et hydratation du jour, émotions et état général, progrès observés
+- Utile pour maintenir la motivation et objectiver les progrès sur les prises en charge de longue durée (fatigue, reprise sportive, rééquilibrage alimentaire)"
+    ],
+
+    // ============================================
+    // SYSTÈME NERVEUX, ALIMENTATION ÉMOTIONNELLE & FOIE
+    // ============================================
+    [
+        'categorie' => 'stress',
+        'tags' => ['depression', 'digestif', 'stress'],
+        'titre' => 'Respiration yogique complète contre les pulsions sucrées',
+        'contenu' => "RESPIRATION YOGIQUE COMPLÈTE - PULSIONS ÉMOTIONNELLES :
+- Pratiquer allongé(e) sur le dos, 5-10 minutes
+- Inspiration abdominale (le ventre monte) → thoracique (la poitrine monte) → claviculaire
+- Expiration : vider le ventre puis la poitrine progressivement
+- Objectif : oxygénation cellulaire, détente nerveuse, massage interne des organes
+- À utiliser comme alternative au grignotage émotionnel en cas de pulsion sucrée ou de stress"
+    ],
+    [
+        'categorie' => 'alimentation',
+        'tags' => ['digestif', 'hormonal', 'stress', 'poids'],
+        'titre' => 'Alimentation soutien neurotransmetteurs et glycémie stable',
+        'contenu' => "ALIMENTATION SOUTIEN HUMEUR / GLYCÉMIE STABLE :
+- Protéines à chaque repas (précurseurs de sérotonine et dopamine)
+- Remplacer les bonbons/grignotages par du chocolat noir 70%+ ou une compote sans sucre
+- Limiter le café à 1/jour, réduire l'alcool progressivement
+- Curcuma (anti-inflammatoire) et cannelle (régule les pulsions sucrées) à intégrer au quotidien
+- Fibres et légumes à chaque repas : la moitié de l'assiette, pour drainer les œstrogènes en excès (constipation = mauvaise élimination hormonale)
+- Repas ritualisés, assis, sans écran, avec mastication prolongée"
+    ],
+    [
+        'categorie' => 'phytologie',
+        'tags' => ['hepatique', 'hormonal', 'stress'],
+        'titre' => 'Mélisse + Chardon-Marie - détox hépatique et apaisement',
+        'contenu' => "PHYTOTHÉRAPIE FOIE ET SYSTÈME NERVEUX :
+- Mélisse (2/3) + Chardon-Marie (1/3) en synergie
+- 5 mL dans un verre d'eau, matin et soir avant les repas
+- Mélisse : détente du système nerveux, antispasmodique digestif
+- Chardon-Marie : soutien hépatique doux, aide au métabolisme des œstrogènes en excès
+- Cure de 3 semaines
+- Particulièrement indiqué en cas d'hyperœstrogénie relative associée à un stress chronique"
+    ],
 ];
