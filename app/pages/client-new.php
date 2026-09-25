@@ -85,16 +85,6 @@ if ($editMode) {
 
                 <div class="form-section">
                     <div class="form-section-title">Informations complémentaires</div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Taille (cm)</label>
-                            <input type="number" name="taille_cm" class="form-control" value="<?= e($client['taille_cm'] ?? '') ?>">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Poids (kg)</label>
-                            <input type="number" step="0.1" name="poids_kg" class="form-control" value="<?= e($client['poids_kg'] ?? '') ?>">
-                        </div>
-                    </div>
                     <div class="form-group">
                         <label class="form-label">Notes</label>
                         <textarea name="notes" class="form-control" rows="3" placeholder="Notes internes sur le client..."><?= e($client['notes'] ?? '') ?></textarea>
@@ -108,6 +98,13 @@ if ($editMode) {
                     </button>
                 </div>
             </form>
+
+            <p class="text-sm text-muted" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border, #e5e5e0);">
+                La naturopathie est un accompagnement de santé naturel et non médical, fondé sur la capacité d'auto-guérison du corps.
+                Elle repose sur une approche holistique : la personne est considérée dans sa globalité — corps, alimentation, mode de vie,
+                émotions — et non par ses seuls symptômes. L'objectif est d'identifier les causes profondes des déséquilibres et de proposer
+                des conseils personnalisés pour aider l'organisme à retrouver son équilibre, en complément de la médecine conventionnelle.
+            </p>
         </div>
     </div>
 </div>

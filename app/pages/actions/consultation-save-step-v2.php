@@ -71,6 +71,19 @@ try {
         $insertStmt->execute([$consultId, $section, $q['key'], $q['value']]);
     }
 
+    // Étape 1 (anthropométrie) : la fiche client n'a plus ses propres champs
+    // taille/poids à la création, on les tient à jour depuis la dernière
+    // mesure prise en consultation pour que le profil client et l'export PDF
+    // praticien restent renseignés.
+    if ($step === 1) {
+        $tailleCm = trim((string) getPost('taille_cm'));
+        $poidsKg = trim((string) getPost('poids_kg'));
+        if ($tailleCm !== '' || $poidsKg !== '') {
+            $updateClient = $db->prepare('UPDATE clients SET taille_cm = COALESCE(NULLIF(?, \'\'), taille_cm), poids_kg = COALESCE(NULLIF(?, \'\'), poids_kg) WHERE id = ?');
+            $updateClient->execute([$tailleCm, $poidsKg, $consultation['client_id']]);
+        }
+    }
+
     if ($step === 15) {
         $p1 = trim((string) getPost('priorite_1'));
         $p2 = trim((string) getPost('priorite_2'));
