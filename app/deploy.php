@@ -143,6 +143,26 @@ function deployRun(string $targetDir): array {
         $log[] = "Attention : la synchronisation des protocoles a échoué (" . $e->getMessage() . ").";
     }
 
+    $log[] = "Synchronisation des ressources (phytologie, aromatologie...) en base...";
+    try {
+        if (!file_exists($targetDir . '/data/ressources.php')) {
+            throw new RuntimeException('fichier data/ressources.php introuvable');
+        }
+        require_once $targetDir . '/data/ressources.php';
+        $result = syncRessources(getDB());
+        if (!empty($result['inserted'])) {
+            $log[] = "Ressources ajoutées en base (" . count($result['inserted']) . ")";
+        }
+        if (!empty($result['updated'])) {
+            $log[] = "Ressources mises à jour en base (" . count($result['updated']) . ")";
+        }
+        if (empty($result['inserted']) && empty($result['updated'])) {
+            $log[] = "Aucune ressource à synchroniser.";
+        }
+    } catch (Throwable $e) {
+        $log[] = "Attention : la synchronisation des ressources a échoué (" . $e->getMessage() . ").";
+    }
+
     $log[] = "Déploiement terminé avec succès.";
 
     return $log;

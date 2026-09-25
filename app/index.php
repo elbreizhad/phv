@@ -70,6 +70,8 @@ $validPages = [
     // Ressources
     'fiches',
     'fiche-view',
+    'ressources',
+    'ressource-view',
     'phv-export',
     'phv-pdf',
     'phv-pdf-praticien',
