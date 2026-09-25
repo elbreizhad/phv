@@ -14,8 +14,24 @@
 function detecterTagsProfil(array $consultation, ?array $synthese, array $reponses): array {
     $tags = [];
 
+    // Helper pour récupérer valeur réponse
+    $getR = function($key, $default = '') use ($reponses) {
+        $val = $reponses[$key] ?? $default;
+        return is_array($val) ? implode(' ', $val) : (string)$val;
+    };
+
     // Récupérer les données textuelles pour analyse
-    $motif = strtolower($consultation['motif'] ?? '');
+    // Le motif combine la phrase initiale du client (saisie à la création) et
+    // le travail du praticien à l'étape 2 (reformulation, historique,
+    // objectif, pathologies explicitement cochées), pour que la détection de
+    // profil reflète vraiment l'échange, pas seulement le texte brut initial.
+    $motif = strtolower(trim(
+        ($consultation['motif'] ?? '') . ' ' .
+        $getR('motif_reformule') . ' ' .
+        $getR('motif_historique') . ' ' .
+        $getR('motif_objectif') . ' ' .
+        $getR('motif_pathologies_liees')
+    ));
     $motifCat = strtolower($consultation['motif_categorie'] ?? '');
     $sexe = strtoupper($consultation['client_sexe'] ?? '');
 
@@ -32,12 +48,6 @@ function detecterTagsProfil(array $consultation, ?array $synthese, array $repons
     $priorite2 = strtolower($synthese['priorite_2'] ?? '');
     $priorite3 = strtolower($synthese['priorite_3'] ?? '');
     $allPriorites = "$priorite1 $priorite2 $priorite3";
-
-    // Helper pour récupérer valeur réponse
-    $getR = function($key, $default = '') use ($reponses) {
-        $val = $reponses[$key] ?? $default;
-        return is_array($val) ? implode(' ', $val) : (string)$val;
-    };
 
     // Scores
     $stressNiveau = (int)$getR('stress_niveau', 5);

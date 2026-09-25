@@ -15,6 +15,9 @@ $stmt->execute([$consultId, $userId]);
 $consultation = $stmt->fetch();
 if (!$consultation) { redirect('dashboard'); }
 
+// Bibliothèque de pathologies pour le lien motif -> fiches/protocoles/recettes (étape Motif)
+$pathologiesList = $db->query("SELECT id, nom, systeme FROM fiches_pathologies ORDER BY systeme, nom")->fetchAll();
+
 // Toutes les réponses V2 toutes sections confondues (pour pré-remplissage)
 $allStmt = $db->prepare("SELECT question_key, reponse FROM consultation_reponses WHERE consultation_id = ? AND section LIKE 'v2_step%'");
 $allStmt->execute([$consultId]);

@@ -14,10 +14,29 @@ $scale = function(string $name, string $icon, string $label) use ($r) {
     <div class="card-body">
         <div class="v2-grid-4">
             <div class="form-group"><label class="form-label">Besoins (h)</label><input type="text" name="sommeil_besoin_h" class="form-control" value="<?= e($r('sommeil_besoin_h')) ?>"></div>
-            <div class="form-group"><label class="form-label">Heures dormies</label><input type="text" name="sommeil_heures_dormies" class="form-control" value="<?= e($r('sommeil_heures_dormies')) ?>"></div>
-            <div class="form-group"><label class="form-label">Heure coucher</label><input type="time" name="sommeil_heure_coucher" class="form-control" value="<?= e($r('sommeil_heure_coucher')) ?>"></div>
-            <div class="form-group"><label class="form-label">Heure lever</label><input type="time" name="sommeil_heure_lever" class="form-control" value="<?= e($r('sommeil_heure_lever')) ?>"></div>
+            <div class="form-group"><label class="form-label">Heures dormies <span class="text-sm text-muted">(auto, ajustable)</span></label><input type="text" id="v2_heures_dormies" name="sommeil_heures_dormies" class="form-control" value="<?= e($r('sommeil_heures_dormies')) ?>"></div>
+            <div class="form-group"><label class="form-label">Heure coucher</label><input type="time" id="v2_heure_coucher" name="sommeil_heure_coucher" class="form-control" value="<?= e($r('sommeil_heure_coucher')) ?>"></div>
+            <div class="form-group"><label class="form-label">Heure lever</label><input type="time" id="v2_heure_lever" name="sommeil_heure_lever" class="form-control" value="<?= e($r('sommeil_heure_lever')) ?>"></div>
         </div>
+        <script>
+        (function() {
+            const coucher = document.getElementById('v2_heure_coucher');
+            const lever = document.getElementById('v2_heure_lever');
+            const dormies = document.getElementById('v2_heures_dormies');
+            function calcDuree() {
+                if (!coucher.value || !lever.value) return;
+                const [hc, mc] = coucher.value.split(':').map(Number);
+                const [hl, ml] = lever.value.split(':').map(Number);
+                let minutes = (hl * 60 + ml) - (hc * 60 + mc);
+                if (minutes <= 0) minutes += 24 * 60; // passe minuit
+                const h = Math.floor(minutes / 60);
+                const m = minutes % 60;
+                dormies.value = m === 0 ? (h + 'h') : (h + 'h' + String(m).padStart(2, '0'));
+            }
+            coucher.addEventListener('change', calcDuree);
+            lever.addEventListener('change', calcDuree);
+        })();
+        </script>
         <div class="form-group">
             <label class="form-label">Réveils nocturnes</label>
             <input type="text" name="sommeil_reveils" class="form-control" value="<?= e($r('sommeil_reveils')) ?>" placeholder="Fréquence / heures / durée">

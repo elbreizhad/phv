@@ -2043,15 +2043,35 @@ function toStr($value): string {
 }
 
 /**
+ * Texte du motif enrichi : combine le motif initial (saisi à la création du
+ * client) avec la reformulation, l'historique, l'objectif et les pathologies
+ * explicitement identifiées par le praticien à l'étape 2 (Motif). Utilisé par
+ * tous les moteurs de correspondance (pathologies, protocoles, recettes,
+ * suggestions) pour qu'ils reflètent vraiment le travail du praticien, pas
+ * seulement la phrase brute du client à la création.
+ */
+function motifTexteEnrichi(array $consultation, array $reponses): string {
+    return trim(implode(' ', array_filter([
+        $consultation['motif'] ?? '',
+        toStr($reponses['motif_reformule'] ?? ''),
+        toStr($reponses['motif_historique'] ?? ''),
+        toStr($reponses['motif_objectif'] ?? ''),
+        toStr($reponses['motif_pathologies_liees'] ?? ''),
+    ])));
+}
+
+/**
  * Matching intelligent des protocoles avec la consultation
  */
 function matchProtocolesToConsultation(array $consultation, ?array $synthese, array $reponses, array $protocoles): array {
     $matched = [];
 
-    // Données de la consultation
-    $motif = strtolower($consultation['motif'] ?? '');
+    // Données de la consultation (motif initial + reformulation et pathologies
+    // identifiées à l'étape 2, pour que le travail du praticien sur le motif
+    // profite réellement au matching, pas seulement le texte saisi à la création)
+    $motif = strtolower(motifTexteEnrichi($consultation, $reponses));
     $motifCat = strtolower($consultation['motif_categorie'] ?? '');
-    $sexe = $consultation['client_sexe'] ?? '';
+    $sexe = strtoupper($consultation['client_sexe'] ?? '');
 
     // Priorités de la synthèse
     $priorite1 = strtolower($synthese['priorite_1'] ?? '');
@@ -2102,7 +2122,7 @@ function matchProtocolesToConsultation(array $consultation, ?array $synthese, ar
         if ($type === 'stress' && $sommeilQualite <= 4) $score += 2;
         if ($type === 'digestif' && !empty($digTroubles)) $score += 3;
         if ($type === 'immunite' && $immuNiveau <= 4) $score += 3;
-        if ($type === 'hormonal' && $sexe === 'femme') $score += 1;
+        if ($type === 'hormonal' && $sexe === 'F') $score += 1;
 
         // Vérifier si les mots du motif apparaissent dans le protocole
         $motifWords = preg_split('/\s+/', $motif);
@@ -2120,9 +2140,12 @@ function matchProtocolesToConsultation(array $consultation, ?array $synthese, ar
         }
     }
 
-    // Trier par score décroissant et limiter à 5
+    // Trier par score décroissant. Limité à 5, sauf si le praticien a
+    // explicitement coché plus de pathologies à l'étape Motif (score >= 100) :
+    // celles-ci sont alors toutes conservées.
     usort($matched, fn($a, $b) => $b['match_score'] - $a['match_score']);
-    return array_slice($matched, 0, 5);
+    $nbExplicites = count(array_filter($matched, fn($p) => $p['match_score'] >= 100));
+    return array_slice($matched, 0, max(5, $nbExplicites));
 }
 
 /**
@@ -2130,32 +2153,49 @@ function matchProtocolesToConsultation(array $consultation, ?array $synthese, ar
  */
 function matchPathologiesToConsultation(array $consultation, ?array $synthese, array $reponses, array $pathologies): array {
     $matched = [];
-    $motif = strtolower($consultation['motif'] ?? '');
+    $motif = strtolower(motifTexteEnrichi($consultation, $reponses));
     $motifCat = strtolower($consultation['motif_categorie'] ?? '');
     $priorites = strtolower(($synthese['priorite_1'] ?? '') . ' ' . ($synthese['priorite_2'] ?? '') . ' ' . ($synthese['priorite_3'] ?? ''));
+
+    // Pathologies explicitement cochées par le praticien à l'étape Motif
+    // (checkbox "Pathologies / pistes à relier") : match garanti et prioritaire.
+    $pathologiesLiees = array_filter(array_map('trim', explode(',', toStr($reponses['motif_pathologies_liees'] ?? ''))));
+    $pathologiesLieesLower = array_map('mb_strtolower', $pathologiesLiees);
 
     foreach ($pathologies as $patho) {
         $score = 0;
         $pathoNom = strtolower($patho['nom']);
         $pathoDesc = strtolower($patho['description'] ?? '');
-        $pathoSysteme = strtolower($patho['systeme'] ?? '');
+        $pathoSysteme = $patho['systeme'] ?? '';
+
+        // Sélection explicite du praticien : priorité absolue
+        if (in_array($pathoNom, $pathologiesLieesLower, true)) {
+            $score += 100;
+        }
 
         // Recherche dans le nom de la pathologie
         if (str_contains($motif, $pathoNom) || str_contains($pathoNom, $motif)) $score += 5;
 
-        // Mots clés communs
+        // Mots clés communs, par système (valeurs identiques à celles de
+        // fiches-pathologies.php : "Système digestif", "Peau / Phanères", etc.)
         $keywords = [
-            'Digestif' => ['digestif', 'intestin', 'ballonnement', 'constipation', 'diarrhée', 'reflux', 'rgo', 'acidité', 'candidose'],
-            'Nerveux' => ['stress', 'anxiété', 'sommeil', 'insomnie', 'fatigue', 'burn', 'épuisement'],
-            'Immunitaire' => ['immunité', 'infection', 'rhume', 'allergie', 'défenses'],
-            'Endocrinien' => ['thyroïde', 'hormone', 'cycle', 'règles', 'spm', 'ménopause'],
-            'Ostéo-articulaire' => ['articulation', 'arthrose', 'douleur', 'rhumatisme'],
-            'Tégumentaire' => ['peau', 'acné', 'eczéma', 'psoriasis'],
-            'Cardiovasculaire' => ['tension', 'hypertension', 'cholestérol', 'cœur', 'circulation']
+            'Système digestif' => ['digestif', 'intestin', 'ballonnement', 'constipation', 'diarrhée', 'reflux', 'rgo', 'acidité', 'candidose', 'sibo', 'dysbiose'],
+            'Système nerveux' => ['stress', 'anxiété', 'sommeil', 'insomnie', 'fatigue', 'burn', 'épuisement', 'humeur', 'dépression', 'addiction'],
+            'Système immunitaire' => ['immunité', 'infection', 'rhume', 'allergie', 'défenses', 'inflammation'],
+            'Système endocrinien' => ['thyroïde', 'hormone', 'cycle', 'règles', 'spm', 'ménopause', 'diabète', 'glycémie', 'perturbateur'],
+            'Système uro-génital' => ['fertilité', 'contraception', 'fibrome', 'kyste', 'libido', 'seins', 'mycose', 'cystite'],
+            'Système ostéo-articulaire' => ['articulation', 'arthrose', 'douleur', 'rhumatisme', 'ostéoporose', 'muscul'],
+            'Peau / Phanères' => ['peau', 'acné', 'eczéma', 'psoriasis', 'rosacée', 'cheveux', 'ongles'],
+            'Système cardio-vasculaire' => ['tension', 'hypertension', 'cholestérol', 'cœur', 'circulation', 'avc'],
+            'Système respiratoire' => ['asthme', 'bronchite', 'respiratoire', 'orl', 'toux'],
+            'Oncologie' => ['cancer', 'oncologie', 'chimiothérapie', 'radiothérapie'],
+            'Grossesse / Périnatalité' => ['grossesse', 'enceinte', 'post-partum', 'allaitement'],
+            'Accompagnement pédiatrique' => ['enfant', 'pédiatrique', 'nourrisson', 'bébé'],
+            'Accompagnement personnes âgées' => ['âgée', 'senior', 'personnes âgées'],
         ];
 
-        if (isset($keywords[$patho['systeme']])) {
-            foreach ($keywords[$patho['systeme']] as $kw) {
+        if (isset($keywords[$pathoSysteme])) {
+            foreach ($keywords[$pathoSysteme] as $kw) {
                 if (str_contains($motif, $kw)) $score += 3;
                 if (str_contains($priorites, $kw)) $score += 2;
             }
@@ -2176,7 +2216,7 @@ function matchPathologiesToConsultation(array $consultation, ?array $synthese, a
  */
 function matchRecettesToConsultation(array $consultation, ?array $synthese, array $reponses, array $recettes): array {
     $matched = [];
-    $motif = strtolower($consultation['motif'] ?? '');
+    $motif = strtolower(motifTexteEnrichi($consultation, $reponses));
     $priorites = strtolower(($synthese['priorite_1'] ?? '') . ' ' . ($synthese['priorite_2'] ?? ''));
 
     // Détecter les régimes nécessaires
@@ -2266,9 +2306,9 @@ function generateAutoPhvContent(array $consultation, ?array $synthese, array $re
     $alimAlertes = [];
 
     // Conseils de base toujours présents
-    $alimConseils[] = "• Mastiquer longuement chaque bouchée (20-30 fois)";
     $alimConseils[] = "• Manger dans le calme, sans écran, en pleine conscience";
     $alimConseils[] = "• Boire 1,5 L d'eau par jour (faiblement minéralisée), en dehors des repas (arrêter 30 min avant, reprendre 1h après)";
+    $alimPrivilegier[] = "Manger largement végétal, varié, riche en couleurs, le plus bio et frais possible";
 
     // Alerte si hydratation insuffisante détectée dans le questionnaire
     if (!empty($hydratation) && (str_contains($hydratation, 'café') || str_contains($hydratation, '1l') || str_contains($hydratation, 'peu'))) {
