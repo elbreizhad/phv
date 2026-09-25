@@ -101,10 +101,16 @@ function deployRun(string $targetDir): array {
     $log[] = "Synchronisation des fiches pathologies en base...";
     try {
         require_once $targetDir . '/data/fiches-pathologies.php';
-        $added = syncFichesPathologies(getDB());
-        $log[] = empty($added)
-            ? "Aucune nouvelle fiche à ajouter (déjà à jour)."
-            : "Fiches ajoutées en base (" . count($added) . ") : " . implode(', ', $added);
+        $result = syncFichesPathologies(getDB());
+        if (!empty($result['inserted'])) {
+            $log[] = "Fiches ajoutées en base (" . count($result['inserted']) . ") : " . implode(', ', $result['inserted']);
+        }
+        if (!empty($result['updated'])) {
+            $log[] = "Fiches mises à jour en base (" . count($result['updated']) . ") : " . implode(', ', $result['updated']);
+        }
+        if (empty($result['inserted']) && empty($result['updated'])) {
+            $log[] = "Aucune fiche à synchroniser.";
+        }
     } catch (Throwable $e) {
         $log[] = "Attention : la synchronisation des fiches a échoué (" . $e->getMessage() . ").";
     }

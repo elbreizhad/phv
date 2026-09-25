@@ -117,36 +117,36 @@ function getFichesPathologies(): array {
         [
             'nom' => 'Mycose vaginale',
             'systeme' => 'Système uro-génital',
-            'description' => "Infection fongique vaginale à Candida albicans, très fréquente. Souvent récidivante si le terrain n'est pas corrigé.",
-            'causes' => "Dysbiose vaginale, antibiotiques, stress, alimentation riche en sucres, contraception hormonale, vêtements serrés/synthétiques, toilette intime agressive.",
-            'signes_cliniques' => "Démangeaisons vulvo-vaginales, pertes blanches épaisses (aspect cottage cheese), rougeurs, brûlures mictionnelles, douleurs.",
-            'conseils_alimentation' => "Protocole anti-candida : limiter sucres rapides, gluten, produits laitiers. Huile de coco quotidienne (acide caprylique). Curcuma frais. Prébiotiques.",
-            'aliments_eviter' => "Sucres rapides, gluten (temporairement), produits laitiers avec lactose, alcool, produits industriels.",
-            'aliments_privilegier' => "Huile de coco, ail, oignon, légumes verts, protéines de qualité, aliments fermentés (miso, kimchi en petite quantité), bouillon d'os.",
-            'conseils_activite' => "Marche rapide 5x/semaine 30-45 min. Yin yoga 1x/semaine. Exercices de Kegel quotidiens (3 séries de 10 contractions).",
-            'conseils_stress' => "Respirer 3-5 min avant chaque repas (respiration ventrale). Marche en nature. Le stress favorise le candida.",
-            'conseils_routine' => "Toilette intime eau tiède + eau florale de rose uniquement. Sous-vêtements coton. Éviter pantalons serrés. Protections en coton bio.",
-            'complements' => "Dysbios'Aroma (2 caps/repas 3 sem puis 2 caps/soir 2 mois). Huile d'argousier (2 caps/j, 2 mois). Propolis noire (1 goutte/j, 15j/mois). Probiotiques (après 3 sem d'HE). Ovules probiotiques (1/sem, 2 mois). Chardon-marie TM (20 gttes avant repas).",
-            'phytotherapie' => "Lapacho (antifongique). Échinacée (immunité). Chardon-marie (soutien hépatique).",
-            'aromatherapie' => "HE Tea Tree + huile de coco en application externe (1 goutte, 1x/jour).",
-            'notes' => 'Cas de référence : Sophie (candidose vaginale). Vérifier vitamine D3 et Zinc avec le médecin.',
+            'description' => "Mycose vaginale récidivante (candidose à Candida albicans) : infection liée à une prolifération de levures du genre Candida, favorisée par un déséquilibre de la flore de Döderlein (lactobacilles) et une élévation du pH vaginal. Devient « récidivante » à partir de 4 épisodes/an ; l'allopathie seule (antifongiques répétés) est souvent insuffisante si le terrain n'est pas corrigé.",
+            'causes' => "1) Déséquilibre de la flore de Döderlein : baisse des lactobacilles → moins d'acide lactique/peroxyde d'hydrogène → protection diminuée ; lien intestin-vagin via dysbiose intestinale et transfert bactérien périnéal. 2) pH vaginal élevé (>4,5 au lieu de 3,8-4,5) : règles, rapports non protégés (sperme pH 7,2-8), savons agressifs, périménopause alcalinisent le milieu et favorisent Candida. 3) Contexte hormonal (préménopause) : baisse des œstrogènes → moins de glycogène → moins de nourriture pour les lactobacilles → muqueuse plus fine/sèche, immunité locale moins efficace. 4) Hygiène inadaptée : produits intimes trop alcalins (pH 8), protections synthétiques/parfumées, sous-vêtements synthétiques ou serrés (humidité). 5) Facteurs métaboliques/immunitaires : sucres rapides (nourriture du Candida), stress chronique (cortisol → immunosuppression), carences (vitamine D, zinc, fer), fatigue chronique, infections virales latentes. 6) Biofilm de Candida résistant aux antifongiques classiques, expliquant certaines récidives.",
+            'signes_cliniques' => "Démangeaisons et brûlures vulvo-vaginales, muqueuse rouge et inflammée, pertes vaginales NON odorantes (différencie d'une vaginose bactérienne), intensification en période périmenstruelle, récidives malgré traitements antifongiques répétés. Terrain associé possible : SII, fatigue, stress chronique, symptômes de préménopause.",
+            'conseils_alimentation' => "Alimentation antifongique ciblée 4 à 6 semaines : zéro sucre rapide autant que possible (sucre, miel, sirops, jus de fruits, produits industriels). Limitation temporaire du gluten (fragilise la perméabilité intestinale) et des produits laitiers/lactose (substrat du Candida). Protocole quotidien : 1 c. à soupe d'huile de coco/jour (acide caprylique) + curcuma frais râpé. Régénération du microbiote sur 4 semaines minimum : prébiotiques et aliments fermentés en petite quantité selon tolérance. Soutien hépatique (artichaut, radis noir, citron à jeun). Fractionner les repas, dîner léger pauvre en glucides pour stabiliser la glycémie. Bien mastiquer, 1,5 L d'eau/jour.",
+            'aliments_eviter' => "Sucre, miel, sirops, jus de fruits, produits industriels/raffinés. Gluten (limitation temporaire). Produits laitiers riches en lactose. Aliments fermentés contenant des levures en phase aiguë (fromages, pain).",
+            'aliments_privilegier' => "Huile de coco (acide caprylique, antifongique naturel), curcuma frais. Prébiotiques : carottes cuites, bananes peu mûres, flocons d'avoine (attention FODMAP si SII associé). Fermentés en petite quantité : miso, kimchi, choucroute crue, tempeh, kéfir type K-Philus. Bouillon d'os (collagène + glutamine) pour la muqueuse intestinale. Artichaut, radis noir, citron à jeun (drainage hépatique).",
+            'conseils_activite' => "Marche rapide 5 j/semaine, 30 à 45 min (circulation, régulation digestive). Yin yoga 1x/semaine (parasympathique). Exercices de Kegel quotidiens : 3 séries de 10 contractions (alterner longues 10s et rapides), renforcent le périnée, améliorent le retour veino-lymphatique pelvien, aident à maintenir un pH vaginal acide. Respiration diaphragmatique/cohérence cardiaque avant les repas.",
+            'conseils_stress' => "Objectif : diminuer le cortisol (immunosuppresseur et déséquilibrant hormonal). Cohérence cardiaque/respiration diaphragmatique 3 à 5 min avant chaque repas (5s inspir/5s expir). Marche en nature (15 min suffisent). Soigner le sommeil, souvent impacté par les crises et le stress chronique. Aliments riches en oméga-3.",
+            'conseils_routine' => "Bain de siège antifongique en période de crise (10 min/j) : infusion de camomille + 1 c. à soupe de vinaigre de cidre + 2 gouttes d'HE tea tree diluées. Toilette intime douce : eau tiède + eau florale de rose ; éviter les nettoyants alcalins (pH 8, physiologique 5-6). Protections en coton bio non blanchi ou culottes menstruelles, sans synthétique ni parfum. Sous-vêtements coton uniquement, éviter vêtements serrés. Rapports protégés pendant le traitement (sperme alcalin).",
+            'complements' => "Stratégie en 3 phases sur ~3 mois : 1) Assainissement (3-8 sem) : antifongiques naturels, bain de siège, HE tea tree diluée en externe. 2) Réparation de la muqueuse (4-8 sem) : gel/ovules à l'acide lactique + lactobacilles rhamnosus, huile d'argousier. 3) Réensemencement (8-12 sem) : probiotiques locaux et oraux ciblés (L. crispatus, rhamnosus, reuteri), échinacée. Doses citées : Dysbios'Aroma 2 gél./repas 3 sem puis 2 gél./dîner 2 mois ; huile d'argousier 2 caps/j 2 mois ; propolis noire 1 goutte sublinguale 15j-3 sem/mois 3 mois ; probiotiques intimes oraux 2 gél. à jeun (après 3 sem d'HE) 3 mois ; probiotiques vaginaux 1 ovule au coucher 1x/sem 2 mois ; chardon-marie TM 20 gouttes avant chaque repas ; vitamine D3 + zinc après dosage médical. Si récidive : argent colloïdal 10-15 ppm max en externe sur la vulve matin/soir (jamais intravaginal).",
+            'phytotherapie' => "HE Tea Tree (diluée, externe uniquement, jamais intravaginal). HE Origan compact (carvacrol, antifongique puissant, 3 sem intensif puis entretien, hépatoprotection conseillée en parallèle). HE Cannelle de Ceylan écorce et HE Girofle (antifongique/antibiofilm, déconseillées si allergie, ulcère, épilepsie, grossesse/allaitement — eugénol). HE Palmarosa/Lemongrass (douces, externe diluées). Chardon-Marie (protecteur hépatique). Échinacée (immunité, cure courte, à éviter si maladie auto-immune). Berbérine, curcumine, extrait d'ail (allicine), extrait d'olivier (oléuropéine) : anti-biofilm de Candida, avis professionnel recommandé pour la berbérine (interactions).",
+            'aromatherapie' => "Argent colloïdal (10-15 ppm max), application externe matin et soir sur la vulve en cas de récidive uniquement (jamais intravaginal, respecter le titrage).",
+            'notes' => "Classification de la flore de Döderlein (frottis, Type I flore idéale à Type V dysbiose sévère) utile pour objectiver et suivre la cure. Si récidives malgré protocole bien suivi, creuser : microbiote intestinal (PCR/culture selles), glycémie/HbA1c/HOMA, immunité (carences, infections latentes EBV/CMV), terrain hormonal (périménopause), autres souches (glabrata, krusei), biofilm résistant. Posture : ne pas juger, écoute active, vérifier l'acceptabilité émotionnelle et pratique (temps/énergie/budget) avant de construire le PHV — un protocole simple réellement suivi vaut mieux qu'un protocole parfait trop lourd. Toujours réorienter vers un médecin/gynécologue si besoin, ne jamais critiquer les professionnels déjà consultés.",
         ],
         [
             'nom' => 'Cystite / Infection urinaire',
             'systeme' => 'Système uro-génital',
-            'description' => "Infection bactérienne de la vessie, très fréquente chez la femme.",
-            'causes' => "E. coli (80% des cas), déshydratation, hygiène intime inadaptée, rapports sexuels, constipation, immunité faible.",
-            'signes_cliniques' => "Brûlures mictionnelles, envies fréquentes, urines troubles/odorantes, douleurs pelviennes.",
-            'conseils_alimentation' => "Hydratation abondante (2L/jour). Canneberge. Éviter les irritants vésicaux.",
-            'aliments_eviter' => "Café, alcool, épices fortes, sucres raffinés, sodas.",
-            'aliments_privilegier' => "Eau, canneberge (jus pur ou complément), myrtille, ail, oignon, persil.",
-            'conseils_activite' => "Activité régulière pour la circulation pelvienne.",
-            'conseils_stress' => "Le stress affaiblit les défenses immunitaires locales.",
-            'conseils_routine' => "Uriner après chaque rapport. S'essuyer d'avant en arrière. Sous-vêtements coton. Uriner régulièrement.",
-            'complements' => "D-Mannose. Canneberge concentrée. Probiotiques spécifiques (Lactobacillus). Propolis.",
-            'phytotherapie' => "Busserole (antiseptique urinaire). Bruyère. Piloselle.",
-            'aromatherapie' => "HE Sarriette des montagnes. HE Origan compact (en capsule, cure courte).",
-            'notes' => 'Orienter vers un médecin si fièvre, sang dans les urines, douleurs lombaires.',
+            'description' => "Infection/inflammation de la vessie, très fréquente chez la femme (proximité anatomique avec le rectum). À distinguer : cystite aiguë et cystite chronique/récidivante, dont la prise en charge diffère.",
+            'causes' => "Causes souvent invisibles à explorer : dysbiose vaginale ou intestinale, constipation chronique, inflammation de bas grade, irritation de la muqueuse vésicale, fatigue chronique, hypo-immunité, déséquilibre hormonal (notamment œstrogènes), stress chronique, tensions pelviennes, hygiène intime inadaptée, carences en nutriments clés. À explorer selon le contexte : transit perturbé, ballonnements, sécheresse des muqueuses, ménopause ou contraception hormonale, récidives après les rapports, produits d'hygiène irritants, sous-vêtements synthétiques, absence de miction après les rapports, hydratation insuffisante.",
+            'signes_cliniques' => "Douleurs sus-pubiennes, brûlures à la miction, mictions fréquentes avec faibles quantités d'urine, parfois sang dans les urines. Forme chronique : infections à répétition, fièvre possible si passage à une pyélonéphrite (infection des voies urinaires hautes).",
+            'conseils_alimentation' => "Boire abondamment pour soutenir les reins et favoriser l'élimination des bactéries. Associer des plantes diurétiques (piloselle, orthosiphon, reine des prés). Alimentation anti-inflammatoire et alcalinisante. Aliments prébiotiques à privilégier. Canneberge riche en D-mannose : inhibe l'adhérence d'E. coli à la paroi vésicale.",
+            'aliments_eviter' => "Sucres rapides (terrain propice aux infections), alcool, épices fortes et excitants (irritants vésicaux). L'hydratation insuffisante est le point à corriger en priorité.",
+            'aliments_privilegier' => "Eau en abondance. Canneberge (riche en D-mannose). Prébiotiques : fructanes (chicorée, ail, topinambour, poireau, artichaut, banane), amidons résistants (légumineuses, banane peu mûre, pommes de terre, céréales complètes cuites puis refroidies), bêta-glucanes (avoine).",
+            'conseils_activite' => "Bouger régulièrement, éviter la station assise prolongée en cas de constipation ou de congestion du petit bassin ; soutenir le transit en douceur.",
+            'conseils_stress' => "Le stress chronique, la fatigue et les tensions pelviennes entretiennent le terrain, et peuvent fragiliser l'immunité de façon indirecte (sommeil insuffisant, charge mentale). Pistes : respiration, cohérence cardiaque, relaxation, pauses régulières, sommeil réparateur, relâchement du plancher pelvien.",
+            'conseils_routine' => "Boire abondamment. Adapter le « nettoyage » intestinal au système digestif du consultant (argile, chlorophylle, aloe vera, charbon végétal). Sauna hors phase aiguë si terrain acidifié (jamais en phase aiguë : la peau est un émonctoire secondaire des reins). Maintien d'une flore intestinale équilibrée (symbiotiques). Sous-vêtements coton, vêtements non serrés. Tisanes associant drainantes (piloselle, orthosiphon), antiseptiques (bruyère, busserole) et adoucissantes (guimauve, mauve). Ne jamais se retenir d'uriner ; uriner après les rapports pour limiter la stase urinaire.",
+            'complements' => "Soutien barrière intestinale/muqueuses : L-glutamine, zinc, L-thréonine, quercétine, vitamines A et D. D-mannose ou canneberge (limite l'adhésion bactérienne). Symbiotiques/probiotiques (microbiote intestinal et vaginal, notamment après antibiotiques). Vitamine C et zinc (immunité, réparation des muqueuses). Canneberge + propolis en soutien des récidives (adhésion bactérienne et biofilm). Exemple de formule complète : DUAB Fort® Confort urinaire (Granions) — D-mannose 2000 mg, canneberge 240 mg, propolis 400 mg, bruyère 250 mg, zinc 5 mg.",
+            'phytotherapie' => "Antiseptiques urinaires : busserole, bruyère, genévrier, canneberge. Diurétiques/draineurs : piloselle, orthosiphon, pissenlit, bouleau, verge d'or, vergerette, chiendent, reine des prés. Anti-inflammatoires/adoucissants des muqueuses : guimauve, mauve, plantain, cassis. Récidives : canneberge, busserole, cassis, ortie, sureau, échinacée, piloselle. Femme ménopausée (terrain hormonal) : canneberge, sauge, trèfle rouge. Gemmothérapie : bourgeon de Bruyère (drainant, antiseptique, apaisant), bourgeon de Cassis (anti-inflammatoire général), bourgeon d'Airelle rouge (cystites récidivantes, fragilité des muqueuses uro-génitales, terrain hormonal/ménopausique).",
+            'aromatherapie' => "Formulations pour cystite aiguë si le consultant ne prend pas déjà d'antibiotiques : HE d'origan (carvacrol), sarriette, lavande, girofle, myrte, géranium (type GynFlash LPEV) ; ou HE origan vulgaire, cannelle de Chine, sarriette des montagnes, lemongrass, giroflier, thym CT thymol, fenouil (type Oleobiotic Pranarôm). Mycologie en soutien : Cordyceps sinensis (effet diurétique, rinçage des voies urinaires, effet réchauffant), Polyporus umbellatus (très diurétique sans perturber les électrolytes), Reishi/Ganoderma lucidum (anti-inflammatoire, immunomodulateur, calme les irritations).",
+            'notes' => "Allopathie (antibiotiques) très efficace mais peut déstabiliser la flore intestinale ; objectif naturopathique : éliminer les germes tout en rééquilibrant la flore et renforçant la barrière intestinale (moins rapide mais plus respectueux du terrain). Questions d'enquête utiles : fréquence (aiguë/chronique ?), antibiotiques déjà pris, ECBU récent, état du système digestif. Piste génétique à connaître : statut FUT2 non-sécréteur (muqueuses moins protégées, microbiote urinaire moins stable) chez certaines femmes aux cystites récidivantes ; le 2'-fucosyllactose (sucre du lait maternel) est une piste ciblée à l'étude pour limiter l'adhésion bactérienne. Bilans utiles : rapport AA/EPA (inflammation), zonuline (perméabilité intestinale), analyse du microbiote intestinal, ECBU sur indication médicale. Orienter vers un médecin en cas de fièvre, sang dans les urines, douleurs lombaires, grossesse ou symptômes persistants.",
         ],
         // ==========================================
         // SYSTÈME ENDOCRINIEN
@@ -888,27 +888,49 @@ function insertFichesPathologies(PDO $db): int {
  * pas encore (comparaison par nom), sans toucher aux fiches déjà présentes.
  * @return array Liste des noms de fiches effectivement ajoutées
  */
+/**
+ * Synchronise la table fiches_pathologies avec getFichesPathologies() :
+ * insère les fiches manquantes et MET À JOUR le contenu des fiches déjà
+ * présentes (comparaison par nom), pour que les améliorations de contenu
+ * apportées ici (nouvelles sources, corrections) atteignent bien la base
+ * même quand la fiche existait déjà.
+ * @return array{inserted: string[], updated: string[]}
+ */
 function syncFichesPathologies(PDO $db): array {
     $fiches = getFichesPathologies();
 
-    $existingNoms = $db->query("SELECT nom FROM fiches_pathologies")->fetchAll(PDO::FETCH_COLUMN);
-    $existingNoms = array_map('mb_strtolower', $existingNoms);
-
-    $stmt = $db->prepare("INSERT INTO fiches_pathologies (nom, systeme, description, causes, signes_cliniques, conseils_alimentation, aliments_eviter, aliments_privilegier, conseils_activite, conseils_stress, conseils_routine, complements, phytotherapie, aromatherapie, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-    $added = [];
-    foreach ($fiches as $f) {
-        if (in_array(mb_strtolower($f['nom']), $existingNoms, true)) {
-            continue;
-        }
-        $stmt->execute([
-            $f['nom'], $f['systeme'], $f['description'], $f['causes'], $f['signes_cliniques'],
-            $f['conseils_alimentation'], $f['aliments_eviter'], $f['aliments_privilegier'],
-            $f['conseils_activite'], $f['conseils_stress'], $f['conseils_routine'],
-            $f['complements'], $f['phytotherapie'], $f['aromatherapie'], $f['notes'],
-        ]);
-        $added[] = $f['nom'];
+    $existingRows = $db->query("SELECT id, nom FROM fiches_pathologies")->fetchAll();
+    $existingByNom = [];
+    foreach ($existingRows as $row) {
+        $existingByNom[mb_strtolower($row['nom'])] = $row['id'];
     }
 
-    return $added;
+    $insertStmt = $db->prepare("INSERT INTO fiches_pathologies (nom, systeme, description, causes, signes_cliniques, conseils_alimentation, aliments_eviter, aliments_privilegier, conseils_activite, conseils_stress, conseils_routine, complements, phytotherapie, aromatherapie, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $updateStmt = $db->prepare("UPDATE fiches_pathologies SET systeme = ?, description = ?, causes = ?, signes_cliniques = ?, conseils_alimentation = ?, aliments_eviter = ?, aliments_privilegier = ?, conseils_activite = ?, conseils_stress = ?, conseils_routine = ?, complements = ?, phytotherapie = ?, aromatherapie = ?, notes = ? WHERE id = ?");
+
+    $inserted = [];
+    $updated = [];
+    foreach ($fiches as $f) {
+        $key = mb_strtolower($f['nom']);
+        if (isset($existingByNom[$key])) {
+            $updateStmt->execute([
+                $f['systeme'], $f['description'], $f['causes'], $f['signes_cliniques'],
+                $f['conseils_alimentation'], $f['aliments_eviter'], $f['aliments_privilegier'],
+                $f['conseils_activite'], $f['conseils_stress'], $f['conseils_routine'],
+                $f['complements'], $f['phytotherapie'], $f['aromatherapie'], $f['notes'],
+                $existingByNom[$key],
+            ]);
+            $updated[] = $f['nom'];
+        } else {
+            $insertStmt->execute([
+                $f['nom'], $f['systeme'], $f['description'], $f['causes'], $f['signes_cliniques'],
+                $f['conseils_alimentation'], $f['aliments_eviter'], $f['aliments_privilegier'],
+                $f['conseils_activite'], $f['conseils_stress'], $f['conseils_routine'],
+                $f['complements'], $f['phytotherapie'], $f['aromatherapie'], $f['notes'],
+            ]);
+            $inserted[] = $f['nom'];
+        }
+    }
+
+    return ['inserted' => $inserted, 'updated' => $updated];
 }
