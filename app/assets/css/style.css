@@ -81,6 +81,8 @@
 html {
     font-size: 15px;
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
 body {
@@ -90,6 +92,8 @@ body {
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
 h1, h2, h3, h4 {
@@ -118,6 +122,8 @@ a:hover {
 .app-layout {
     display: flex;
     min-height: 100vh;
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
 /* --- Sidebar --- */
@@ -990,6 +996,7 @@ select.form-control {
 
 @media (max-width: 768px) {
     .sidebar {
+        width: min(260px, 82vw);
         transform: translateX(-100%);
         transition: var(--transition);
         z-index: 200;
