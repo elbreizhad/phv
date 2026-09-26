@@ -674,6 +674,20 @@ function ressourcesCreerTable(PDO $db): void {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         INDEX idx_section (section)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    // Nettoyage de doublons existants (section + nom identiques, ex: déploiements
+    // lancés en double avant la mise en place de la contrainte d'unicité
+    // ci-dessous) : ne garde que la ligne la plus ancienne (id le plus bas).
+    $db->exec("DELETE r1 FROM ressources r1
+        INNER JOIN ressources r2
+        WHERE r1.section = r2.section AND r1.nom = r2.nom AND r1.id > r2.id");
+
+    // Empêche toute future duplication (double clic, double déploiement...).
+    try {
+        $db->exec("ALTER TABLE ressources ADD UNIQUE KEY uniq_section_nom (section, nom)");
+    } catch (PDOException $e) {
+        // La contrainte existe déjà (Duplicate key name) : rien à faire.
+    }
 }
 
 /**
