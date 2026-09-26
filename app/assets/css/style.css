@@ -1053,12 +1053,18 @@ select.form-control {
         grid-template-columns: 1fr !important;
     }
     /* Tableaux (clients, factures, dashboard...) : défilement horizontal
-       contenu dans le tableau plutôt que de faire défiler toute la page. */
-    table.table {
-        display: block;
+       contenu dans la carte plutôt que de faire défiler toute la page.
+       Le tableau garde sa largeur naturelle (width:max-content) pour que
+       le débordement soit réel et scrollable, au lieu d'être compressé
+       puis tronqué/superposé par l'algorithme de mise en page des tables. */
+    .card-body {
         overflow-x: auto;
-        white-space: nowrap;
         -webkit-overflow-scrolling: touch;
+    }
+    table.table {
+        width: max-content;
+        min-width: 100%;
+        white-space: nowrap;
     }
 }
 

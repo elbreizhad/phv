@@ -49,6 +49,7 @@ $validPages = [
     'client-documents',
     'client-timeline',
     // Consultations
+    'consultations',
     'consultation-new',
     'consultation-step1',
     'consultation-step2',
