@@ -139,7 +139,7 @@ $consultationId = getGet('consultation_id', '');
                 </div>
                 <?php endif; ?>
 
-                <table class="table" id="lignes-table">
+                <table class="table table-editable" id="lignes-table">
                     <thead>
                         <tr>
                             <th style="width: 50%;">Description</th>

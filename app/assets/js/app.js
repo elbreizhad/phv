@@ -95,7 +95,57 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('knowledge-search')) {
         initKnowledgeSearch();
     }
+
+    // Tableaux responsives (accordéon sur mobile)
+    initResponsiveTables();
 });
+
+/**
+ * Rend les tableaux .table utilisables sur mobile : seule la 1re colonne
+ * reste visible, un tap sur la ligne déplie les autres colonnes (avec leur
+ * libellé récupéré depuis <thead>) et referme la ligne précédemment ouverte.
+ * L'affichage réel (une seule colonne / défilement normal) est piloté par le
+ * CSS (@media max-width:768px) ; ce script prépare la structure et le clic
+ * dans tous les cas, sans impact visuel en desktop.
+ */
+function initResponsiveTables() {
+    document.querySelectorAll('table.table:not(.table-editable)').forEach(function(table) {
+        if (table.dataset.responsiveReady) return;
+        table.dataset.responsiveReady = '1';
+
+        const headers = Array.from(table.querySelectorAll('thead th')).map(function(th) {
+            return th.textContent.trim();
+        });
+        const rows = table.querySelectorAll('tbody tr');
+
+        rows.forEach(function(tr) {
+            Array.from(tr.children).forEach(function(td, i) {
+                if (i === 0) return;
+                td.classList.add('row-hidden');
+                const label = headers[i];
+                if (label) {
+                    const labelEl = document.createElement('span');
+                    labelEl.className = 'row-detail-label';
+                    labelEl.textContent = label;
+                    td.insertBefore(labelEl, td.firstChild);
+                }
+            });
+
+            tr.addEventListener('click', function(e) {
+                if (e.target.closest('a, button, input, select, textarea, form, label')) {
+                    return;
+                }
+                const wasExpanded = tr.classList.contains('row-expanded');
+                rows.forEach(function(otherTr) {
+                    otherTr.classList.remove('row-expanded');
+                });
+                if (!wasExpanded) {
+                    tr.classList.add('row-expanded');
+                }
+            });
+        });
+    });
+}
 
 /**
  * Système de suggestions intelligentes pour le PHV

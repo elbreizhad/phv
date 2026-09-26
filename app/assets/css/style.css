@@ -1059,19 +1059,84 @@ select.form-control {
     [style*="grid-template-columns: 1fr 1fr"] {
         grid-template-columns: 1fr !important;
     }
-    /* Tableaux (clients, factures, dashboard...) : défilement horizontal
-       contenu dans la carte plutôt que de faire défiler toute la page.
-       Le tableau garde sa largeur naturelle (width:max-content) pour que
-       le débordement soit réel et scrollable, au lieu d'être compressé
-       puis tronqué/superposé par l'algorithme de mise en page des tables. */
-    .card-body {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+    /* Tableaux (clients, factures, dashboard, consultations...) :
+       sur mobile, chaque ligne devient une carte à une seule colonne.
+       Seule la 1re cellule reste visible ; un tap sur la ligne déplie
+       les autres cellules en dessous (avec leur libellé de colonne,
+       injecté par JS), et replie la ligne précédemment ouverte
+       (voir initResponsiveTables() dans app.js). */
+    /* .table-editable (ex: lignes de facture avec champs de saisie) garde
+       sa mise en page normale : l'accordéon casserait la saisie mobile. */
+    table.table:not(.table-editable) thead {
+        display: none;
     }
-    table.table {
-        width: max-content;
-        min-width: 100%;
-        white-space: nowrap;
+    table.table:not(.table-editable),
+    table.table:not(.table-editable) tbody,
+    table.table:not(.table-editable) tr,
+    table.table:not(.table-editable) td {
+        display: block;
+        width: 100%;
+    }
+    table.table:not(.table-editable) {
+        border-collapse: separate;
+    }
+    table.table:not(.table-editable) tr {
+        position: relative;
+        background: #fff;
+        border: 1px solid var(--cream-200);
+        border-radius: var(--radius-md);
+        margin-bottom: 0.7rem;
+        padding: 0.85rem 2.2rem 0.85rem 1rem;
+        cursor: pointer;
+    }
+    table.table:not(.table-editable) tr:hover td {
+        background: transparent;
+    }
+    table.table:not(.table-editable) tr::after {
+        content: '\203A';
+        position: absolute;
+        top: 0.75rem;
+        right: 1rem;
+        font-size: 1.4rem;
+        line-height: 1;
+        color: var(--text-light);
+        transition: transform 0.2s;
+    }
+    table.table:not(.table-editable) tr.row-expanded::after {
+        transform: rotate(90deg);
+    }
+    table.table:not(.table-editable) td {
+        border: none !important;
+        padding: 0.1rem 0 !important;
+        white-space: normal;
+        font-size: 0.9rem;
+    }
+    table.table:not(.table-editable) td:first-child {
+        font-weight: 600;
+    }
+    table.table:not(.table-editable) td.row-hidden {
+        display: none;
+    }
+    table.table:not(.table-editable) tr.row-expanded td.row-hidden {
+        display: block;
+        margin-top: 0.3rem;
+    }
+    table.table:not(.table-editable) td .row-detail-label {
+        display: block;
+        margin-top: 0.6rem;
+        font-size: 0.68rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+    }
+    table.table:not(.table-editable) td .row-detail-label:first-child {
+        margin-top: 0;
+    }
+    table.table:not(.table-editable) tr.row-expanded td.row-hidden.actions {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 0.3rem;
     }
 }
 
