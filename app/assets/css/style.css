@@ -1883,7 +1883,39 @@ select.form-control {
     }
 
     .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
+    }
+
+    /* Barre de navigation de l'agenda (< Aujourd'hui > / Jour Semaine Mois) :
+       trop de boutons pour une seule ligne sur mobile, on la laisse
+       revenir à la ligne au lieu de déborder. */
+    .calendar-nav .card-body {
+        flex-wrap: wrap;
+        gap: 0.6rem;
+    }
+    .calendar-nav .vue-selector {
+        width: 100%;
+        justify-content: stretch;
+    }
+    .calendar-nav .vue-selector a {
+        flex: 1;
+        text-align: center;
+    }
+
+    /* Vue semaine : garder des colonnes lisibles (pas de compression en
+       dessous d'une largeur exploitable) et défiler horizontalement
+       uniquement à l'intérieur de la carte du calendrier. */
+    .week-header,
+    .week-row {
+        grid-template-columns: 42px repeat(7, minmax(72px, 1fr));
+        min-width: 600px;
+    }
+    .day-timeline {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .timeline-hour {
+        min-width: 320px;
     }
 }
 
