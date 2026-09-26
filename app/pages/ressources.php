@@ -13,6 +13,8 @@ const RESSOURCES_SECTIONS = [
     'hydrologie' => 'Hydrologie',
     'stress' => 'Gestion du stress',
     'alimentation' => 'Alimentation générale',
+    'mycotherapie' => 'Mycothérapie',
+    'activite_physique' => 'Activité physique',
 ];
 
 $db = getDB();
