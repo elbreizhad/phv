@@ -62,9 +62,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Sidebar responsive toggle
     const menuToggle = document.getElementById('menuToggle');
     const sidebar = document.getElementById('sidebar');
-    if (menuToggle && sidebar) {
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    if (menuToggle && sidebar && sidebarOverlay) {
         menuToggle.addEventListener('click', function() {
             sidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('open');
+        });
+        sidebarOverlay.addEventListener('click', function() {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('open');
         });
     }
 

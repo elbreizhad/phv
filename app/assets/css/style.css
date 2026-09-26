@@ -231,6 +231,15 @@ a:hover {
     min-height: 100vh;
 }
 
+/* --- Barre + overlay mobile (cachées par défaut, activées sous 768px) --- */
+.mobile-topbar {
+    display: none;
+}
+
+.sidebar-overlay {
+    display: none;
+}
+
 .page-header {
     padding: 2rem 2.5rem 1.5rem;
     display: flex;
@@ -983,12 +992,47 @@ select.form-control {
     .sidebar {
         transform: translateX(-100%);
         transition: var(--transition);
+        z-index: 200;
     }
     .sidebar.open {
         transform: translateX(0);
     }
     .main-content {
         margin-left: 0;
+    }
+    .mobile-topbar {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.9rem 1.2rem;
+        background: var(--sage-800);
+        color: var(--text-inverse);
+        position: sticky;
+        top: 0;
+        z-index: 90;
+    }
+    .mobile-menu-btn {
+        background: none;
+        border: none;
+        color: inherit;
+        padding: 0.2rem;
+        display: flex;
+        cursor: pointer;
+    }
+    .mobile-topbar-brand {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.4);
+        z-index: 150;
+    }
+    .sidebar-overlay.open {
+        display: block;
     }
     .page-header {
         padding: 1.5rem;
@@ -1001,6 +1045,20 @@ select.form-control {
     }
     .form-row-3 {
         grid-template-columns: 1fr;
+    }
+    /* Mises en page à deux colonnes (fiches, ressources, factures, stats...)
+       écrites en style inline "2fr 1fr" : passent en une seule colonne. */
+    [style*="grid-template-columns: 2fr 1fr"],
+    [style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+    }
+    /* Tableaux (clients, factures, dashboard...) : défilement horizontal
+       contenu dans le tableau plutôt que de faire défiler toute la page. */
+    table.table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
     }
 }
 
