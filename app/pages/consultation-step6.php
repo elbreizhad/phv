@@ -95,6 +95,18 @@ try {
 }
 
 // ============================================
+// RÉCUPÉRER LES RESSOURCES (phytologie, aromatologie, micronutrition...)
+// ============================================
+$suggestedRessources = [];
+try {
+    $ressourcesStmt = $db->query("SELECT * FROM ressources ORDER BY section, categorie, nom");
+    $allRessources = $ressourcesStmt->fetchAll();
+    $suggestedRessources = matchRessourcesToConsultation($consultation, $synthese, $allReponses, $allRessources);
+} catch (PDOException $e) {
+    // Table ressources n'existe pas encore
+}
+
+// ============================================
 // DÉTECTION DU PROFIL CLIENT (TAGS)
 // ============================================
 $tagsProfil = detecterTagsProfil($consultation, $synthese, $allReponses);
@@ -877,6 +889,37 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
                             <div class="recette-section">
                                 <h5>Instructions</h5>
                                 <div><?= nl2br(e($recette['instructions'])) ?></div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- ============================================ -->
+        <!-- RESSOURCES SUGGÉRÉES (phytologie, aromatologie, micronutrition...) -->
+        <!-- ============================================ -->
+        <?php if (!empty($suggestedRessources)): ?>
+        <div class="card mb-3" style="border: 2px solid #7b1fa2;">
+            <div class="card-header" style="background: linear-gradient(135deg, #7b1fa2 0%, #4a148c 100%); color: white;">
+                <h3 style="color: white; margin: 0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" style="vertical-align: middle; margin-right: 8px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    Ressources suggérées
+                </h3>
+                <span class="badge" style="background: white; color: #7b1fa2;"><?= count($suggestedRessources) ?> fiche(s)</span>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-2">Plantes, huiles essentielles, micronutriments, techniques... en lien avec ce profil :</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: .75rem;">
+                    <?php foreach ($suggestedRessources as $ress): ?>
+                    <div class="card" style="margin: 0;">
+                        <div class="card-body" style="padding: .8rem 1rem;">
+                            <span class="text-sm text-muted"><?= e(ucfirst(str_replace('_', ' ', $ress['section']))) ?> · <?= e($ress['categorie']) ?></span><br>
+                            <strong><?= e($ress['nom']) ?></strong>
+                            <div style="margin-top: .5rem;">
+                                <a href="<?= url('ressource-view', ['id' => $ress['id']]) ?>" target="_blank" class="btn btn-outline btn-sm">Consulter</a>
                             </div>
                         </div>
                     </div>
@@ -2250,6 +2293,50 @@ function matchRecettesToConsultation(array $consultation, ?array $synthese, arra
         if ($score > 0) {
             $recette['match_score'] = $score;
             $matched[] = $recette;
+        }
+    }
+
+    usort($matched, fn($a, $b) => $b['match_score'] - $a['match_score']);
+    return array_slice($matched, 0, 8);
+}
+
+/**
+ * Matching des ressources (phytologie, aromatologie, micronutrition,
+ * hydrologie, gestion du stress, alimentation générale, mycothérapie,
+ * activité physique) avec la consultation. Score par recoupement de mots
+ * entre le motif enrichi et le nom/la catégorie/les indications de la fiche.
+ */
+function matchRessourcesToConsultation(array $consultation, ?array $synthese, array $reponses, array $ressources): array {
+    $matched = [];
+    $motif = strtolower(motifTexteEnrichi($consultation, $reponses));
+    $priorites = strtolower(($synthese['priorite_1'] ?? '') . ' ' . ($synthese['priorite_2'] ?? '') . ' ' . ($synthese['priorite_3'] ?? ''));
+
+    // Mots courants à ignorer pour éviter les faux matches sur des mots outils
+    $motifWords = array_unique(array_filter(preg_split('/[^\p{L}]+/u', $motif), fn($w) => mb_strlen($w) > 3));
+
+    foreach ($ressources as $ress) {
+        $score = 0;
+        $texteRessource = strtolower(($ress['nom'] ?? '') . ' ' . ($ress['categorie'] ?? '') . ' ' . ($ress['indication'] ?? '') . ' ' . ($ress['proprietes'] ?? ''));
+
+        // Nom de la ressource cité tel quel dans le motif (fort signal)
+        $nomLower = strtolower($ress['nom'] ?? '');
+        if ($nomLower !== '' && (str_contains($motif, $nomLower) || str_contains($nomLower, $motif))) {
+            $score += 6;
+        }
+
+        // Recoupement de mots significatifs entre motif et fiche
+        foreach ($motifWords as $word) {
+            if (str_contains($texteRessource, $word)) {
+                $score += 2;
+            }
+            if (str_contains($priorites, $word) && str_contains($texteRessource, $word)) {
+                $score += 1;
+            }
+        }
+
+        if ($score > 0) {
+            $ress['match_score'] = $score;
+            $matched[] = $ress;
         }
     }
 
