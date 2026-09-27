@@ -263,6 +263,15 @@ if ($check->fetch()) {
     $db->prepare("INSERT INTO phv ($cols) VALUES ($placeholders)")->execute(array_values($data));
 }
 
+// Sauvegarde silencieuse déclenchée en arrière-plan par le parcours en pages
+// (changement d'étape) : on répond directement, sans flash ni page complète.
+$isBackground = ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest';
+if ($isBackground) {
+    header('Content-Type: application/json');
+    echo json_encode(['success' => true]);
+    exit;
+}
+
 // Finaliser ?
 $finalize = getPost('finalize');
 if ($finalize === '1') {

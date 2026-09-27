@@ -1015,6 +1015,145 @@ select.form-control {
     margin-top: 0.2rem;
 }
 
+/* --- Parcours PHV (étape 6 en pages) --- */
+.phv-wizard-stepper {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 1rem 1.2rem;
+    background: #fff;
+    border: 1px solid var(--cream-300);
+    border-radius: var(--radius-lg);
+    margin-bottom: 1.2rem;
+    overflow-x: auto;
+}
+
+.phv-wizard-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    width: 108px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+}
+
+.phv-wizard-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--cream-300);
+    color: var(--text-muted);
+}
+
+.phv-wizard-step.done .phv-wizard-circle {
+    background: var(--sage-500);
+    color: #fff;
+}
+
+.phv-wizard-step.active .phv-wizard-circle {
+    background: var(--sage-800);
+    color: #fff;
+    box-shadow: 0 0 0 4px var(--sage-100);
+}
+
+.phv-wizard-label {
+    font-size: 10.5px;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.2;
+}
+
+.phv-wizard-step.active .phv-wizard-label {
+    color: var(--sage-800);
+    font-weight: 600;
+}
+
+.phv-wizard-line {
+    flex: 1;
+    height: 2px;
+    background: var(--cream-300);
+    margin-top: 15px;
+    min-width: 12px;
+}
+
+.phv-page {
+    display: none;
+}
+
+.phv-page.active {
+    display: block;
+}
+
+.phv-wizard-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem 0 1.5rem;
+}
+
+.phv-wizard-nav .phv-save-indicator {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Encart "dans le PHV précédent" */
+.phv-history-box {
+    padding: 0.7rem 0.9rem;
+    background: #faf7f0;
+    border: 1px dashed var(--cream-400);
+    border-radius: var(--radius-md);
+    margin-bottom: 1rem;
+}
+
+.phv-history-box .phv-history-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    gap: 0.6rem;
+}
+
+.phv-history-box .phv-history-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #8a7a5a;
+}
+
+.phv-history-box .phv-history-text {
+    font-size: 0.82rem;
+    color: #5a4f3a;
+    line-height: 1.55;
+    font-style: italic;
+    white-space: pre-line;
+}
+
+.phv-history-box .phv-history-action {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--sage-600);
+    cursor: pointer;
+    white-space: nowrap;
+    background: none;
+    border: none;
+    font-family: inherit;
+}
+
+.phv-history-box .phv-history-action:hover {
+    color: var(--sage-800);
+}
+
 /* --- Empty state --- */
 .empty-state {
     text-align: center;

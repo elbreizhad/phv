@@ -49,6 +49,62 @@ $phvStmt = $db->prepare("SELECT * FROM phv WHERE consultation_id = ?");
 $phvStmt->execute([$consultId]);
 $phv = $phvStmt->fetch();
 
+// PHV de la consultation précédente du même client (pour l'encart "dans le
+// PHV précédent" du parcours) : la dernière consultation terminée avant
+// celle-ci, hors elle-même.
+$phvPrecedent = null;
+$phvPrecedentStmt = $db->prepare("
+    SELECT p.*, c.updated_at AS consultation_date
+    FROM phv p
+    JOIN consultations c ON c.id = p.consultation_id
+    WHERE c.client_id = ? AND c.id != ? AND c.statut = 'terminee'
+    ORDER BY c.updated_at DESC
+    LIMIT 1
+");
+$phvPrecedentStmt->execute([$consultation['client_id'], $consultId]);
+$phvPrecedent = $phvPrecedentStmt->fetch() ?: null;
+
+/**
+ * Encart "Dans le PHV précédent" : affiche ce qui avait été noté la
+ * dernière fois pour un champ donné, avec un bouton pour le reprendre
+ * dans le champ courant (texte libre) ou en cartes (bloc structuré JSON).
+ */
+function renderPhvHistoryBox(?array $phvPrecedent, string $field, string $label, string $kind = 'text'): string
+{
+    if (!$phvPrecedent || empty($phvPrecedent[$field])) {
+        return '';
+    }
+
+    $raw = $phvPrecedent[$field];
+    if ($kind === 'json') {
+        $items = json_decode($raw, true);
+        if (!is_array($items) || empty($items)) {
+            return '';
+        }
+        $preview = implode(' · ', array_filter(array_map(function ($it) {
+            return trim($it['titre'] ?? $it['nom_repas'] ?? $it['titre'] ?? ($it['texte'] ?? ''));
+        }, $items)));
+        if ($preview === '') {
+            return '';
+        }
+    } else {
+        $preview = trim((string) $raw);
+        if ($preview === '') {
+            return '';
+        }
+    }
+
+    $date = !empty($phvPrecedent['consultation_date']) ? formatDate($phvPrecedent['consultation_date']) : '';
+
+    return '<div class="phv-history-box">'
+        . '<div class="phv-history-head">'
+        . '<span class="phv-history-label">🕓 Dans le PHV précédent' . ($date ? ' (' . e($date) . ')' : '') . '</span>'
+        . '<button type="button" class="phv-history-action" onclick="reprendrePhvHistorique(this)" data-target-field="' . e($field) . '" data-kind="' . e($kind) . '" data-payload="' . e($raw) . '">↻ Reprendre</button>'
+        . '</div>'
+        . '<div class="phv-history-text">« ' . e($preview) . ' »</div>'
+        . '</div>';
+}
+
 // Toutes les réponses du questionnaire
 $allReponses = getReponses($consultId);
 
@@ -167,10 +223,31 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
         <strong>Mode contextuel :</strong> Les suggestions s'adaptent au profil du client. Cliquez sur [+] pour ajouter une suggestion, modifiez librement le texte.
     </div>
 
-    <form method="POST" action="<?= url('consultation-step6', ['id' => $consultId]) ?>">
+    <?php
+    $phvWizardPages = [
+        1 => 'Objectifs',
+        2 => 'Alimentation',
+        3 => 'Bien-être',
+        4 => 'Activité & routines',
+        5 => 'Compléments & phyto',
+        6 => 'Finalisation',
+    ];
+    ?>
+    <div class="phv-wizard-stepper" id="phvWizardStepper">
+        <?php $i = 0; foreach ($phvWizardPages as $num => $label): $i++; ?>
+        <button type="button" class="phv-wizard-step <?= $num === 1 ? 'active' : '' ?>" data-phv-page="<?= $num ?>" onclick="gotoPhvPage(<?= $num ?>)">
+            <span class="phv-wizard-circle"><?= $num ?></span>
+            <span class="phv-wizard-label"><?= e($label) ?></span>
+        </button>
+        <?php if ($i < count($phvWizardPages)): ?><div class="phv-wizard-line"></div><?php endif; ?>
+        <?php endforeach; ?>
+    </div>
+
+    <form method="POST" action="<?= url('consultation-step6', ['id' => $consultId]) ?>" id="phvForm">
         <input type="hidden" name="action" value="phv-save">
         <input type="hidden" name="consultation_id" value="<?= $consultId ?>">
 
+        <div class="phv-page active" data-phv-page="1">
         <!-- ============================================ -->
         <!-- OBJECTIFS DU PROGRAMME -->
         <!-- ============================================ -->
@@ -184,9 +261,13 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
             </div>
         </div>
 
+        </div>
+
+        <div class="phv-page" data-phv-page="2">
         <!-- ============================================ -->
         <!-- ALIMENTATION -->
         <!-- ============================================ -->
+        <?= renderPhvHistoryBox($phvPrecedent, 'conseils_alimentaires', 'Alimentation', 'json') ?>
         <div class="card mb-3">
             <div class="card-header">
                 <h3>Alimentation</h3>
@@ -360,8 +441,13 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
         </div>
 
         <!-- ============================================ -->
+        </div>
+
+        <div class="phv-page" data-phv-page="3">
+        <!-- ============================================ -->
         <!-- GESTION DU STRESS -->
         <!-- ============================================ -->
+        <?= renderPhvHistoryBox($phvPrecedent, 'gestion_stress', 'Bien-être', 'text') ?>
         <div class="card mb-3">
             <div class="card-header">
                 <h3>Gestion du stress & émotions</h3>
@@ -408,8 +494,13 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
         </div>
 
         <!-- ============================================ -->
+        </div>
+
+        <div class="phv-page" data-phv-page="4">
+        <!-- ============================================ -->
         <!-- ACTIVITÉ PHYSIQUE -->
         <!-- ============================================ -->
+        <?= renderPhvHistoryBox($phvPrecedent, 'activite_physique', 'Activité', 'text') ?>
         <div class="card mb-3">
             <div class="card-header">
                 <h3>Activité physique</h3>
@@ -490,8 +581,13 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
         </div>
 
         <!-- ============================================ -->
+        </div>
+
+        <div class="phv-page" data-phv-page="5">
+        <!-- ============================================ -->
         <!-- PHYTOLOGIE -->
         <!-- ============================================ -->
+        <?= renderPhvHistoryBox($phvPrecedent, 'phytologie', 'Phytologie', 'text') ?>
         <div class="card mb-3">
             <div class="card-header">
                 <h3>Phytologie</h3>
@@ -720,6 +816,10 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
         </div>
         <?php endif; ?>
 
+        <!-- ============================================ -->
+        </div>
+
+        <div class="phv-page" data-phv-page="6">
         <!-- ============================================ -->
         <!-- RECOMMANDATIONS COMPLÉMENTAIRES -->
         <!-- ============================================ -->
@@ -1344,6 +1444,14 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
             </div>
         </div>
 
+        </div>
+
+        <div class="phv-wizard-nav">
+            <button type="button" class="btn btn-outline" id="phvPrevBtn" onclick="phvWizardPrev()">← Étape précédente</button>
+            <span class="phv-save-indicator" id="phvSaveIndicator"></span>
+            <button type="button" class="btn btn-primary" id="phvNextBtn" onclick="phvWizardNext()">Étape suivante →</button>
+        </div>
+
         <div class="d-flex justify-between" style="margin-top: 1.5rem;">
             <?php $prevUrl = $isV2 ? url('consultation-v2', ['id' => $consultId, 'step' => 15]) : url('consultation-step5', ['id' => $consultId]); ?>
             <a href="<?= $prevUrl ?>" class="btn btn-secondary">
@@ -1402,6 +1510,86 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
 </div>
 
 <script>
+// ============================================
+// Parcours PHV en pages (étape 6 découpée en 6 sous-étapes)
+// ============================================
+var PHV_WIZARD_PAGES = [1, 2, 3, 4, 5, 6];
+
+function gotoPhvPage(num) {
+    document.querySelectorAll('.phv-page').forEach(function(page) {
+        page.classList.toggle('active', parseInt(page.dataset.phvPage, 10) === num);
+    });
+    document.querySelectorAll('.phv-wizard-step').forEach(function(step) {
+        const stepNum = parseInt(step.dataset.phvPage, 10);
+        step.classList.toggle('active', stepNum === num);
+        step.classList.toggle('done', stepNum < num);
+    });
+    document.getElementById('phvPrevBtn').style.visibility = num === 1 ? 'hidden' : 'visible';
+    document.getElementById('phvNextBtn').textContent = num === 6 ? 'Voir le récapitulatif' : 'Étape suivante →';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    try { sessionStorage.setItem('phvWizardPage_<?= $consultId ?>', String(num)); } catch (e) {}
+}
+
+function currentPhvPage() {
+    const active = document.querySelector('.phv-page.active');
+    return active ? parseInt(active.dataset.phvPage, 10) : 1;
+}
+
+function phvWizardNext() {
+    const cur = currentPhvPage();
+    savePhvProgress();
+    if (cur < 6) gotoPhvPage(cur + 1);
+}
+
+function phvWizardPrev() {
+    const cur = currentPhvPage();
+    if (cur > 1) gotoPhvPage(cur - 1);
+}
+
+// Sauvegarde silencieuse en arrière-plan (réutilise l'action phv-save
+// existante) à chaque changement de page, pour ne rien perdre si le
+// praticien ferme l'onglet en cours de route.
+function savePhvProgress() {
+    const form = document.getElementById('phvForm');
+    if (!form) return;
+    const indicator = document.getElementById('phvSaveIndicator');
+    if (indicator) indicator.textContent = 'Enregistrement...';
+    fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(function() { if (indicator) { indicator.textContent = 'Enregistré ✓'; setTimeout(function() { indicator.textContent = ''; }, 2000); } })
+        .catch(function() { if (indicator) indicator.textContent = "Échec de l'enregistrement automatique"; });
+}
+
+// Reprendre le contenu du PHV précédent dans le champ courant
+function reprendrePhvHistorique(btn) {
+    const field = btn.getAttribute('data-target-field');
+    const kind = btn.getAttribute('data-kind');
+    const payload = btn.getAttribute('data-payload');
+    if (!field || !payload) return;
+
+    if (kind === 'json' && window.blockEditors && window.blockEditors[field]) {
+        try {
+            const items = JSON.parse(payload);
+            items.forEach(function(item) { window.blockEditors[field].addItem(item); });
+        } catch (e) {}
+    } else {
+        const el = document.querySelector('[name="' + field + '"]');
+        if (el) {
+            el.value = el.value.trim() ? el.value + '\n\n' + payload : payload;
+        }
+    }
+    btn.textContent = 'Repris ✓';
+    btn.disabled = true;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    let startPage = 1;
+    try {
+        const saved = sessionStorage.getItem('phvWizardPage_<?= $consultId ?>');
+        if (saved) startPage = parseInt(saved, 10);
+    } catch (e) {}
+    if (startPage >= 1 && startPage <= 6) gotoPhvPage(startPage);
+});
+
 // Insertion de suggestion dans un textarea
 function insertSuggestion(fieldId, element) {
     const textarea = document.getElementById(fieldId);
