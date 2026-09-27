@@ -248,14 +248,20 @@ function initBlockEditor(container) {
 /**
  * Ajoute une suggestion comme nouvelle carte dans un block-editor (au lieu
  * de l'insérer dans un textarea). `field` = data-field du block-editor,
- * `targetKey` = clé du schéma qui reçoit le texte de la suggestion.
+ * `targetKey` = clé du schéma qui reçoit le texte de la suggestion,
+ * `titleKey` (optionnel) = clé du schéma qui reçoit le titre de la
+ * suggestion (ex : "titre" pour pré-remplir le titre du conseil).
  */
-function insertSuggestionAsCard(field, targetKey, element) {
+function insertSuggestionAsCard(field, targetKey, element, titleKey) {
     const content = element.getAttribute('data-content');
     const editor = window.blockEditors && window.blockEditors[field];
     if (!content || !editor) return;
     const partial = {};
     partial[targetKey] = content;
+    if (titleKey) {
+        const titreEl = element.querySelector('.suggestion-titre');
+        if (titreEl) partial[titleKey] = titreEl.textContent.trim();
+    }
     editor.addItem(partial);
     element.classList.add('inserted');
 }

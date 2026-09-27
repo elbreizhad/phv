@@ -220,7 +220,7 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
                         <h4>Suggestions</h4>
                         <div class="suggestion-list">
                             <?php foreach (array_slice($suggestionsAlimentation, 0, 8) as $sugg): ?>
-                            <div class="suggestion-item" onclick="insertSuggestionAsCard('conseils_alimentaires', 'texte', this)" data-content="<?= e($sugg['contenu']) ?>">
+                            <div class="suggestion-item" onclick="insertSuggestionAsCard('conseils_alimentaires', 'texte', this, 'titre')" data-content="<?= e($sugg['contenu']) ?>">
                                 <span class="add-icon">+</span>
                                 <span class="suggestion-titre"><?= e($sugg['titre']) ?></span>
                             </div>
