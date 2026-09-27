@@ -253,15 +253,25 @@ function initBlockEditor(container) {
  * suggestion (ex : "titre" pour pré-remplir le titre du conseil).
  */
 function insertSuggestionAsCard(field, targetKey, element, titleKey) {
-    const content = element.getAttribute('data-content');
+    let content = element.getAttribute('data-content');
     const editor = window.blockEditors && window.blockEditors[field];
     if (!content || !editor) return;
     const partial = {};
-    partial[targetKey] = content;
     if (titleKey) {
         const titreEl = element.querySelector('.suggestion-titre');
         if (titreEl) partial[titleKey] = titreEl.textContent.trim();
+        // Le contenu des suggestions commence souvent par sa propre ligne de
+        // titre ("ALIMENTATION SANS GLUTEN :") : on l'enlève pour éviter le
+        // doublon avec le titre de la carte, déjà rempli ci-dessus.
+        const lines = content.split('\n');
+        const firstLine = lines[0].trim();
+        if (firstLine !== '' && firstLine.endsWith(':') && firstLine === firstLine.toUpperCase()) {
+            lines.shift();
+            while (lines.length && lines[0].trim() === '') lines.shift();
+            content = lines.join('\n');
+        }
     }
+    partial[targetKey] = content;
     editor.addItem(partial);
     element.classList.add('inserted');
 }
