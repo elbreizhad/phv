@@ -78,6 +78,18 @@
     padding: 0;
 }
 
+/* Garde-fous anti-débordement horizontal (mobile) : une image plus
+   large que son conteneur, ou un mot/email/URL non sécable, sont les
+   causes les plus fréquentes de dépassement de la largeur d'écran. */
+img, svg, video, iframe, canvas {
+    max-width: 100%;
+}
+
+body, p, h1, h2, h3, h4, td, th, .subtitle, .badge, .form-control {
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
 html {
     font-size: 15px;
     scroll-behavior: smooth;
@@ -1047,6 +1059,28 @@ select.form-control {
     .page-body {
         padding: 0 1.5rem 2rem;
     }
+    /* Groupes de boutons (en-têtes de carte, actions de formulaire,
+       sélecteurs...) : autoriser le retour à la ligne au lieu de
+       déborder de l'écran quand plusieurs boutons ne tiennent pas
+       sur une seule ligne. */
+    .card-header,
+    .form-actions,
+    .d-flex {
+        flex-wrap: wrap;
+    }
+    .btn {
+        white-space: normal;
+    }
+    /* Tableau de lignes de facture (saisie) : exclu de la transformation
+       en accordéon car éditable, mais toujours trop large pour un écran
+       de téléphone. Il défile horizontalement dans sa carte. */
+    .card-body:has(table.table-editable) {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    table.table-editable {
+        min-width: 500px;
+    }
     .step-label {
         display: none !important;
     }
@@ -1543,6 +1577,7 @@ select.form-control {
 
 .modal-footer {
     display: flex;
+    flex-wrap: wrap;
     justify-content: flex-end;
     gap: 0.5rem;
     padding: 1rem 1.5rem;
