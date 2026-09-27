@@ -172,6 +172,19 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
         <input type="hidden" name="consultation_id" value="<?= $consultId ?>">
 
         <!-- ============================================ -->
+        <!-- OBJECTIFS DU PROGRAMME -->
+        <!-- ============================================ -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3>Objectifs du programme</h3>
+            </div>
+            <div class="card-body">
+                <p class="text-sm text-muted mb-2">Affichés en liste à puces en tête du PHV client. Une ligne = un objectif.</p>
+                <textarea name="objectifs" id="field-objectifs" class="form-control" rows="5" placeholder="Rééquilibrage alimentaire et stabilisation de la glycémie&#10;Réduction des ballonnements post-prandiaux&#10;Reprise d'une activité physique régulière"><?= e($phv['objectifs'] ?? getReponseValue($allReponses, 'motif_objectif', '')) ?></textarea>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
         <!-- ALIMENTATION -->
         <!-- ============================================ -->
         <div class="card mb-3">
@@ -260,6 +273,11 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
                     </div>
                 </div>
 
+                <label class="d-flex align-center gap-1 mt-2" style="font-size:0.9rem;">
+                    <input type="checkbox" name="inclure_tableau_ig" value="1" <?= !empty($phv['inclure_tableau_ig']) ? 'checked' : '' ?>>
+                    Inclure le tableau des aliments à index glycémique dans le PHV client
+                </label>
+
                 <!-- Commentaire praticien -->
                 <div class="form-group mt-2 praticien-comment">
                     <label class="form-label">
@@ -303,6 +321,19 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- SOUTIEN ÉMOTIONNEL & LIEN SOCIAL -->
+        <!-- ============================================ -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3>Soutien émotionnel & lien social</h3>
+            </div>
+            <div class="card-body">
+                <p class="text-sm text-muted mb-2">Isolement, deuil, ressources d'entraide, associations locales... Affiché dans un encart dédié, distinct de la gestion du stress.</p>
+                <textarea name="soutien_emotionnel" id="field-soutien" class="form-control" rows="5" placeholder="Ex : groupes de parole, associations locales, encouragement à en parler à son entourage..."><?= e($phv['soutien_emotionnel'] ?? '') ?></textarea>
             </div>
         </div>
 
@@ -531,7 +562,7 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
                     $complements = $autoContent['complements'];
                     $totalSlots = max(count($complements) + 2, 5);
                     for ($i = 0; $i < $totalSlots; $i++):
-                        $comp = $complements[$i] ?? ['nom' => '', 'posologie' => '', 'duree' => '', 'raison' => ''];
+                        $comp = $complements[$i] ?? ['nom' => '', 'posologie' => '', 'moment' => '', 'duree' => '', 'association' => '', 'raison' => ''];
                         $hasContent = !empty($comp['nom']);
                     ?>
                     <div class="complement-edit-item <?= $hasContent ? 'has-content' : 'empty-slot' ?>" data-index="<?= $i ?>">
@@ -543,8 +574,12 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
                                 placeholder="Nom du complément" value="<?= e($comp['nom']) ?>">
                             <input type="text" name="complement_posologie[]" class="form-control complement-poso"
                                 placeholder="Posologie (ex: 1 gélule/jour)" value="<?= e($comp['posologie']) ?>">
+                            <input type="text" name="complement_moment[]" class="form-control complement-moment"
+                                placeholder="Moment (ex: matin à jeun)" value="<?= e($comp['moment'] ?? '') ?>">
                             <input type="text" name="complement_duree[]" class="form-control complement-duree"
                                 placeholder="Durée (ex: 3 mois)" value="<?= e($comp['duree']) ?>">
+                            <input type="text" name="complement_association[]" class="form-control complement-association"
+                                placeholder="Association recommandée (optionnel)" value="<?= e($comp['association'] ?? '') ?>">
                         </div>
                         <?php if (!empty($comp['raison'])): ?>
                         <div class="complement-raison"><?= e($comp['raison']) ?></div>
@@ -634,6 +669,19 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
                     <label class="form-label">Notes internes (non incluses dans l'export)</label>
                     <textarea name="notes_phv" class="form-control" rows="2" placeholder="Notes pour le suivi..."><?= e($phv['notes'] ?? '') ?></textarea>
                 </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- POINTS D'ATTENTION -->
+        <!-- ============================================ -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3>⚠ Points d'attention</h3>
+            </div>
+            <div class="card-body">
+                <p class="text-sm text-muted mb-2">Mis en évidence dans un encadré d'alerte sur le PHV client (ex : tabac, interaction médicamenteuse, signal à surveiller).</p>
+                <textarea name="points_attention" id="field-points-attention" class="form-control" rows="4" placeholder="Ex : le tabac aggrave les ballonnements et l'inflammation digestive..."><?= e($phv['points_attention'] ?? '') ?></textarea>
             </div>
         </div>
 
@@ -1388,8 +1436,12 @@ function addComplement() {
                 placeholder="Nom du complément" value="">
             <input type="text" name="complement_posologie[]" class="form-control complement-poso"
                 placeholder="Posologie (ex: 1 gélule/jour)" value="">
+            <input type="text" name="complement_moment[]" class="form-control complement-moment"
+                placeholder="Moment (ex: matin à jeun)" value="">
             <input type="text" name="complement_duree[]" class="form-control complement-duree"
                 placeholder="Durée (ex: 3 mois)" value="">
+            <input type="text" name="complement_association[]" class="form-control complement-association"
+                placeholder="Association recommandée (optionnel)" value="">
         </div>
         <button type="button" class="complement-remove" onclick="removeComplement(this)" title="Supprimer">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>

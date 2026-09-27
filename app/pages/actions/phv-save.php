@@ -11,7 +11,9 @@ if (!$stmt->fetch()) { redirect('dashboard'); }
 $complements = [];
 $noms = $_POST['complement_nom'] ?? [];
 $posologies = $_POST['complement_posologie'] ?? [];
+$moments = $_POST['complement_moment'] ?? [];
 $durees = $_POST['complement_duree'] ?? [];
+$associations = $_POST['complement_association'] ?? [];
 $actifs = $_POST['complement_actif'] ?? [];
 
 for ($i = 0; $i < count($noms); $i++) {
@@ -20,7 +22,9 @@ for ($i = 0; $i < count($noms); $i++) {
         $complements[] = [
             'nom' => trim($noms[$i]),
             'posologie' => trim($posologies[$i] ?? ''),
+            'moment' => trim($moments[$i] ?? ''),
             'duree' => trim($durees[$i] ?? ''),
+            'association' => trim($associations[$i] ?? ''),
         ];
     }
 }
@@ -169,6 +173,10 @@ $nouveauxChamps = [
     'programme_detox' => getPost('programme_detox'),
     'hydrologie' => getPost('hydrologie'),
     'complements_texte' => getPost('complements_texte'),
+    'objectifs' => getPost('objectifs'),
+    'soutien_emotionnel' => getPost('soutien_emotionnel'),
+    'points_attention' => getPost('points_attention'),
+    'prochain_rdv_notes' => getPost('prochain_rdv_notes'),
 ];
 
 foreach ($nouveauxChamps as $champ => $valeur) {
@@ -180,6 +188,24 @@ foreach ($nouveauxChamps as $champ => $valeur) {
             // Colonne pas encore créée - ignorer ou stocker ailleurs
         }
     }
+}
+
+// Date du prochain RDV (peut être vide pour effacer une date déjà saisie)
+try {
+    $db->query("SELECT prochain_rdv FROM phv LIMIT 0");
+    $data['prochain_rdv'] = getPost('prochain_rdv') ?: null;
+} catch (PDOException $e) {
+    // Colonne pas encore créée
+}
+
+// Case à cocher "inclure le tableau IG" : toujours enregistrée (y compris
+// pour repasser à 0 quand elle est décochée), contrairement aux textarea
+// ci-dessus qu'on ne veut pas écraser par du vide.
+try {
+    $db->query("SELECT inclure_tableau_ig FROM phv LIMIT 0");
+    $data['inclure_tableau_ig'] = getPost('inclure_tableau_ig') ? 1 : 0;
+} catch (PDOException $e) {
+    // Colonne pas encore créée
 }
 
 // Vérifier si un PHV existe déjà

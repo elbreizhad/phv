@@ -233,6 +233,92 @@ if (!empty($pathologiesIds)) {
         .box-avoid h4 { color: #c45b4b; }
         .box-favor h4 { color: #4a9b5a; }
 
+        /* Objectifs du programme */
+        .objectifs-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .objectifs-list li {
+            position: relative;
+            padding-left: 1.1rem;
+            margin-bottom: 0.3rem;
+            font-size: 9.5pt;
+        }
+        .objectifs-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #c4704b;
+            font-weight: bold;
+        }
+
+        /* Encadré d'alerte (points d'attention) */
+        .box-warning {
+            padding: 0.7rem 0.8rem;
+            background: #fde3e3;
+            border-left: 3px solid #c45b4b;
+            border-radius: 5px;
+            font-size: 9pt;
+            color: #6d1f1f;
+        }
+        .box-warning h4 {
+            font-size: 8.5pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #c45b4b;
+            margin-bottom: 0.3rem;
+        }
+
+        /* Encadré soutien émotionnel / lien social */
+        .box-soutien {
+            padding: 0.7rem 0.8rem;
+            background: #f1eaf5;
+            border-left: 3px solid #7a5a9b;
+            border-radius: 5px;
+            font-size: 9pt;
+            color: #4a3860;
+        }
+        .box-soutien h4 {
+            font-size: 8.5pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #7a5a9b;
+            margin-bottom: 0.3rem;
+        }
+
+        /* Prochain rendez-vous */
+        .box-rdv {
+            padding: 0.6rem 0.8rem;
+            background: #f4f7f2;
+            border-left: 3px solid #4a6741;
+            border-radius: 5px;
+            font-size: 9pt;
+            color: #3b5234;
+        }
+
+        /* Tableau index glycémique */
+        .ig-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.4rem;
+            font-size: 8pt;
+        }
+        .ig-table th {
+            padding: 0.35rem;
+            text-align: left;
+            color: white;
+            font-size: 7.5pt;
+        }
+        .ig-table th.ig-bas { background: #4a9b5a; }
+        .ig-table th.ig-modere { background: #d4a054; }
+        .ig-table th.ig-eleve { background: #c45b4b; }
+        .ig-table td {
+            padding: 0.35rem;
+            border-bottom: 1px solid #ebe3d5;
+            vertical-align: top;
+        }
+
         /* Commentaires praticien */
         .praticien-note {
             margin-top: 0.5rem;
@@ -654,6 +740,23 @@ if (!empty($pathologiesIds)) {
             </div>
         </div>
 
+        <!-- Objectifs du programme -->
+        <?php if (!empty($phv['objectifs'])): ?>
+        <div class="section">
+            <div class="section-title">Objectifs</div>
+            <div class="content">
+                <ul class="objectifs-list">
+                    <?php foreach (preg_split('/\r\n|\r|\n/', trim($phv['objectifs'])) as $ligne): ?>
+                        <?php $ligne = trim($ligne, " \t\-•*"); ?>
+                        <?php if ($ligne !== ''): ?>
+                        <li><?= e($ligne) ?></li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <!-- Alimentation -->
         <?php if ($phv['alimentation'] || $phv['alimentation_eviter'] || $phv['alimentation_privilegier']): ?>
         <div class="section">
@@ -677,6 +780,30 @@ if (!empty($pathologiesIds)) {
                         <p><?= nl2br(e($phv['alimentation_privilegier'])) ?></p>
                     </div>
                     <?php endif; ?>
+                </div>
+                <?php endif; ?>
+
+                <?php if (!empty($phv['inclure_tableau_ig'])): ?>
+                <div style="margin-top: 0.6rem;">
+                    <h4 style="font-size: 8pt; text-transform: uppercase; letter-spacing: 1px; color: #4a6741; margin-bottom: 0.3rem;">Index glycémique - guide pratique</h4>
+                    <table class="ig-table">
+                        <thead>
+                            <tr>
+                                <th class="ig-bas">IG bas (&lt; 55) - à privilégier</th>
+                                <th class="ig-modere">IG modéré (55-70)</th>
+                                <th class="ig-eleve">IG élevé (&gt; 70) - à éviter</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Légumes verts, courgette, haricots verts, épinards, carotte crue</td><td>Riz blanc, pâtes bien cuites, betterave cuite</td><td>Pain blanc, baguette classique, farine blanche et de riz</td></tr>
+                            <tr><td>Légumineuses : lentilles, pois chiches, haricots</td><td>Semoule, couscous, maïs en boîte</td><td>Riz soufflé, galettes de riz</td></tr>
+                            <tr><td>Quinoa, orge, flocons d'avoine gros</td><td>Pain complet du commerce</td><td>Céréales sucrées du matin</td></tr>
+                            <tr><td>Patate douce, potimarron</td><td>Ananas, melon, raisin, kiwi</td><td>Pomme de terre au four, purée</td></tr>
+                            <tr><td>Pomme, poire, cerise, fraise, pêche</td><td>Pain au levain complet</td><td>Dates, fruits confits, jus de fruits</td></tr>
+                            <tr><td>Chocolat noir ≥ 70 %, oléagineux</td><td>Crème glacée artisanale</td><td>Viennoiseries, gâteaux, biscuits industriels</td></tr>
+                            <tr><td>Yaourt nature, fromage blanc</td><td>Banane peu mûre</td><td>Sodas, boissons sucrées</td></tr>
+                        </tbody>
+                    </table>
                 </div>
                 <?php endif; ?>
 
@@ -706,6 +833,16 @@ if (!empty($pathologiesIds)) {
                 <?php if (!empty($commentaires['stress'])): ?>
                     <div class="praticien-note"><?= nl2br(e($commentaires['stress'])) ?></div>
                 <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Soutien émotionnel / lien social -->
+        <?php if (!empty($phv['soutien_emotionnel'])): ?>
+        <div class="section">
+            <div class="box-soutien">
+                <h4>Soutien émotionnel</h4>
+                <p><?= nl2br(e($phv['soutien_emotionnel'])) ?></p>
             </div>
         </div>
         <?php endif; ?>
@@ -759,6 +896,7 @@ if (!empty($pathologiesIds)) {
 
         <!-- Compléments -->
         <?php if (!empty($complements)): ?>
+        <?php $complementsDetailles = array_reduce($complements, fn($carry, $c) => $carry || !empty($c['moment']) || !empty($c['association']), false); ?>
         <div class="section">
             <div class="section-title">Compléments alimentaires</div>
             <div class="content">
@@ -767,7 +905,13 @@ if (!empty($pathologiesIds)) {
                         <tr>
                             <th>Complément</th>
                             <th>Posologie</th>
+                            <?php if ($complementsDetailles): ?>
+                            <th>Moment</th>
+                            <?php endif; ?>
                             <th>Durée</th>
+                            <?php if ($complementsDetailles): ?>
+                            <th>Association</th>
+                            <?php endif; ?>
                         </tr>
                     </thead>
                     <tbody>
@@ -775,7 +919,13 @@ if (!empty($pathologiesIds)) {
                         <tr>
                             <td><strong><?= e($c['nom']) ?></strong></td>
                             <td><?= e($c['posologie']) ?></td>
+                            <?php if ($complementsDetailles): ?>
+                            <td><?= e($c['moment'] ?? '') ?></td>
+                            <?php endif; ?>
                             <td><?= e($c['duree']) ?></td>
+                            <?php if ($complementsDetailles): ?>
+                            <td><?= e($c['association'] ?? '') ?></td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
@@ -848,6 +998,31 @@ if (!empty($pathologiesIds)) {
         <div class="section">
             <div class="section-title">Recommandations complémentaires</div>
             <div class="content"><p><?= nl2br(e($phv['recommandations_complementaires'])) ?></p></div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Points d'attention -->
+        <?php if (!empty($phv['points_attention'])): ?>
+        <div class="section">
+            <div class="box-warning">
+                <h4>⚠ Point d'attention</h4>
+                <p><?= nl2br(e($phv['points_attention'])) ?></p>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Prochain rendez-vous -->
+        <?php if (!empty($phv['prochain_rdv']) || !empty($phv['prochain_rdv_notes'])): ?>
+        <div class="section">
+            <div class="box-rdv">
+                <strong>Prochain rendez-vous</strong>
+                <?php if (!empty($phv['prochain_rdv'])): ?>
+                    <?= ' : ' . e(formatDate($phv['prochain_rdv'])) ?>
+                <?php endif; ?>
+                <?php if (!empty($phv['prochain_rdv_notes'])): ?>
+                    <p style="margin-top: 0.3rem;"><?= nl2br(e($phv['prochain_rdv_notes'])) ?></p>
+                <?php endif; ?>
+            </div>
         </div>
         <?php endif; ?>
 

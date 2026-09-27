@@ -98,6 +98,17 @@ function deployRun(string $targetDir): array {
 
     require_once $targetDir . '/config/database.php';
 
+    $log[] = "Vérification du schéma de la table phv...";
+    try {
+        require_once $targetDir . '/data/phv-schema.php';
+        $colonnesAjoutees = syncPhvSchema(getDB());
+        $log[] = empty($colonnesAjoutees)
+            ? "Schéma phv déjà à jour."
+            : "Colonnes phv ajoutées (" . count($colonnesAjoutees) . ") : " . implode(', ', $colonnesAjoutees);
+    } catch (Throwable $e) {
+        $log[] = "Attention : la vérification du schéma phv a échoué (" . $e->getMessage() . ").";
+    }
+
     $log[] = "Synchronisation des fiches pathologies en base...";
     try {
         require_once $targetDir . '/data/fiches-pathologies.php';
