@@ -1924,29 +1924,55 @@ select.form-control {
         flex-wrap: wrap;
         gap: 0.6rem;
     }
+    /* Grille (et non flex) pour forcer 3 tiers strictement égaux qui
+       tiennent toujours sur l'écran, sans dépendre de la largeur du
+       texte des boutons (qui pourrait empêcher le retour à la ligne
+       et faire déborder "Mois" hors de l'écran). */
     .calendar-nav .vue-selector {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
         width: 100%;
-        justify-content: stretch;
+        gap: 0.4rem;
     }
     .calendar-nav .vue-selector a {
-        flex: 1;
+        min-width: 0;
+        padding: 0.5rem 0.3rem;
         text-align: center;
     }
 
-    /* Vue semaine : garder des colonnes lisibles (pas de compression en
-       dessous d'une largeur exploitable) et défiler horizontalement
-       uniquement à l'intérieur de la carte du calendrier. */
+    /* Vue semaine : tout doit tenir dans la largeur de l'écran, sans
+       défilement ni zoom. Les colonnes se compressent (1fr) et les
+       textes se réduisent en conséquence. */
     .week-header,
     .week-row {
-        grid-template-columns: 42px repeat(7, minmax(72px, 1fr));
-        min-width: 600px;
+        grid-template-columns: 32px repeat(7, 1fr);
     }
-    .day-timeline {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+    .week-time-col {
+        padding: 0.3rem 0.1rem;
+        font-size: 0.62rem;
     }
-    .timeline-hour {
-        min-width: 320px;
+    .week-day-header {
+        padding: 0.4rem 0.1rem;
+        min-width: 0;
+    }
+    .week-cell {
+        min-width: 0;
+        padding: 0.1rem;
+    }
+    .week-day-header .day-name {
+        font-size: 0.6rem;
+    }
+    .week-day-header .day-num {
+        font-size: 0.95rem;
+    }
+    .week-event {
+        padding: 0.15rem 0.2rem;
+        font-size: 0.6rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .week-event .event-time {
+        display: none;
     }
 }
 
