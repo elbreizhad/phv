@@ -355,6 +355,16 @@ a:hover {
 .stat-icon.blue { background: #eef4f9; color: var(--info); }
 .stat-icon.gold { background: #fdf6e8; color: var(--warning); }
 
+/* Icônes thématiques des fiches Ressources (couleur/fond posés en inline
+   par renderRessourceIcon() car dépendants de la fiche). */
+.ressource-icon {
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
 .stat-info h3 {
     font-family: 'Inter', sans-serif;
     font-size: 1.8rem;

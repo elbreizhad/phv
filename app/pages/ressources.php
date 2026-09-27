@@ -4,6 +4,7 @@
  * hydrologie, gestion du stress, alimentation générale...).
  * Structure calquée sur "Fiches pathologies" : section -> catégorie -> fiches.
  */
+require_once __DIR__ . '/../data/ressources-icons.php';
 
 // Sections prévues à terme ; seules celles avec du contenu en base sont cliquables.
 const RESSOURCES_SECTIONS = [
@@ -100,10 +101,15 @@ foreach ($ressources as $r) {
             <?php foreach ($ressourcesGroup as $r): ?>
             <div class="card" style="cursor:pointer;" onclick="window.location='<?= url('ressource-view', ['id' => $r['id']]) ?>'">
                 <div class="card-body">
-                    <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><?= e($r['nom']) ?></h3>
-                    <?php if ($r['indication']): ?>
-                    <p class="text-sm text-muted" style="line-height: 1.5;"><?= e(mb_strimwidth($r['indication'], 0, 130, '...')) ?></p>
-                    <?php endif; ?>
+                    <div style="display:flex; align-items:flex-start; gap:0.8rem;">
+                        <?= renderRessourceIcon($r) ?>
+                        <div style="flex:1; min-width:0;">
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><?= e($r['nom']) ?></h3>
+                            <?php if ($r['indication']): ?>
+                            <p class="text-sm text-muted" style="line-height: 1.5;"><?= e(mb_strimwidth($r['indication'], 0, 110, '...')) ?></p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                     <div style="margin-top: 0.8rem;">
                         <a href="<?= url('ressource-view', ['id' => $r['id']]) ?>" class="btn btn-outline btn-sm">Consulter</a>
                     </div>

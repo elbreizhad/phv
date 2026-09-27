@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../data/ressources-icons.php';
+
 $db = getDB();
 $id = (int) getGet('id');
 
@@ -11,9 +13,12 @@ $sousTitre = trim(($ressource['categorie'] ?? '') . (!empty($ressource['partie_u
 ?>
 
 <div class="page-header">
-    <div>
-        <h1><?= e($ressource['nom']) ?></h1>
-        <p class="subtitle"><?= e($sousTitre) ?></p>
+    <div style="display:flex; align-items:center; gap:1rem;">
+        <?= renderRessourceIcon($ressource, 56) ?>
+        <div>
+            <h1><?= e($ressource['nom']) ?></h1>
+            <p class="subtitle"><?= e($sousTitre) ?></p>
+        </div>
     </div>
     <a href="<?= url('ressources', ['section' => $ressource['section']]) ?>" class="btn btn-secondary">Retour</a>
 </div>
