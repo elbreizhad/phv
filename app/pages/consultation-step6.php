@@ -192,16 +192,35 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
                 <h3>Alimentation</h3>
             </div>
             <div class="card-body">
+                <?php
+                // Blocs "conseil" (titre + explication) : rendus tels quels dans le
+                // PDF client (paragraphe titre en gras + texte), sans retouche.
+                // Migration douce : si rien de structuré n'existe encore mais qu'un
+                // ancien texte libre "alimentation" existe, on le reprend en une carte.
+                $conseilsAlimentaires = json_decode($phv['conseils_alimentaires'] ?? '', true);
+                if (!is_array($conseilsAlimentaires)) { $conseilsAlimentaires = []; }
+                if (empty($conseilsAlimentaires) && !empty($phv['alimentation'])) {
+                    $conseilsAlimentaires = [['titre' => '', 'texte' => $phv['alimentation']]];
+                }
+                $schemaConseils = [
+                    ['key' => 'titre', 'label' => 'Titre du conseil', 'type' => 'text', 'placeholder' => "Ex : Cuisiner maison le plus souvent possible"],
+                    ['key' => 'texte', 'label' => 'Explication', 'type' => 'textarea', 'placeholder' => "Pourquoi / comment..."],
+                ];
+                ?>
                 <div class="phv-section">
                     <div class="phv-section-main">
                         <label class="form-label">Conseils alimentaires</label>
-                        <textarea name="alimentation" id="field-alimentation" rows="8"><?= e($phv['alimentation'] ?? $autoContent['alimentation']['conseils']) ?></textarea>
+                        <input type="hidden" name="conseils_alimentaires" value="<?= e(json_encode($conseilsAlimentaires, JSON_UNESCAPED_UNICODE)) ?>">
+                        <div class="block-editor" data-field="conseils_alimentaires" data-schema="<?= e(json_encode($schemaConseils, JSON_UNESCAPED_UNICODE)) ?>">
+                            <div class="block-editor-list"></div>
+                            <button type="button" class="btn btn-outline btn-sm block-editor-add">+ Ajouter un conseil</button>
+                        </div>
                     </div>
                     <div class="phv-section-suggestions">
                         <h4>Suggestions</h4>
                         <div class="suggestion-list">
                             <?php foreach (array_slice($suggestionsAlimentation, 0, 8) as $sugg): ?>
-                            <div class="suggestion-item" onclick="insertSuggestion('field-alimentation', this)" data-content="<?= e($sugg['contenu']) ?>">
+                            <div class="suggestion-item" onclick="insertSuggestionAsCard('conseils_alimentaires', 'texte', this)" data-content="<?= e($sugg['contenu']) ?>">
                                 <span class="add-icon">+</span>
                                 <span class="suggestion-titre"><?= e($sugg['titre']) ?></span>
                             </div>
@@ -225,20 +244,71 @@ $suggestionsHydrologie = getSuggestionsCategorie($tagsProfil, 'hydrologie');
                     </div>
                 </div>
 
+                <?php
+                // Un bloc par repas (nom + contenu + astuce optionnelle), rendu
+                // dans le PDF client comme dans l'exemple fourni par la cliente
+                // (petit-déjeuner / déjeuner / collation / dîner, chacun détaillé).
+                $menuStructure = json_decode($phv['menu_structure'] ?? '', true);
+                if (!is_array($menuStructure)) { $menuStructure = []; }
+                if (empty($menuStructure)) {
+                    if (!empty($phv['menu_type'])) {
+                        $menuStructure = [['nom_repas' => '', 'contenu' => $phv['menu_type'], 'astuce' => '']];
+                    } else {
+                        $menuStructure = [
+                            ['nom_repas' => 'Petit-déjeuner', 'contenu' => '', 'astuce' => ''],
+                            ['nom_repas' => 'Déjeuner', 'contenu' => '', 'astuce' => ''],
+                            ['nom_repas' => 'Collation', 'contenu' => '', 'astuce' => ''],
+                            ['nom_repas' => 'Dîner', 'contenu' => '', 'astuce' => ''],
+                        ];
+                    }
+                }
+                $schemaMenu = [
+                    ['key' => 'nom_repas', 'label' => 'Repas', 'type' => 'text', 'placeholder' => 'Ex : Petit-déjeuner'],
+                    ['key' => 'contenu', 'label' => 'Composition / options', 'type' => 'textarea', 'placeholder' => "Option 1 : ...\nOption 2 : ..."],
+                    ['key' => 'astuce', 'label' => 'Astuce (optionnel)', 'type' => 'textarea', 'placeholder' => 'Conseil pratique lié à ce repas...'],
+                ];
+                ?>
                 <div class="phv-section mt-2">
                     <div class="phv-section-main">
                         <label class="form-label">Menu type</label>
-                        <textarea name="menu_type" id="field-menu" rows="10"><?= e($phv['menu_type'] ?? $autoContent['alimentation']['menu_type']) ?></textarea>
+                        <input type="hidden" name="menu_structure" value="<?= e(json_encode($menuStructure, JSON_UNESCAPED_UNICODE)) ?>">
+                        <div class="block-editor" data-field="menu_structure" data-schema="<?= e(json_encode($schemaMenu, JSON_UNESCAPED_UNICODE)) ?>">
+                            <div class="block-editor-list"></div>
+                            <button type="button" class="btn btn-outline btn-sm block-editor-add">+ Ajouter un repas</button>
+                        </div>
                     </div>
                     <div class="phv-section-suggestions">
                         <h4>Menus types</h4>
                         <div class="suggestion-list">
                             <?php foreach (array_slice($suggestionsMenuType, 0, 5) as $sugg): ?>
-                            <div class="suggestion-item" onclick="insertSuggestion('field-menu', this)" data-content="<?= e($sugg['contenu']) ?>">
+                            <div class="suggestion-item" onclick="insertSuggestionAsCard('menu_structure', 'contenu', this)" data-content="<?= e($sugg['contenu']) ?>">
                                 <span class="add-icon">+</span>
                                 <span class="suggestion-titre"><?= e($sugg['titre']) ?></span>
                             </div>
                             <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <?php
+                $ressourcesExternes = json_decode($phv['ressources_externes'] ?? '', true);
+                if (!is_array($ressourcesExternes)) { $ressourcesExternes = []; }
+                $schemaRessourcesExternes = [
+                    ['key' => 'type', 'label' => 'Type', 'type' => 'text', 'placeholder' => 'Livre, chaîne YouTube, site, appli...'],
+                    ['key' => 'titre', 'label' => 'Titre', 'type' => 'text', 'placeholder' => 'Ex : Je réussis ma détox sucre 2'],
+                    ['key' => 'auteur', 'label' => 'Auteur / Source', 'type' => 'text', 'placeholder' => 'Ex : Bérengère Philippon, Larousse 2022'],
+                    ['key' => 'description', 'label' => 'Description', 'type' => 'textarea', 'placeholder' => "Pourquoi cette ressource, ce qu'elle apporte..."],
+                    ['key' => 'lien', 'label' => 'Lien (optionnel)', 'type' => 'text', 'placeholder' => 'https://...'],
+                ];
+                ?>
+                <div class="phv-section mt-2">
+                    <div class="phv-section-main">
+                        <label class="form-label">Ressources externes recommandées</label>
+                        <p class="text-sm text-muted mb-2">Livres, chaînes YouTube, sites, applis... affichés en petites fiches dans le PHV client.</p>
+                        <input type="hidden" name="ressources_externes" value="<?= e(json_encode($ressourcesExternes, JSON_UNESCAPED_UNICODE)) ?>">
+                        <div class="block-editor" data-field="ressources_externes" data-schema="<?= e(json_encode($schemaRessourcesExternes, JSON_UNESCAPED_UNICODE)) ?>">
+                            <div class="block-editor-list"></div>
+                            <button type="button" class="btn btn-outline btn-sm block-editor-add">+ Ajouter une ressource</button>
                         </div>
                     </div>
                 </div>

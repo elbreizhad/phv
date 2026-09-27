@@ -98,7 +98,167 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Tableaux responsives (accordéon sur mobile)
     initResponsiveTables();
+
+    // Blocs structurés du PHV (cartes répétables : conseils, menu, ressources...)
+    document.querySelectorAll('.block-editor').forEach(initBlockEditor);
 });
+
+/**
+ * Éditeur générique de "blocs" répétables pour le PHV (conseils alimentaires,
+ * menu type par repas, ressources externes...). Un seul composant JS piloté
+ * par un schéma déclaré en data-attribute côté PHP : ajouter une nouvelle
+ * section structurée ne demande pas de nouveau JS, juste un nouveau schéma.
+ *
+ * Le conteneur attend :
+ *   data-field   : name du <input type="hidden"> qui stocke le JSON
+ *   data-schema  : JSON [{key, label, type: "text"|"textarea", placeholder}]
+ * et doit contenir un ".block-editor-list" et un bouton ".block-editor-add".
+ */
+function initBlockEditor(container) {
+    let schema;
+    try {
+        schema = JSON.parse(container.dataset.schema || '[]');
+    } catch (e) {
+        schema = [];
+    }
+    const hidden = document.querySelector('input[type="hidden"][name="' + container.dataset.field + '"]');
+    const list = container.querySelector('.block-editor-list');
+    const addBtn = container.querySelector('.block-editor-add');
+    if (!hidden || !list || !addBtn) return;
+
+    let items;
+    try {
+        items = JSON.parse(hidden.value || '[]');
+    } catch (e) {
+        items = [];
+    }
+    if (!Array.isArray(items)) items = [];
+
+    function sync() {
+        hidden.value = JSON.stringify(items);
+    }
+
+    function render() {
+        list.innerHTML = '';
+        items.forEach(function(item, idx) {
+            const card = document.createElement('div');
+            card.className = 'block-editor-card';
+
+            const fieldsWrap = document.createElement('div');
+            fieldsWrap.className = 'block-editor-card-fields';
+            schema.forEach(function(f) {
+                const label = document.createElement('label');
+                label.className = 'block-editor-label';
+                label.textContent = f.label;
+                fieldsWrap.appendChild(label);
+
+                const input = f.type === 'textarea' ? document.createElement('textarea') : document.createElement('input');
+                if (f.type === 'textarea') {
+                    input.rows = 2;
+                } else {
+                    input.type = 'text';
+                }
+                input.className = 'form-control';
+                input.value = item[f.key] || '';
+                if (f.placeholder) input.placeholder = f.placeholder;
+                input.addEventListener('input', function() {
+                    items[idx][f.key] = input.value;
+                    sync();
+                });
+                fieldsWrap.appendChild(input);
+            });
+            card.appendChild(fieldsWrap);
+
+            const actions = document.createElement('div');
+            actions.className = 'block-editor-card-actions';
+
+            const upBtn = document.createElement('button');
+            upBtn.type = 'button';
+            upBtn.textContent = '↑';
+            upBtn.title = 'Monter';
+            upBtn.disabled = idx === 0;
+            upBtn.addEventListener('click', function() {
+                if (idx > 0) {
+                    const tmp = items[idx - 1];
+                    items[idx - 1] = items[idx];
+                    items[idx] = tmp;
+                    render();
+                    sync();
+                }
+            });
+
+            const downBtn = document.createElement('button');
+            downBtn.type = 'button';
+            downBtn.textContent = '↓';
+            downBtn.title = 'Descendre';
+            downBtn.disabled = idx === items.length - 1;
+            downBtn.addEventListener('click', function() {
+                if (idx < items.length - 1) {
+                    const tmp = items[idx + 1];
+                    items[idx + 1] = items[idx];
+                    items[idx] = tmp;
+                    render();
+                    sync();
+                }
+            });
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.textContent = '✕';
+            removeBtn.title = 'Supprimer';
+            removeBtn.addEventListener('click', function() {
+                items.splice(idx, 1);
+                render();
+                sync();
+            });
+
+            actions.appendChild(upBtn);
+            actions.appendChild(downBtn);
+            actions.appendChild(removeBtn);
+            card.appendChild(actions);
+
+            list.appendChild(card);
+        });
+    }
+
+    addBtn.addEventListener('click', function() {
+        const blank = {};
+        schema.forEach(function(f) { blank[f.key] = ''; });
+        items.push(blank);
+        render();
+        sync();
+    });
+
+    render();
+
+    // Accessible depuis l'extérieur (ex: clic sur une suggestion) pour
+    // ajouter une carte pré-remplie sans dupliquer la logique d'affichage.
+    window.blockEditors = window.blockEditors || {};
+    window.blockEditors[container.dataset.field] = {
+        addItem: function(partial) {
+            const blank = {};
+            schema.forEach(function(f) { blank[f.key] = ''; });
+            items.push(Object.assign(blank, partial));
+            render();
+            sync();
+        }
+    };
+}
+
+/**
+ * Ajoute une suggestion comme nouvelle carte dans un block-editor (au lieu
+ * de l'insérer dans un textarea). `field` = data-field du block-editor,
+ * `targetKey` = clé du schéma qui reçoit le texte de la suggestion.
+ */
+function insertSuggestionAsCard(field, targetKey, element) {
+    const content = element.getAttribute('data-content');
+    const editor = window.blockEditors && window.blockEditors[field];
+    if (!content || !editor) return;
+    const partial = {};
+    partial[targetKey] = content;
+    editor.addItem(partial);
+    element.classList.add('inserted');
+}
 
 /**
  * Rend les tableaux .table utilisables sur mobile : seule la 1re colonne

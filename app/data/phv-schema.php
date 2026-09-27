@@ -15,6 +15,11 @@ const PHV_COLONNES_ATTENDUES = [
     'inclure_tableau_ig' => 'TINYINT(1) NOT NULL DEFAULT 0',
     'prochain_rdv' => 'DATE NULL',
     'prochain_rdv_notes' => 'TEXT NULL',
+    // Blocs structurés (JSON) : saisis en cartes dans l'étape 6, mis en forme
+    // automatiquement dans le PDF client (plus de retouche manuelle après coup).
+    'conseils_alimentaires' => 'TEXT NULL',
+    'menu_structure' => 'TEXT NULL',
+    'ressources_externes' => 'TEXT NULL',
 ];
 
 /**

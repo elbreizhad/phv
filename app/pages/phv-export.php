@@ -758,11 +758,25 @@ if (!empty($pathologiesIds)) {
         <?php endif; ?>
 
         <!-- Alimentation -->
-        <?php if ($phv['alimentation'] || $phv['alimentation_eviter'] || $phv['alimentation_privilegier']): ?>
+        <?php
+        $conseilsAlimentaires = json_decode($phv['conseils_alimentaires'] ?? '', true);
+        if (!is_array($conseilsAlimentaires)) { $conseilsAlimentaires = []; }
+        ?>
+        <?php if (!empty($conseilsAlimentaires) || $phv['alimentation'] || $phv['alimentation_eviter'] || $phv['alimentation_privilegier']): ?>
         <div class="section">
             <div class="section-title">Conseils alimentaires</div>
             <div class="content">
-                <?php if ($phv['alimentation']): ?>
+                <?php if (!empty($conseilsAlimentaires)): ?>
+                    <?php foreach ($conseilsAlimentaires as $conseil): ?>
+                        <?php $titre = trim($conseil['titre'] ?? ''); $texte = trim($conseil['texte'] ?? ''); ?>
+                        <?php if ($titre !== '' || $texte !== ''): ?>
+                        <p>
+                            <?php if ($titre !== ''): ?><strong><?= e($titre) ?></strong><?= $texte !== '' ? ' — ' : '' ?><?php endif; ?>
+                            <?= nl2br(e($texte)) ?>
+                        </p>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php elseif ($phv['alimentation']): ?>
                     <p><?= nl2br(e($phv['alimentation'])) ?></p>
                 <?php endif; ?>
 
@@ -815,11 +829,57 @@ if (!empty($pathologiesIds)) {
         <?php endif; ?>
 
         <!-- Menu type -->
-        <?php if ($phv['menu_type']): ?>
+        <?php
+        $menuStructure = json_decode($phv['menu_structure'] ?? '', true);
+        if (!is_array($menuStructure)) { $menuStructure = []; }
+        ?>
+        <?php if (!empty($menuStructure) || $phv['menu_type']): ?>
         <div class="section">
             <div class="section-title">Exemples de repas</div>
             <div class="content">
-                <p><?= nl2br(e($phv['menu_type'])) ?></p>
+                <?php if (!empty($menuStructure)): ?>
+                    <?php foreach ($menuStructure as $repas): ?>
+                        <?php $nomRepas = trim($repas['nom_repas'] ?? ''); $contenu = trim($repas['contenu'] ?? ''); $astuce = trim($repas['astuce'] ?? ''); ?>
+                        <?php if ($nomRepas !== '' || $contenu !== ''): ?>
+                        <div style="margin-bottom: 0.6rem;">
+                            <?php if ($nomRepas !== ''): ?>
+                            <div style="font-weight: 600; color: #3b5234; font-size: 9.5pt; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.2rem;"><?= e($nomRepas) ?></div>
+                            <?php endif; ?>
+                            <?php if ($contenu !== ''): ?>
+                            <p><?= nl2br(e($contenu)) ?></p>
+                            <?php endif; ?>
+                            <?php if ($astuce !== ''): ?>
+                            <div class="praticien-note" style="border-left-color: #4a9b5a; color: #2e5c2e;"><?= nl2br(e($astuce)) ?></div>
+                            <?php endif; ?>
+                        </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p><?= nl2br(e($phv['menu_type'])) ?></p>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Ressources externes -->
+        <?php
+        $ressourcesExternes = json_decode($phv['ressources_externes'] ?? '', true);
+        if (!is_array($ressourcesExternes)) { $ressourcesExternes = []; }
+        ?>
+        <?php if (!empty($ressourcesExternes)): ?>
+        <div class="section">
+            <div class="section-title">Ressources recommandées</div>
+            <div class="content">
+                <?php foreach ($ressourcesExternes as $ressource): ?>
+                    <?php $titre = trim($ressource['titre'] ?? ''); if ($titre === '') continue; ?>
+                    <div style="margin-bottom: 0.5rem; padding: 0.5rem 0.6rem; background: #f8f6f2; border-radius: 5px;">
+                        <?php if (!empty($ressource['type'])): ?><span style="font-size: 7.5pt; text-transform: uppercase; letter-spacing: 0.5px; color: #a85a3a; font-weight: 600;"><?= e($ressource['type']) ?></span><br><?php endif; ?>
+                        <strong><?= e($titre) ?></strong>
+                        <?php if (!empty($ressource['auteur'])): ?> — <?= e($ressource['auteur']) ?><?php endif; ?>
+                        <?php if (!empty($ressource['description'])): ?><p style="margin-top: 0.2rem;"><?= nl2br(e($ressource['description'])) ?></p><?php endif; ?>
+                        <?php if (!empty($ressource['lien'])): ?><p style="margin-top: 0.2rem; font-size: 8.5pt; word-break: break-all;"><?= e($ressource['lien']) ?></p><?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </div>
         <?php endif; ?>

@@ -127,11 +127,43 @@ $protocolesIds = array_values(array_unique(array_filter(array_map('intval', $pro
 $recettesIds = array_values(array_unique(array_filter(array_map('intval', $recettesIds))));
 $pathologiesIds = array_values(array_unique(array_filter(array_map('intval', $pathologiesIds))));
 
+// Blocs structurés "conseils alimentaires" / "menu type" (cartes ajoutées à
+// l'étape 6) : on en tire aussi une version texte pour les anciens
+// consommateurs (PDF praticien, exports antérieurs) qui lisent encore
+// alimentation/menu_type en texte libre.
+$conseilsAlimentaires = json_decode(getPost('conseils_alimentaires') ?: '[]', true) ?: [];
+$conseilsAlimentaires = array_values(array_filter($conseilsAlimentaires, function ($c) {
+    return trim($c['titre'] ?? '') !== '' || trim($c['texte'] ?? '') !== '';
+}));
+$alimentationTexte = implode("\n\n", array_map(function ($c) {
+    $titre = trim($c['titre'] ?? '');
+    $texte = trim($c['texte'] ?? '');
+    if ($titre !== '' && $texte !== '') return $titre . ' — ' . $texte;
+    return $titre !== '' ? $titre : $texte;
+}, $conseilsAlimentaires));
+
+$menuStructure = json_decode(getPost('menu_structure') ?: '[]', true) ?: [];
+$menuStructure = array_values(array_filter($menuStructure, function ($m) {
+    return trim($m['nom_repas'] ?? '') !== '' || trim($m['contenu'] ?? '') !== '';
+}));
+$menuTypeTexte = implode("\n\n", array_map(function ($m) {
+    $lignes = [];
+    if (trim($m['nom_repas'] ?? '') !== '') $lignes[] = strtoupper(trim($m['nom_repas'])) . ' :';
+    if (trim($m['contenu'] ?? '') !== '') $lignes[] = trim($m['contenu']);
+    if (trim($m['astuce'] ?? '') !== '') $lignes[] = 'Astuce : ' . trim($m['astuce']);
+    return implode("\n", $lignes);
+}, $menuStructure));
+
+$ressourcesExternes = json_decode(getPost('ressources_externes') ?: '[]', true) ?: [];
+$ressourcesExternes = array_values(array_filter($ressourcesExternes, function ($r) {
+    return trim($r['titre'] ?? '') !== '';
+}));
+
 $data = [
-    'alimentation' => getPost('alimentation') . $regimesString,
+    'alimentation' => $alimentationTexte . $regimesString,
     'alimentation_eviter' => getPost('alimentation_eviter'),
     'alimentation_privilegier' => getPost('alimentation_privilegier'),
-    'menu_type' => getPost('menu_type'),
+    'menu_type' => $menuTypeTexte,
     'activite_physique' => getPost('activite_physique'),
     'gestion_stress' => getPost('gestion_stress'),
     'routine_matin' => getPost('routine_matin'),
@@ -177,6 +209,9 @@ $nouveauxChamps = [
     'soutien_emotionnel' => getPost('soutien_emotionnel'),
     'points_attention' => getPost('points_attention'),
     'prochain_rdv_notes' => getPost('prochain_rdv_notes'),
+    'conseils_alimentaires' => json_encode($conseilsAlimentaires, JSON_UNESCAPED_UNICODE),
+    'menu_structure' => json_encode($menuStructure, JSON_UNESCAPED_UNICODE),
+    'ressources_externes' => json_encode($ressourcesExternes, JSON_UNESCAPED_UNICODE),
 ];
 
 foreach ($nouveauxChamps as $champ => $valeur) {
