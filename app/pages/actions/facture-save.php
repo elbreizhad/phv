@@ -27,6 +27,15 @@ if (!$clientStmt->fetch()) {
     redirect('factures');
 }
 
+// Vérifier que la consultation (si fournie) appartient aussi à l'utilisateur
+if ($consultationId) {
+    $consultCheck = $db->prepare("SELECT id FROM consultations WHERE id = ? AND user_id = ?");
+    $consultCheck->execute([$consultationId, $userId]);
+    if (!$consultCheck->fetch()) {
+        $consultationId = null;
+    }
+}
+
 try {
     $db->beginTransaction();
 

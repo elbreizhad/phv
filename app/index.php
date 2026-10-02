@@ -19,6 +19,12 @@ if (!in_array($page, $publicPages)) {
     requireAuth();
 }
 
+// Pages réservées aux administrateurs
+$adminPages = ['admin-users', 'admin-user-edit', 'admin-systeme'];
+if (in_array($page, $adminPages)) {
+    requireAdmin();
+}
+
 // API endpoints (AJAX, JSON response, pas de layout)
 $apiPages = ['suggestions-api', 'agenda-api', 'factures-api', 'stats-api', 'rdv-notes-save'];
 if (in_array($page, $apiPages)) {
@@ -92,6 +98,10 @@ $validPages = [
     'parametres',
     'parametres-cabinet',
     'parametres-prestations',
+    // Administration (accès admin uniquement, vérifié plus bas)
+    'admin-users',
+    'admin-user-edit',
+    'admin-systeme',
     // Questionnaire pré-consultation (public)
     'questionnaire-pre',
     // Téléconsultation
@@ -205,7 +215,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             break;
 
         case 'site-update':
+            requireAdmin();
             require __DIR__ . '/pages/actions/site-update.php';
+            break;
+
+        // Administration (praticiens)
+        case 'admin-user-save':
+            requireAdmin();
+            require __DIR__ . '/pages/actions/admin-user-save.php';
+            break;
+
+        case 'admin-user-toggle':
+            requireAdmin();
+            require __DIR__ . '/pages/actions/admin-user-toggle.php';
             break;
 
         case 'prestation-save':

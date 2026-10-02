@@ -8,6 +8,14 @@ $motifCategorie = getPost('motif_categorie');
 $typeSeance = getPost('type_seance');
 $dateConsultation = getPost('date_consultation');
 
+// Le client doit appartenir au praticien connecté
+$clientCheck = $db->prepare("SELECT id FROM clients WHERE id = ? AND user_id = ?");
+$clientCheck->execute([$clientId, $userId]);
+if (!$clientCheck->fetch()) {
+    flashSet('error', 'Client invalide.');
+    redirect('clients');
+}
+
 // Déterminer la version de trame selon les paramètres utilisateur
 // (résilient si la migration SQL n'a pas encore été jouée)
 $useV2 = false;

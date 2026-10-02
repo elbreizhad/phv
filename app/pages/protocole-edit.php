@@ -8,7 +8,7 @@ $protocoleId = (int)getGet('id');
 
 $protocole = null;
 if ($protocoleId) {
-    $stmt = $db->prepare("SELECT * FROM protocoles WHERE id = ? AND user_id = ?");
+    $stmt = $db->prepare("SELECT * FROM protocoles WHERE id = ? AND (user_id = ? OR user_id IS NULL)");
     $stmt->execute([$protocoleId, $userId]);
     $protocole = $stmt->fetch();
     if (!$protocole) {
@@ -18,23 +18,28 @@ if ($protocoleId) {
 }
 
 $isEdit = $protocole !== null;
+$isOwner = $protocole === null || $protocole['user_id'] == $userId;
 $phases = $protocole ? json_decode($protocole['phases'] ?? '[]', true) : [];
 $complements = $protocole ? json_decode($protocole['complements'] ?? '[]', true) : [];
 ?>
 
 <div class="page-header">
     <div>
-        <h1><?= $isEdit ? 'Modifier le protocole' : 'Nouveau protocole' ?></h1>
+        <h1><?= $isEdit ? ($isOwner ? 'Modifier le protocole' : 'Voir le protocole') : 'Nouveau protocole' ?></h1>
         <p class="subtitle"><?= $isEdit ? e($protocole['nom']) : 'Créez un protocole naturopathique' ?></p>
     </div>
     <a href="<?= url('protocoles') ?>" class="btn btn-secondary">Retour</a>
 </div>
 
 <div class="page-body animate-in">
+    <?php if (!$isOwner): ?>
+    <div class="alert alert-info mb-2">Protocole commun à tous les praticiens — lecture seule.</div>
+    <?php endif; ?>
     <form method="POST" action="<?= url('protocoles') ?>">
         <input type="hidden" name="action" value="protocole-save">
         <input type="hidden" name="protocole_id" value="<?= $protocoleId ?>">
 
+        <fieldset <?= !$isOwner ? 'disabled' : '' ?> style="border:none; padding:0; margin:0;">
         <div class="card mb-2">
             <div class="card-header">
                 <h3>Informations générales</h3>
@@ -164,9 +169,13 @@ $complements = $protocole ? json_decode($protocole['complements'] ?? '[]', true)
             </div>
         </div>
 
+        </fieldset>
+
         <div class="form-actions d-flex justify-between">
             <a href="<?= url('protocoles') ?>" class="btn btn-secondary">Annuler</a>
+            <?php if ($isOwner): ?>
             <button type="submit" class="btn btn-primary"><?= $isEdit ? 'Enregistrer' : 'Créer le protocole' ?></button>
+            <?php endif; ?>
         </div>
     </form>
 </div>

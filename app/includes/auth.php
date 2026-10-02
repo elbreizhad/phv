@@ -11,18 +11,32 @@ function initSession(): void {
 
 function login(string $username, string $password): bool {
     $db = getDB();
-    $stmt = $db->prepare('SELECT id, username, password_hash, nom, prenom FROM users WHERE username = ?');
-    $stmt->execute([$username]);
+    // Résilient si la migration (role/actif) n'a pas encore été jouée.
+    try {
+        $stmt = $db->prepare('SELECT id, username, password_hash, nom, prenom, role, actif FROM users WHERE username = ?');
+        $stmt->execute([$username]);
+    } catch (PDOException $e) {
+        $stmt = $db->prepare('SELECT id, username, password_hash, nom, prenom FROM users WHERE username = ?');
+        $stmt->execute([$username]);
+    }
     $user = $stmt->fetch();
 
-    if ($user && password_verify($password, $user['password_hash'])) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_nom'] = $user['nom'];
-        $_SESSION['user_prenom'] = $user['prenom'];
-        $_SESSION['user_username'] = $user['username'];
-        return true;
+    if (!$user || !password_verify($password, $user['password_hash'])) {
+        return false;
     }
-    return false;
+    if (isset($user['actif']) && !$user['actif']) {
+        return false;
+    }
+
+    // Empêche la réutilisation d'un identifiant de session pré-connexion.
+    session_regenerate_id(true);
+
+    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['user_nom'] = $user['nom'];
+    $_SESSION['user_prenom'] = $user['prenom'];
+    $_SESSION['user_username'] = $user['username'];
+    $_SESSION['user_role'] = $user['role'] ?? 'praticien';
+    return true;
 }
 
 function logout(): void {
@@ -38,6 +52,20 @@ function requireAuth(): void {
         header('Location: ' . APP_URL . '/index.php?page=login');
         exit;
     }
+    // Un compte désactivé par un administrateur perd l'accès immédiatement,
+    // pas seulement à la prochaine tentative de connexion.
+    try {
+        $stmt = getDB()->prepare('SELECT actif FROM users WHERE id = ?');
+        $stmt->execute([currentUserId()]);
+        $actif = $stmt->fetchColumn();
+        if ($actif === false || (int) $actif === 0) {
+            logout();
+            header('Location: ' . APP_URL . '/index.php?page=login');
+            exit;
+        }
+    } catch (PDOException $e) {
+        // Colonne pas encore migrée : on laisse passer.
+    }
 }
 
 function currentUserId(): int {
@@ -46,6 +74,18 @@ function currentUserId(): int {
 
 function currentUserName(): string {
     return ($_SESSION['user_prenom'] ?? '') . ' ' . ($_SESSION['user_nom'] ?? '');
+}
+
+function isAdmin(): bool {
+    return ($_SESSION['user_role'] ?? 'praticien') === 'admin';
+}
+
+function requireAdmin(): void {
+    requireAuth();
+    if (!isAdmin()) {
+        header('Location: ' . APP_URL . '/index.php?page=dashboard');
+        exit;
+    }
 }
 
 /**

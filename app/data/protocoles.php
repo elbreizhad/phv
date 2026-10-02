@@ -326,25 +326,25 @@ function getProtocolesTypes(): array {
 
 /**
  * Insère dans la table `protocoles` les protocoles de la bibliothèque qui
- * n'existent pas encore (comparaison insensible à la casse sur le nom), pour
- * le praticien identifié comme le premier utilisateur de l'application
- * (praticien solo). Retourne la liste des noms de protocoles ajoutés.
+ * n'existent pas encore (comparaison insensible à la casse sur le nom), en
+ * tant que protocoles communs (user_id NULL) visibles par tous les
+ * praticiens — comme les recettes globales (voir recettes.php). Nécessite
+ * que protocoles.user_id soit nullable (géré par tenant-schema.php).
+ * Retourne la liste des noms de protocoles ajoutés.
  */
 function syncProtocoles(PDO $db): array {
     $protocoles = getProtocolesTypes();
 
-    // Les protocoles appartiennent à un praticien (user_id NOT NULL) : on les
-    // rattache au premier utilisateur de l'app (praticien solo).
-    $userId = (int)$db->query("SELECT MIN(id) FROM users")->fetchColumn();
-    if (!$userId) {
+    try {
+        $existingNoms = $db->query("SELECT nom FROM protocoles WHERE user_id IS NULL")->fetchAll(PDO::FETCH_COLUMN);
+    } catch (PDOException $e) {
+        // user_id pas encore nullable (tenant-schema pas encore passé) : on
+        // n'insère rien plutôt que de rattacher à tort à un praticien précis.
         return [];
     }
+    $existingNoms = array_map('mb_strtolower', $existingNoms);
 
-    $existingNoms = $db->prepare("SELECT nom FROM protocoles WHERE user_id = ?");
-    $existingNoms->execute([$userId]);
-    $existingNoms = array_map('mb_strtolower', $existingNoms->fetchAll(PDO::FETCH_COLUMN));
-
-    $stmt = $db->prepare("INSERT INTO protocoles (user_id, nom, type_protocole, duree_jours, description, objectifs, phases, complements, alimentation, contre_indications) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $db->prepare("INSERT INTO protocoles (user_id, nom, type_protocole, duree_jours, description, objectifs, phases, complements, alimentation, contre_indications) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     $added = [];
     foreach ($protocoles as $p) {
@@ -352,7 +352,7 @@ function syncProtocoles(PDO $db): array {
             continue;
         }
         $stmt->execute([
-            $userId, $p['nom'], $p['type_protocole'], $p['duree_jours'], $p['description'], $p['objectifs'],
+            $p['nom'], $p['type_protocole'], $p['duree_jours'], $p['description'], $p['objectifs'],
             json_encode($p['phases']), json_encode($p['complements']), $p['alimentation'], $p['contre_indications'],
         ]);
         $added[] = $p['nom'];

@@ -10,43 +10,59 @@ $messages = [];
 try {
     $db = getDB();
 
-    // Lire et exécuter le schéma SQL
-    $sql = file_get_contents(__DIR__ . '/../sql/schema.sql');
+    // Page publique : une fois un compte créé, elle refuse de se rejouer
+    // (elle recréerait sinon un compte "praticien/naturo2026" à volonté,
+    // ce qui serait une porte dérobée sur un site déjà en service).
+    $existingUsers = (int) $db->query("SELECT COUNT(*) FROM users")->fetchColumn();
 
-    // Séparer les requêtes
-    $statements = array_filter(array_map('trim', explode(';', $sql)));
-
-    foreach ($statements as $stmt) {
-        if (!empty($stmt) && stripos($stmt, 'INSERT INTO users') === false) {
-            $db->exec($stmt);
-        }
-    }
-
-    // Migration : ajouter la colonne commentaires_praticien si elle n'existe pas
-    try {
-        $db->exec("ALTER TABLE phv ADD COLUMN commentaires_praticien JSON AFTER notes");
-        $messages[] = ['info', 'Colonne commentaires_praticien ajoutee a la table phv.'];
-    } catch (Exception $e) {
-        // La colonne existe probablement déjà, on ignore
-    }
-
-    // Créer l'utilisateur par défaut avec mot de passe hashé
-    $hash = password_hash('naturo2026', PASSWORD_DEFAULT);
-    $check = $db->query("SELECT COUNT(*) FROM users WHERE username = 'praticien'")->fetchColumn();
-    if ($check == 0) {
-        $stmt = $db->prepare("INSERT INTO users (username, password_hash, nom, prenom, email) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute(['praticien', $hash, 'Praticien', 'PHV', 'praticien@phv.fr']);
-        $messages[] = ['success', 'Utilisateur par defaut cree : praticien / naturo2026'];
+    if ($existingUsers > 0) {
+        $messages[] = ['info', 'Le site est déjà installé.'];
     } else {
-        $messages[] = ['info', 'Utilisateur "praticien" existe deja.'];
+        // Lire et exécuter le schéma SQL
+        $sql = file_get_contents(__DIR__ . '/../sql/schema.sql');
+
+        // Séparer les requêtes
+        $statements = array_filter(array_map('trim', explode(';', $sql)));
+
+        foreach ($statements as $stmt) {
+            if (!empty($stmt) && stripos($stmt, 'INSERT INTO users') === false) {
+                $db->exec($stmt);
+            }
+        }
+
+        // Migration : ajouter la colonne commentaires_praticien si elle n'existe pas
+        try {
+            $db->exec("ALTER TABLE phv ADD COLUMN commentaires_praticien JSON AFTER notes");
+            $messages[] = ['info', 'Colonne commentaires_praticien ajoutee a la table phv.'];
+        } catch (Exception $e) {
+            // La colonne existe probablement déjà, on ignore
+        }
+
+        // Premier compte = administrateur (gère ensuite les autres praticiens)
+        require_once __DIR__ . '/../data/tenant-schema.php';
+        try {
+            syncTenantSchema($db);
+        } catch (Exception $e) {
+            // Tables pas toutes prêtes au tout premier passage, ignoré.
+        }
+
+        $hash = password_hash('naturo2026', PASSWORD_DEFAULT);
+        $check = $db->query("SELECT COUNT(*) FROM users WHERE username = 'praticien'")->fetchColumn();
+        if ($check == 0) {
+            $stmt = $db->prepare("INSERT INTO users (username, password_hash, nom, prenom, email, role) VALUES (?, ?, ?, ?, ?, 'admin')");
+            $stmt->execute(['praticien', $hash, 'Praticien', 'PHV', 'praticien@phv.fr']);
+            $messages[] = ['success', 'Administrateur créé : praticien / naturo2026'];
+        } else {
+            $messages[] = ['info', 'Utilisateur "praticien" existe deja.'];
+        }
+
+        // Insérer les fiches pathologies
+        require_once __DIR__ . '/../data/fiches-pathologies.php';
+        $fichesCount = insertFichesPathologies($db);
+        $messages[] = ['success', $fichesCount . ' fiches pathologies inserees.'];
+
+        $messages[] = ['success', 'Installation terminee avec succes !'];
     }
-
-    // Insérer les fiches pathologies
-    require_once __DIR__ . '/../data/fiches-pathologies.php';
-    $fichesCount = insertFichesPathologies($db);
-    $messages[] = ['success', $fichesCount . ' fiches pathologies inserees.'];
-
-    $messages[] = ['success', 'Installation terminee avec succes !'];
 } catch (Exception $e) {
     $messages[] = ['error', 'Erreur : ' . $e->getMessage()];
 }

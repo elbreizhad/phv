@@ -65,8 +65,8 @@ $protocoles = [];
 if (!empty($protocolesIds)) {
     try {
         $placeholders = implode(',', array_fill(0, count($protocolesIds), '?'));
-        $protoStmt = $db->prepare("SELECT * FROM protocoles WHERE id IN ($placeholders)");
-        $protoStmt->execute($protocolesIds);
+        $protoStmt = $db->prepare("SELECT * FROM protocoles WHERE id IN ($placeholders) AND (user_id = ? OR user_id IS NULL)");
+        $protoStmt->execute([...$protocolesIds, $userId]);
         $protocoles = $protoStmt->fetchAll();
     } catch (PDOException $e) {}
 }
@@ -76,8 +76,8 @@ $recettes = [];
 if (!empty($recettesIds)) {
     try {
         $placeholders = implode(',', array_fill(0, count($recettesIds), '?'));
-        $recStmt = $db->prepare("SELECT * FROM recettes WHERE id IN ($placeholders)");
-        $recStmt->execute($recettesIds);
+        $recStmt = $db->prepare("SELECT * FROM recettes WHERE id IN ($placeholders) AND (user_id = ? OR user_id IS NULL)");
+        $recStmt->execute([...$recettesIds, $userId]);
         $recettes = $recStmt->fetchAll();
     } catch (PDOException $e) {}
 }

@@ -109,6 +109,17 @@ function deployRun(string $targetDir): array {
         $log[] = "Attention : la vérification du schéma phv a échoué (" . $e->getMessage() . ").";
     }
 
+    $log[] = "Vérification du schéma multi-praticien (rôles, protocoles communs)...";
+    try {
+        require_once $targetDir . '/data/tenant-schema.php';
+        $tenantChanges = syncTenantSchema(getDB());
+        $log[] = empty($tenantChanges)
+            ? "Schéma multi-praticien déjà à jour."
+            : implode(' / ', $tenantChanges);
+    } catch (Throwable $e) {
+        $log[] = "Attention : la vérification du schéma multi-praticien a échoué (" . $e->getMessage() . ").";
+    }
+
     $log[] = "Synchronisation des fiches pathologies en base...";
     try {
         require_once $targetDir . '/data/fiches-pathologies.php';

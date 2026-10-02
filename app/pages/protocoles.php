@@ -5,7 +5,7 @@
 $db = getDB();
 $userId = currentUserId();
 
-$protocolesStmt = $db->prepare("SELECT * FROM protocoles WHERE user_id = ? ORDER BY nom");
+$protocolesStmt = $db->prepare("SELECT * FROM protocoles WHERE (user_id = ? OR user_id IS NULL) ORDER BY nom");
 $protocolesStmt->execute([$userId]);
 $protocoles = $protocolesStmt->fetchAll();
 ?>

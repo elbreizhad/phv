@@ -27,13 +27,17 @@ if ($visioEnabled || $typeRdv === 'visio') {
     $visioPassword = strtoupper(bin2hex(random_bytes(3)));
 }
 
-// Si client sélectionné, utiliser son nom comme titre
+// Si client sélectionné, vérifier qu'il appartient au praticien et utiliser
+// son nom comme titre ; sinon on ignore le client fourni (ne doit pas
+// pouvoir rattacher un RDV au client d'un autre praticien).
 if ($clientId) {
     $clientStmt = $db->prepare("SELECT nom, prenom FROM clients WHERE id = ? AND user_id = ?");
     $clientStmt->execute([$clientId, $userId]);
     $client = $clientStmt->fetch();
     if ($client) {
         $titre = $client['prenom'] . ' ' . $client['nom'];
+    } else {
+        $clientId = null;
     }
 }
 
@@ -48,8 +52,8 @@ if ($rdvId) {
     // Mise à jour
     if ($visioEnabled) {
         // Vérifier si visio existe déjà
-        $checkStmt = $db->prepare("SELECT visio_room_id FROM rendez_vous WHERE id = ?");
-        $checkStmt->execute([$rdvId]);
+        $checkStmt = $db->prepare("SELECT visio_room_id FROM rendez_vous WHERE id = ? AND user_id = ?");
+        $checkStmt->execute([$rdvId, $userId]);
         $existing = $checkStmt->fetch();
         if ($existing && $existing['visio_room_id']) {
             // Garder l'ancien lien visio

@@ -9,7 +9,7 @@ $deployScript = dirname(__DIR__, 2) . '/deploy.php';
 
 if (!file_exists($deployScript)) {
     flashSet('error', "Le déploiement n'est pas configuré sur ce serveur (deploy.php manquant).");
-    redirect('parametres');
+    redirect('admin-systeme');
 }
 
 require_once $deployScript;
@@ -21,4 +21,4 @@ try {
     flashSet('error', "Échec de l'actualisation : " . $e->getMessage());
 }
 
-redirect('parametres');
+redirect('admin-systeme');

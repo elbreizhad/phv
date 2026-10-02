@@ -114,7 +114,7 @@ $allReponses = getReponses($consultId);
 $allProtocoles = [];
 $suggestedProtocoles = [];
 try {
-    $protocolesStmt = $db->prepare("SELECT * FROM protocoles WHERE user_id = ? AND actif = TRUE ORDER BY type_protocole, nom");
+    $protocolesStmt = $db->prepare("SELECT * FROM protocoles WHERE (user_id = ? OR user_id IS NULL) AND actif = TRUE ORDER BY type_protocole, nom");
     $protocolesStmt->execute([$userId]);
     $allProtocoles = $protocolesStmt->fetchAll();
     $suggestedProtocoles = matchProtocolesToConsultation($consultation, $synthese, $allReponses, $allProtocoles);
@@ -142,8 +142,8 @@ try {
 $allRecettes = [];
 $suggestedRecettes = [];
 try {
-    $recettesStmt = $db->prepare("SELECT * FROM recettes ORDER BY categorie, nom");
-    $recettesStmt->execute();
+    $recettesStmt = $db->prepare("SELECT * FROM recettes WHERE (user_id = ? OR user_id IS NULL) ORDER BY categorie, nom");
+    $recettesStmt->execute([$userId]);
     $allRecettes = $recettesStmt->fetchAll();
     $suggestedRecettes = matchRecettesToConsultation($consultation, $synthese, $allReponses, $allRecettes);
 } catch (PDOException $e) {
