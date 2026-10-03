@@ -120,6 +120,17 @@ function deployRun(string $targetDir): array {
         $log[] = "Attention : la vérification du schéma multi-praticien a échoué (" . $e->getMessage() . ").";
     }
 
+    $log[] = "Vérification du schéma des abonnements (packs, essais)...";
+    try {
+        require_once $targetDir . '/data/subscription-schema.php';
+        $subscriptionChanges = syncSubscriptionSchema(getDB());
+        $log[] = empty($subscriptionChanges)
+            ? "Schéma abonnements déjà à jour."
+            : implode(' / ', $subscriptionChanges);
+    } catch (Throwable $e) {
+        $log[] = "Attention : la vérification du schéma abonnements a échoué (" . $e->getMessage() . ").";
+    }
+
     $log[] = "Synchronisation des fiches pathologies en base...";
     try {
         require_once $targetDir . '/data/fiches-pathologies.php';

@@ -7,6 +7,7 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/app.php';
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/helpers.php';
+require_once __DIR__ . '/includes/subscription.php';
 
 initSession();
 
@@ -20,9 +21,19 @@ if (!in_array($page, $publicPages)) {
 }
 
 // Pages réservées aux administrateurs
-$adminPages = ['admin-users', 'admin-user-edit', 'admin-systeme'];
+$adminPages = ['admin-users', 'admin-user-edit', 'admin-systeme', 'admin-codes'];
 if (in_array($page, $adminPages)) {
     requireAdmin();
+}
+
+// Verrouillage abonnement : un praticien sans abonnement actif (ni essai en
+// cours) ne peut accéder qu'à la page Abonnement. Les administrateurs ne
+// sont jamais verrouillés.
+$subscriptionExemptPages = ['abonnement', 'logout'];
+if (!in_array($page, $publicPages) && !isAdmin() && !in_array($page, $subscriptionExemptPages)) {
+    if (!hasActiveSubscription(currentUserId())) {
+        redirect('abonnement');
+    }
 }
 
 // API endpoints (AJAX, JSON response, pas de layout)
@@ -98,10 +109,13 @@ $validPages = [
     'parametres',
     'parametres-cabinet',
     'parametres-prestations',
+    // Abonnement
+    'abonnement',
     // Administration (accès admin uniquement, vérifié plus bas)
     'admin-users',
     'admin-user-edit',
     'admin-systeme',
+    'admin-codes',
     // Questionnaire pré-consultation (public)
     'questionnaire-pre',
     // Téléconsultation
@@ -228,6 +242,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         case 'admin-user-toggle':
             requireAdmin();
             require __DIR__ . '/pages/actions/admin-user-toggle.php';
+            break;
+
+        // Abonnement
+        case 'abonnement-activer-code':
+            require __DIR__ . '/pages/actions/abonnement-activer-code.php';
+            break;
+
+        case 'admin-code-save':
+            requireAdmin();
+            require __DIR__ . '/pages/actions/admin-code-save.php';
+            break;
+
+        case 'admin-code-toggle':
+            requireAdmin();
+            require __DIR__ . '/pages/actions/admin-code-toggle.php';
             break;
 
         case 'prestation-save':
